@@ -4,7 +4,7 @@ export const portfolioData = {
     handle: "@alejandrovega-stackblend",
     initials: "AV",
     location: { es: "Bogotá, Colombia", en: "Bogotá, Colombia" },
-    yearsExp: 3,
+    yearsExp: 4,
     education: { es: "Formado en SENA", en: "Educated at SENA" },
     title: { es: "Desarrollador Full Stack", en: "Full Stack Developer" },
     tagline: {
@@ -29,7 +29,7 @@ export const portfolioData = {
       "Resuelvo problemas complejos mediante automatización y uso estratégico de datos (BigQuery) para la toma de decisiones. Autodidacta, adaptable y orientado a resultados.",
     ],
     en: [
-      "Full Stack Developer with 3 years of experience leading high-impact solutions at companies like Pulzo and Kiki Latam.",
+      "Full Stack Developer with 4 years of experience leading high-impact solutions at companies like Pulzo and Kiki Latam.",
       "I specialize in designing and implementing efficient, scalable and sustainable systems, with a focus on continuous improvement, automation and code quality.",
       "I solve complex problems through automation and strategic use of data (BigQuery) for decision-making. Self-taught, adaptable and results-oriented.",
     ],

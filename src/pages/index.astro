@@ -35,7 +35,7 @@ import '../styles/global.css';
         <span class="font-mono text-[0.74rem] tracking-[0.1em] text-[var(--ink-2)] px-[18px] inline-flex items-center gap-[10px]"><span class="text-[var(--accent)]">●</span> NODE_OPS: 99.9% UPTIME</span>
         <span class="font-mono text-[0.74rem] tracking-[0.1em] text-[var(--ink-2)] px-[18px] inline-flex items-center gap-[10px]"><span class="text-[var(--accent)]">▼</span> LOC: BOGOTÁ / GMT-5</span>
         <span class="font-mono text-[0.74rem] tracking-[0.1em] text-[var(--ink-2)] px-[18px] inline-flex items-center gap-[10px]"><span class="text-[var(--accent)]">●</span> STACK: NESTJS · PYTHON · BIGQUERY</span>
-        <span class="font-mono text-[0.74rem] tracking-[0.1em] text-[var(--ink-2)] px-[18px] inline-flex items-center gap-[10px]"><span class="text-[var(--accent)]">▲</span> EXP: 3 YRS / 7 PROJECTS</span>
+        <span class="font-mono text-[0.74rem] tracking-[0.1em] text-[var(--ink-2)] px-[18px] inline-flex items-center gap-[10px]"><span class="text-[var(--accent)]">▲</span> EXP: 4 YRS / 7 PROJECTS</span>
         <span class="font-mono text-[0.74rem] tracking-[0.1em] text-[var(--ink-2)] px-[18px] inline-flex items-center gap-[10px]"><span class="text-[var(--accent)]">●</span> FOR HIRE: REMOTE / HYBRID</span>
         <span class="font-mono text-[0.74rem] tracking-[0.1em] text-[var(--ink-2)] px-[18px] inline-flex items-center gap-[10px]"><span class="text-[var(--accent)]">▼</span> PULZO · KIKI LATAM · RODA</span>
         <span class="font-mono text-[0.74rem] tracking-[0.1em] text-[var(--ink-2)] px-[18px] inline-flex items-center gap-[10px]"><span class="text-[var(--accent)]">●</span> AUTOMATION · DATA · BACKEND</span>
@@ -78,7 +78,7 @@ import '../styles/global.css';
       </div>
       <div class="mt-12 lg:mt-16 grid grid-cols-3 gap-3 sm:gap-6 max-w-xl">
         <div style="border-top:1px solid var(--line);padding-top:14px;">
-          <div class="font-display text-[2.4rem] font-bold leading-none" data-counter="3">0</div>
+          <div class="font-display text-[2.4rem] font-bold leading-none" data-counter="4">0</div>
           <div class="font-mono text-[0.7rem] text-[var(--ink-3)] tracking-[0.15em] uppercase mt-[6px]"><span class="lang-es">años de exp.</span><span class="lang-en">years exp.</span></div>
         </div>
         <div style="border-top:1px solid var(--line);padding-top:14px;">
@@ -178,7 +178,7 @@ import '../styles/global.css';
         <div class="border border-[var(--line)] p-5" data-stagger-item>
           <div class="cy-num">// ROOTS</div>
           <div class="mt-2 font-display text-xl">SENA · Bogotá</div>
-          <div class="text-sm text-[var(--ink-3)] mt-1 font-mono"><span class="lang-es">4 años · 4°N</span><span class="lang-en">3 years · 4°N</span></div>
+          <div class="text-sm text-[var(--ink-3)] mt-1 font-mono"><span class="lang-es">4 años · 4°N</span><span class="lang-en">4 years · 4°N</span></div>
         </div>
         <div class="border border-[var(--line)] p-5" data-stagger-item>
           <div class="cy-num">// MODE</div>
@@ -619,7 +619,7 @@ function paintHero() {
       ['$ whoami','ps1'], ['alejandro_vega — desarrollador full stack','ok'],
       ['$ cat .stack','ps1'], ['php · python · ts · nestjs · laravel',''],
       ['react · angular · postgresql · bigquery',''],
-      ['$ status','ps1'], ['● online · disponible para hire','ok'], ['$ _','ps1'],
+      ['$ status','ps1'], ['● online · disponible para contratar','ok'], ['$ _','ps1'],
     ];
     heroTerm.innerHTML = '';
     let i = 0;
@@ -840,6 +840,7 @@ function attachTerminalGame(container: HTMLElement, lang: 'es' | 'en') {
     }
     const keyH = (e: KeyboardEvent)=>{
       if(!snakeActive)return;
+      if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key))e.preventDefault();
       if(e.key==='ArrowUp'&&dir.y===0)dir={x:0,y:-1};
       else if(e.key==='ArrowDown'&&dir.y===0)dir={x:0,y:1};
       else if(e.key==='ArrowLeft'&&dir.x===0)dir={x:-1,y:0};
@@ -963,50 +964,6 @@ function attachTerminalGame(container: HTMLElement, lang: 'es' | 'en') {
     if (e.key === 'ArrowUp') { histIdx = Math.min(histIdx + 1, cmdHistory.length - 1); input.value = cmdHistory[histIdx] || ''; }
     if (e.key === 'ArrowDown') { histIdx = Math.max(histIdx - 1, -1); input.value = histIdx >= 0 ? cmdHistory[histIdx] : ''; }
   });
-}
-
-// ─── Spotify now-playing ──────────────────────────────────────────────────────
-function initSpotify() {
-  const trackEl = document.getElementById('nowTrackText') as HTMLElement | null;
-  const iconEl  = document.getElementById('nowPlayIcon')  as HTMLElement | null;
-  if (!trackEl || !iconEl) return;
-
-  async function tick() {
-    try {
-      const res  = await fetch('/api/spotify');
-      if (!res.ok) return;
-      const data = await res.json() as {
-        isPlaying: boolean; title?: string; artist?: string;
-        songUrl?: string; configured?: boolean;
-      };
-
-      if (!data.isPlaying || !data.title) {
-        const lang = getLang();
-        trackEl.innerHTML = lang === 'es' ? '— SIN REPRODUCCIÓN ACTIVA' : '— NOT PLAYING NOW';
-        iconEl.textContent = '⏸';
-        return;
-      }
-
-      const trunc = (s: string, n: number) => s.length > n ? s.slice(0, n) + '…' : s;
-      const artist = trunc(data.artist ?? '', 24);
-      const title  = trunc(data.title ?? '', 28);
-      const label  = `${artist} — ${title}`;
-
-      iconEl.textContent = '▶';
-      if (data.songUrl) {
-        trackEl.innerHTML =
-          `<a href="${data.songUrl}" target="_blank" rel="noopener"
-              style="color:inherit;text-decoration:none;display:inline;">${label}</a>`;
-      } else {
-        trackEl.textContent = label;
-      }
-    } catch {
-      // keep static fallback silently
-    }
-  }
-
-  tick();
-  setInterval(tick, 30_000);
 }
 
 // ─── Char-level reveal for accent words in section headings ─────────────────
@@ -1181,7 +1138,6 @@ async function start() {
   initCharReveal();
   initWaveHero();
   initNowClock();
-  initSpotify();
   initNowBand();
 
   // Hero name char-by-char reveal — more dramatic stagger
