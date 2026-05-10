@@ -24,7 +24,7 @@ export const portfolioData = {
 
   about: {
     es: [
-      "Soy Desarrollador Full Stack con 3 años de experiencia liderando soluciones de alto impacto en empresas como Pulzo y Kiki Latam.",
+      "Soy Desarrollador Full Stack con 4 años de experiencia liderando soluciones de alto impacto en empresas como Pulzo y Kiki Latam.",
       "Me especializo en diseñar e implementar sistemas eficientes, escalables y sostenibles, con enfoque en mejora continua, automatización y calidad del código.",
       "Resuelvo problemas complejos mediante automatización y uso estratégico de datos (BigQuery) para la toma de decisiones. Autodidacta, adaptable y orientado a resultados.",
     ],

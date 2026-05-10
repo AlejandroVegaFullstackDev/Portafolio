@@ -128,10 +128,12 @@ import '../styles/global.css';
       <span class="lang-es">DISPONIBLE — REMOTO/HÍBRIDO</span>
       <span class="lang-en">AVAILABLE — REMOTE/HYBRID</span>
     </div>
-    <div class="now-item" style="flex:1;">
-      <span style="color:var(--accent);">▶</span>
-      <span class="lang-es">ESCUCHANDO: KAVINSKY — NIGHTCALL</span>
-      <span class="lang-en">LISTENING: KAVINSKY — NIGHTCALL</span>
+    <div class="now-item" style="flex:1;" id="nowTrackItem">
+      <span style="color:var(--accent);" id="nowPlayIcon">▶</span>
+      <span id="nowTrackText">
+        <span class="lang-es">KAVINSKY — NIGHTCALL</span>
+        <span class="lang-en">KAVINSKY — NIGHTCALL</span>
+      </span>
     </div>
     <div class="now-item">
       <span style="color:var(--ink-3);">BOGOTÁ</span>
@@ -176,7 +178,7 @@ import '../styles/global.css';
         <div class="border border-[var(--line)] p-5" data-stagger-item>
           <div class="cy-num">// ROOTS</div>
           <div class="mt-2 font-display text-xl">SENA · Bogotá</div>
-          <div class="text-sm text-[var(--ink-3)] mt-1 font-mono"><span class="lang-es">3 años · 4°N</span><span class="lang-en">3 years · 4°N</span></div>
+          <div class="text-sm text-[var(--ink-3)] mt-1 font-mono"><span class="lang-es">4 años · 4°N</span><span class="lang-en">3 years · 4°N</span></div>
         </div>
         <div class="border border-[var(--line)] p-5" data-stagger-item>
           <div class="cy-num">// MODE</div>
@@ -755,8 +757,8 @@ function attachTerminalGame(container: HTMLElement, lang: 'es' | 'en') {
       ? ['alejandro_vega','role: full stack engineer','loc:  bogota, co / gmt-5','avail: yes — remote / hybrid']
       : ['alejandro_vega','rol: desarrollador full stack','loc: bogotá, co / gmt-5','disp: sí — remoto / híbrido'],
     about: (_, l) => l === 'en'
-      ? ['3 years building high-impact systems.','Pulzo · Kiki Latam · Roda.','Automation, data pipelines, scalable APIs.','Autodidact. Results-oriented.']
-      : ['3 años construyendo sistemas de alto impacto.','Pulzo · Kiki Latam · Roda.','Automatización, pipelines, APIs escalables.','Autodidacta. Orientado a resultados.'],
+      ? ['4 years building high-impact systems.','Pulzo · Kiki Latam · Roda.','Automation, data pipelines, scalable APIs.','Autodidact. Results-oriented.']
+      : ['4 años construyendo sistemas de alto impacto.','Pulzo · Kiki Latam · Roda.','Automatización, pipelines, APIs escalables.','Autodidacta. Orientado a resultados.'],
     stack: () => ['Backend:  PHP · Python · TypeScript · NestJS · Laravel','Frontend: React · Angular · Tailwind','Data:     BigQuery · PostgreSQL · MySQL · Redis','Cloud:    AWS · GCP · Docker'],
     projects: (_, l) => l === 'en'
       ? ['[001] CUFE/DIAN automation — Python · BigQuery','[002] Shipping platform   — NestJS · PostgreSQL','[003] Laravel task manager — Laravel · Livewire','[004] GA4+BigQuery reporting — SQL · Looker Studio']
@@ -963,6 +965,50 @@ function attachTerminalGame(container: HTMLElement, lang: 'es' | 'en') {
   });
 }
 
+// ─── Spotify now-playing ──────────────────────────────────────────────────────
+function initSpotify() {
+  const trackEl = document.getElementById('nowTrackText') as HTMLElement | null;
+  const iconEl  = document.getElementById('nowPlayIcon')  as HTMLElement | null;
+  if (!trackEl || !iconEl) return;
+
+  async function tick() {
+    try {
+      const res  = await fetch('/api/spotify');
+      if (!res.ok) return;
+      const data = await res.json() as {
+        isPlaying: boolean; title?: string; artist?: string;
+        songUrl?: string; configured?: boolean;
+      };
+
+      if (!data.isPlaying || !data.title) {
+        const lang = getLang();
+        trackEl.innerHTML = lang === 'es' ? '— SIN REPRODUCCIÓN ACTIVA' : '— NOT PLAYING NOW';
+        iconEl.textContent = '⏸';
+        return;
+      }
+
+      const trunc = (s: string, n: number) => s.length > n ? s.slice(0, n) + '…' : s;
+      const artist = trunc(data.artist ?? '', 24);
+      const title  = trunc(data.title ?? '', 28);
+      const label  = `${artist} — ${title}`;
+
+      iconEl.textContent = '▶';
+      if (data.songUrl) {
+        trackEl.innerHTML =
+          `<a href="${data.songUrl}" target="_blank" rel="noopener"
+              style="color:inherit;text-decoration:none;display:inline;">${label}</a>`;
+      } else {
+        trackEl.textContent = label;
+      }
+    } catch {
+      // keep static fallback silently
+    }
+  }
+
+  tick();
+  setInterval(tick, 30_000);
+}
+
 // ─── Char-level reveal for accent words in section headings ─────────────────
 function initCharReveal() {
   if (document.documentElement.getAttribute('data-tweak-anim') === 'off') return;
@@ -1135,6 +1181,7 @@ async function start() {
   initCharReveal();
   initWaveHero();
   initNowClock();
+  initSpotify();
   initNowBand();
 
   // Hero name char-by-char reveal — more dramatic stagger
