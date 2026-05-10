@@ -520,8 +520,8 @@ function initCounters() {
     const suffix = el.dataset.counterSuffix || '';
     const decimals = parseInt(el.dataset.counterDecimals || '0');
     const obj = { v: 0 };
-    gsap.to(obj, { v: target, duration: 1.6, ease: 'expo.out',
-      scrollTrigger: { trigger: el, start: 'top 85%', once: true },
+    // Counters live in the hero viewport — skip ScrollTrigger, animate with delay
+    gsap.to(obj, { v: target, duration: 1.6, ease: 'expo.out', delay: 1.2,
       onUpdate: () => { el.textContent = obj.v.toFixed(decimals) + suffix; } });
   });
 }
