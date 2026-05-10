@@ -1,0 +1,878 @@
+---
+import Layout from '../layouts/Layout.astro';
+import TweaksPanel from '../components/TweaksPanel';
+import '../styles/global.css';
+---
+
+<Layout title="Alejandro Vega — Full Stack Engineer">
+
+<!-- Boot screen -->
+<div id="boot" class="cy-boot">
+  <div class="text-center font-mono text-[var(--ok)] text-sm leading-relaxed max-w-xl px-6">
+    <div id="bootLog" class="text-left"></div>
+  </div>
+</div>
+
+<!-- Header bar -->
+<header style="position:fixed;top:0;left:0;right:0;z-index:40;background:rgba(5,5,7,0.7);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);" data-header>
+  <div class="px-6 lg:px-10 h-12 flex items-center justify-between gap-6 text-sm">
+    <div class="flex items-center gap-4">
+      <span class="font-mono text-[var(--accent)] font-semibold tracking-widest">AV/_</span>
+      <span class="font-mono text-[var(--ink-3)] tracking-widest text-[0.7rem] hidden sm:inline">stackblend.dev</span>
+    </div>
+    <div class="flex items-center gap-4">
+      <span class="cy-status"><span class="lang-es">disponible</span><span class="lang-en">available</span></span>
+      <button id="langToggle" class="font-mono text-[0.78rem] tracking-widest border border-[var(--line-2)] px-2 py-1 hover:border-[var(--accent)] hover:text-[var(--accent)] transition">
+        <span class="lang-es">EN</span><span class="lang-en">ES</span>
+      </button>
+    </div>
+  </div>
+  <!-- Ticker -->
+  <div style="display:flex;align-items:center;gap:14px;height:30px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);overflow:hidden;background:var(--bg-2);">
+    <div class="cy-marquee" data-marquee="80">
+      <div class="flex items-center">
+        <span class="font-mono text-[0.74rem] tracking-[0.1em] text-[var(--ink-2)] px-[18px] inline-flex items-center gap-[10px]"><span class="text-[var(--accent)]">▲</span> SYS_STATUS: ONLINE</span>
+        <span class="font-mono text-[0.74rem] tracking-[0.1em] text-[var(--ink-2)] px-[18px] inline-flex items-center gap-[10px]"><span class="text-[var(--accent)]">●</span> NODE_OPS: 99.9% UPTIME</span>
+        <span class="font-mono text-[0.74rem] tracking-[0.1em] text-[var(--ink-2)] px-[18px] inline-flex items-center gap-[10px]"><span class="text-[var(--accent)]">▼</span> LOC: BOGOTÁ / GMT-5</span>
+        <span class="font-mono text-[0.74rem] tracking-[0.1em] text-[var(--ink-2)] px-[18px] inline-flex items-center gap-[10px]"><span class="text-[var(--accent)]">●</span> STACK: NESTJS · PYTHON · BIGQUERY</span>
+        <span class="font-mono text-[0.74rem] tracking-[0.1em] text-[var(--ink-2)] px-[18px] inline-flex items-center gap-[10px]"><span class="text-[var(--accent)]">▲</span> EXP: 3 YRS / 7 PROJECTS</span>
+        <span class="font-mono text-[0.74rem] tracking-[0.1em] text-[var(--ink-2)] px-[18px] inline-flex items-center gap-[10px]"><span class="text-[var(--accent)]">●</span> FOR HIRE: REMOTE / HYBRID</span>
+        <span class="font-mono text-[0.74rem] tracking-[0.1em] text-[var(--ink-2)] px-[18px] inline-flex items-center gap-[10px]"><span class="text-[var(--accent)]">▼</span> PULZO · KIKI LATAM · RODA</span>
+        <span class="font-mono text-[0.74rem] tracking-[0.1em] text-[var(--ink-2)] px-[18px] inline-flex items-center gap-[10px]"><span class="text-[var(--accent)]">●</span> AUTOMATION · DATA · BACKEND</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+
+<main class="pt-[100px]">
+
+<!-- HERO -->
+<section id="hero" class="relative min-h-[calc(100vh-100px)] cy-scanlines flex items-center px-6 lg:px-20 overflow-hidden" style="background:radial-gradient(1200px 600px at 80% -10%,rgba(255,0,60,0.18),transparent 60%),radial-gradient(900px 500px at 0% 110%,rgba(255,0,60,0.10),transparent 60%),var(--bg);">
+  <div class="cy-grid absolute inset-0 pointer-events-none"></div>
+  <div class="grid lg:grid-cols-12 gap-10 w-full max-w-[1480px] mx-auto items-end relative z-10">
+    <div class="lg:col-span-7">
+      <div class="flex items-center gap-3 mb-8">
+        <span class="cy-eyebrow">// FULL STACK ENGINEER</span>
+        <span class="h-px w-10 bg-[var(--accent)]"></span>
+        <span class="font-mono text-[0.72rem] text-[var(--ink-3)] tracking-widest">v.2026</span>
+      </div>
+      <h1 class="font-mono font-extrabold tracking-[-0.04em] leading-[0.85]" style="font-size:clamp(3rem,11vw,11rem);" id="heroName"></h1>
+      <p class="mt-8 max-w-xl text-[var(--ink-2)] text-lg leading-relaxed font-display">
+        <span class="lang-es">Especialista en automatización de procesos y arquitecturas escalables. Backend, datos y APIs que aguantan tráfico real, no demos.</span>
+        <span class="lang-en">Specialist in process automation and scalable architectures. Backend, data and APIs that handle real traffic, not demos.</span>
+      </p>
+      <div class="mt-10 flex flex-wrap gap-4">
+        <a href="#contact" class="cy-btn solid" data-magnetic>
+          <span class="lang-es">INICIAR CONEXIÓN ↗</span>
+          <span class="lang-en">INITIATE CONNECTION ↗</span>
+        </a>
+        <a href="#projects" class="cy-btn" data-magnetic>
+          <span class="lang-es">VER PROYECTOS</span>
+          <span class="lang-en">VIEW PROJECTS</span>
+        </a>
+      </div>
+      <div class="mt-16 grid grid-cols-3 gap-6 max-w-xl">
+        <div style="border-top:1px solid var(--line);padding-top:14px;">
+          <div class="font-display text-[2.4rem] font-bold leading-none" data-counter="3">0</div>
+          <div class="font-mono text-[0.7rem] text-[var(--ink-3)] tracking-[0.15em] uppercase mt-[6px]"><span class="lang-es">años de exp.</span><span class="lang-en">years exp.</span></div>
+        </div>
+        <div style="border-top:1px solid var(--line);padding-top:14px;">
+          <div class="font-display text-[2.4rem] font-bold leading-none" data-counter="7">0</div>
+          <div class="font-mono text-[0.7rem] text-[var(--ink-3)] tracking-[0.15em] uppercase mt-[6px]"><span class="lang-es">proyectos</span><span class="lang-en">projects</span></div>
+        </div>
+        <div style="border-top:1px solid var(--line);padding-top:14px;">
+          <div class="font-display text-[2.4rem] font-bold leading-none"><span data-counter="99.9" data-counter-suffix="%" data-counter-decimals="1">0%</span></div>
+          <div class="font-mono text-[0.7rem] text-[var(--ink-3)] tracking-[0.15em] uppercase mt-[6px]">uptime</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="lg:col-span-5 relative">
+      <div class="relative border border-[var(--line)] bg-[var(--panel)] overflow-hidden">
+        <span style="position:absolute;top:-1px;left:-1px;width:18px;height:18px;border:1px solid var(--accent);border-right:0;border-bottom:0;"></span>
+        <span style="position:absolute;top:-1px;right:-1px;width:18px;height:18px;border:1px solid var(--accent);border-left:0;border-bottom:0;"></span>
+        <span style="position:absolute;bottom:-1px;left:-1px;width:18px;height:18px;border:1px solid var(--accent);border-right:0;border-top:0;"></span>
+        <span style="position:absolute;bottom:-1px;right:-1px;width:18px;height:18px;border:1px solid var(--accent);border-left:0;border-top:0;"></span>
+        <div class="cy-term-bar">
+          <span class="dot r"></span><span class="dot"></span><span class="dot"></span>
+          <span>~/alejandro@stackblend</span>
+          <span class="label">tty/01</span>
+        </div>
+        <div class="cy-term-body min-h-[280px]" id="heroTerm"></div>
+      </div>
+      <div class="absolute -top-6 -right-6 w-24 h-24 border border-[var(--accent)] flex items-center justify-center font-mono text-xs text-[var(--accent)] tracking-widest rotate-12">
+        <div class="text-center leading-tight">BOGOTÁ<br/>·<br/>04°N</div>
+      </div>
+    </div>
+  </div>
+
+  <pre class="font-mono font-bold opacity-[0.05] absolute -right-10 bottom-0 select-none pointer-events-none text-[10px] sm:text-xs hidden md:block" style="white-space:pre;line-height:0.98;color:var(--accent);">
+█████╗  ██╗   ██╗
+██╔══██╗ ██║   ██║
+███████║ ██║   ██║
+██╔══██║ ╚██╗ ██╔╝
+██║  ██║  ╚████╔╝
+╚═╝  ╚═╝   ╚═══╝</pre>
+</section>
+
+<!-- ABOUT -->
+<section id="about" class="relative px-6 lg:px-20 py-24 lg:py-36">
+  <div class="max-w-[1480px] mx-auto grid lg:grid-cols-12 gap-10">
+    <div class="lg:col-span-4 lg:sticky lg:top-32 self-start">
+      <div class="cy-eyebrow mb-4" data-scramble><span class="lang-es">// 01 _ SOBRE_MÍ</span><span class="lang-en">// 01 _ ABOUT_ME</span></div>
+      <h2 class="cy-headline text-5xl lg:text-6xl" data-reveal="up">
+        <span class="lang-es">Backend con<br/><span class="text-[var(--accent)]">disciplina</span><br/>de producto.</span>
+        <span class="lang-en">Backend with<br/><span class="text-[var(--accent)]">product</span><br/>discipline.</span>
+      </h2>
+    </div>
+    <div class="lg:col-span-7 lg:col-start-6">
+      <div class="cy-term">
+        <div class="cy-term-bar">
+          <span class="dot r"></span><span class="dot"></span><span class="dot"></span>
+          <span>cat about.md</span><span class="label">utf-8</span>
+        </div>
+        <div class="cy-term-body space-y-4 text-base" id="aboutTerm"></div>
+      </div>
+      <div class="grid grid-cols-2 gap-4 mt-10" data-stagger>
+        <div class="border border-[var(--line)] p-5" data-stagger-item>
+          <div class="cy-num">// FOCUS</div>
+          <div class="mt-2 font-display text-xl"><span class="lang-es">Automatización</span><span class="lang-en">Automation</span></div>
+          <div class="text-sm text-[var(--ink-3)] mt-1 font-mono">ETL · scrapers · workers</div>
+        </div>
+        <div class="border border-[var(--line)] p-5" data-stagger-item>
+          <div class="cy-num">// METHOD</div>
+          <div class="mt-2 font-display text-xl"><span class="lang-es">Datos primero</span><span class="lang-en">Data first</span></div>
+          <div class="text-sm text-[var(--ink-3)] mt-1 font-mono">BigQuery · GA4 · SQL</div>
+        </div>
+        <div class="border border-[var(--line)] p-5" data-stagger-item>
+          <div class="cy-num">// ROOTS</div>
+          <div class="mt-2 font-display text-xl">SENA · Bogotá</div>
+          <div class="text-sm text-[var(--ink-3)] mt-1 font-mono"><span class="lang-es">3 años · 4°N</span><span class="lang-en">3 years · 4°N</span></div>
+        </div>
+        <div class="border border-[var(--line)] p-5" data-stagger-item>
+          <div class="cy-num">// MODE</div>
+          <div class="mt-2 font-display text-xl"><span class="lang-es">Remoto / Híbrido</span><span class="lang-en">Remote / Hybrid</span></div>
+          <div class="text-sm text-[var(--ink-3)] mt-1 font-mono"><span class="lang-es">incorporación inmediata</span><span class="lang-en">immediate availability</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STACK -->
+<section id="stack" class="relative px-6 lg:px-20 py-24 lg:py-36 border-y border-[var(--line)] bg-[var(--bg-2)] cy-scanlines overflow-hidden">
+  <div class="max-w-[1480px] mx-auto">
+    <div class="flex items-end justify-between flex-wrap gap-6 mb-12">
+      <div>
+        <div class="cy-eyebrow mb-3" data-scramble>// 02 _ STACK</div>
+        <h2 class="cy-headline text-5xl lg:text-7xl" data-reveal="up">
+          <span class="lang-es">Las herramientas<br/>que <span class="text-[var(--accent)]">domino</span>.</span>
+          <span class="lang-en">The tools<br/>I <span class="text-[var(--accent)]">master</span>.</span>
+        </h2>
+      </div>
+      <p class="font-mono text-sm text-[var(--ink-3)] max-w-sm">
+        <span class="lang-es">Sin religiones tecnológicas. Elijo la herramienta correcta para el problema correcto.</span>
+        <span class="lang-en">No tech religions. The right tool for the right problem.</span>
+      </p>
+    </div>
+    <div class="overflow-hidden border-y border-[var(--line)] py-5 mb-14">
+      <div class="cy-marquee" data-marquee="120">
+        <div class="flex items-center" id="stackMarquee"></div>
+      </div>
+    </div>
+    <div class="grid md:grid-cols-2 lg:grid-cols-5 gap-4" id="stackGrid" data-stagger></div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section id="services" class="relative px-6 lg:px-20 py-24 lg:py-36">
+  <div class="max-w-[1480px] mx-auto">
+    <div class="grid lg:grid-cols-12 gap-10 mb-14">
+      <div class="lg:col-span-5">
+        <div class="cy-eyebrow mb-3" data-scramble><span class="lang-es">// 03 _ SERVICIOS</span><span class="lang-en">// 03 _ SERVICES</span></div>
+        <h2 class="cy-headline text-5xl lg:text-7xl" data-reveal="up">
+          <span class="lang-es">Lo que<br/><span class="text-[var(--accent)]">construyo</span> para ti.</span>
+          <span class="lang-en">What I <span class="text-[var(--accent)]">build</span><br/>for you.</span>
+        </h2>
+      </div>
+      <p class="lg:col-span-5 lg:col-start-7 self-end text-[var(--ink-2)] text-lg leading-relaxed">
+        <span class="lang-es">Cuatro líneas de trabajo. Cada una con casos reales en producción y la disciplina de operación que se necesita para no romper nada importante.</span>
+        <span class="lang-en">Four service lines. Each with real production cases and the operational discipline required to not break anything important.</span>
+      </p>
+    </div>
+    <div class="grid md:grid-cols-2 gap-px bg-[var(--line)]" id="servicesGrid"></div>
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section id="exp" class="relative px-6 lg:px-20 py-24 lg:py-36 bg-[var(--bg-2)] border-y border-[var(--line)] cy-scanlines">
+  <div class="max-w-[1480px] mx-auto">
+    <div class="cy-eyebrow mb-3" data-scramble><span class="lang-es">// 04 _ EXPERIENCIA</span><span class="lang-en">// 04 _ EXPERIENCE</span></div>
+    <h2 class="cy-headline text-5xl lg:text-7xl mb-14" data-reveal="up">
+      <span class="lang-es">Historial de <span class="text-[var(--accent)]">commits</span>.</span>
+      <span class="lang-en">Commit <span class="text-[var(--accent)]">history</span>.</span>
+    </h2>
+    <div class="grid lg:grid-cols-12 gap-10">
+      <div class="lg:col-span-3">
+        <div class="cy-term sticky top-28">
+          <div class="cy-term-bar">
+            <span class="dot r"></span><span class="dot"></span><span class="dot"></span>
+            <span>git log --career</span>
+          </div>
+          <div class="cy-term-body text-xs space-y-2">
+            <div><span class="text-[var(--accent)]">commit</span> 7f3a · roda</div>
+            <div><span class="text-[var(--accent)]">commit</span> 4c2e · kiki latam</div>
+            <div><span class="text-[var(--accent)]">commit</span> a91d · pulzo</div>
+            <div class="text-[var(--ink-3)]">— EOF —</div>
+          </div>
+        </div>
+      </div>
+      <div class="lg:col-span-9" id="expList"></div>
+    </div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects" class="relative px-6 lg:px-20 py-24 lg:py-36">
+  <div class="max-w-[1480px] mx-auto">
+    <div class="flex items-end justify-between flex-wrap gap-6 mb-14">
+      <div>
+        <div class="cy-eyebrow mb-3" data-scramble><span class="lang-es">// 05 _ PROYECTOS</span><span class="lang-en">// 05 _ PROJECTS</span></div>
+        <h2 class="cy-headline text-5xl lg:text-7xl" data-reveal="up">
+          <span class="lang-es">Casos en <span class="text-[var(--accent)]">producción</span>.</span>
+          <span class="lang-en">Cases in <span class="text-[var(--accent)]">production</span>.</span>
+        </h2>
+      </div>
+      <a href="https://github.com/AlejandroVegaFullstackDev" target="_blank" class="cy-btn" data-magnetic>
+        <span class="lang-es">VER GITHUB ↗</span>
+        <span class="lang-en">VIEW GITHUB ↗</span>
+      </a>
+    </div>
+    <div class="grid md:grid-cols-2 gap-6" id="projectsGrid" data-stagger></div>
+  </div>
+</section>
+
+<!-- PLAYGROUND -->
+<section id="playground" class="relative px-6 lg:px-20 py-24 lg:py-36 bg-[var(--bg-2)] border-y border-[var(--line)] cy-scanlines overflow-hidden">
+  <div class="max-w-[1480px] mx-auto">
+    <div class="grid lg:grid-cols-12 gap-10 mb-10">
+      <div class="lg:col-span-6">
+        <div class="cy-eyebrow mb-3" data-scramble>// 06 _ PLAYGROUND</div>
+        <h2 class="cy-headline text-5xl lg:text-7xl" data-reveal="up">
+          <span class="lang-es">Trastéa la <span class="text-[var(--accent)]">terminal</span>.</span>
+          <span class="lang-en">Hack the <span class="text-[var(--accent)]">terminal</span>.</span>
+        </h2>
+        <p class="mt-6 text-[var(--ink-2)] text-lg max-w-md leading-relaxed">
+          <span class="lang-es">Una mini-shell con comandos reales. Escribe <code class="font-mono text-[var(--accent)]">help</code> para empezar. Trae snake, matrix y un par de easter eggs.</span>
+          <span class="lang-en">A mini-shell with real commands. Type <code class="font-mono text-[var(--accent)]">help</code> to start. Includes snake, matrix and a few easter eggs.</span>
+        </p>
+        <div class="mt-8 flex flex-wrap gap-2 font-mono text-xs">
+          <span class="cy-tag">help</span><span class="cy-tag">about</span><span class="cy-tag">stack</span>
+          <span class="cy-tag">projects</span><span class="cy-tag">contact</span><span class="cy-tag">snake</span>
+          <span class="cy-tag">matrix</span><span class="cy-tag">hack</span><span class="cy-tag">whoami</span>
+        </div>
+      </div>
+      <div class="lg:col-span-6">
+        <div class="border border-[var(--line)] relative overflow-hidden bg-black">
+          <span style="position:absolute;top:-1px;left:-1px;width:18px;height:18px;border:1px solid var(--accent);border-right:0;border-bottom:0;"></span>
+          <span style="position:absolute;top:-1px;right:-1px;width:18px;height:18px;border:1px solid var(--accent);border-left:0;border-bottom:0;"></span>
+          <span style="position:absolute;bottom:-1px;left:-1px;width:18px;height:18px;border:1px solid var(--accent);border-right:0;border-top:0;"></span>
+          <span style="position:absolute;bottom:-1px;right:-1px;width:18px;height:18px;border:1px solid var(--accent);border-left:0;border-top:0;"></span>
+          <div class="cy-term-bar">
+            <span class="dot r"></span><span class="dot"></span><span class="dot"></span>
+            <span>stackblend.shell</span><span class="label">click → focus</span>
+          </div>
+          <div id="termGame" class="relative" style="min-height:340px"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact" class="relative px-6 lg:px-20 py-24 lg:py-32 overflow-hidden">
+  <div class="max-w-[1480px] mx-auto">
+    <div class="cy-eyebrow mb-6" data-scramble><span class="lang-es">// 07 _ CONTACTO</span><span class="lang-en">// 07 _ CONTACT</span></div>
+    <h2 class="cy-headline text-6xl lg:text-[10rem] leading-[0.9]" data-reveal="up">
+      <span class="lang-es">¿Construimos<br/>algo <span class="text-[var(--accent)] cy-glitch heavy" data-text="serio?">serio?</span></span>
+      <span class="lang-en">Let's build<br/>something <span class="text-[var(--accent)] cy-glitch heavy" data-text="serious?">serious?</span></span>
+    </h2>
+    <div class="grid lg:grid-cols-12 gap-10 mt-16">
+      <div class="lg:col-span-7 space-y-6">
+        <p class="text-[var(--ink-2)] text-xl leading-relaxed max-w-2xl">
+          <span class="lang-es">Estoy disponible para roles full-time, contratos por proyecto y consultorías. Remoto o híbrido en Bogotá.</span>
+          <span class="lang-en">I'm open to full-time, project contracts and consultancies. Remote or hybrid in Bogotá.</span>
+        </p>
+        <div class="space-y-3 font-mono text-base">
+          <a href="https://www.linkedin.com/in/alejandrovega-stackblend/" target="_blank" class="cy-link block">
+            <span class="text-[var(--ink-3)]">linkedin →</span> /in/alejandrovega-stackblend
+          </a>
+          <a href="https://github.com/AlejandroVegaFullstackDev" target="_blank" class="cy-link block">
+            <span class="text-[var(--ink-3)]">github →</span> /AlejandroVegaFullstackDev
+          </a>
+        </div>
+      </div>
+      <div class="lg:col-span-5">
+        <div class="border border-[var(--line)] p-6 bg-[var(--panel)]">
+          <div class="cy-num mb-3">// SYSTEM_INFO</div>
+          <dl class="space-y-3 font-mono text-sm">
+            <div class="flex justify-between border-b border-[var(--line)] pb-2"><dt class="text-[var(--ink-3)]">location</dt><dd>Bogotá, CO</dd></div>
+            <div class="flex justify-between border-b border-[var(--line)] pb-2"><dt class="text-[var(--ink-3)]">timezone</dt><dd>GMT-5</dd></div>
+            <div class="flex justify-between border-b border-[var(--line)] pb-2"><dt class="text-[var(--ink-3)]">status</dt><dd class="text-[var(--accent)]"><span class="lang-es">disponible</span><span class="lang-en">available</span></dd></div>
+            <div class="flex justify-between border-b border-[var(--line)] pb-2"><dt class="text-[var(--ink-3)]">mode</dt><dd><span class="lang-es">remoto / híbrido</span><span class="lang-en">remote / hybrid</span></dd></div>
+            <div class="flex justify-between"><dt class="text-[var(--ink-3)]">response</dt><dd>&lt; 24h</dd></div>
+          </dl>
+        </div>
+      </div>
+    </div>
+    <div class="mt-24 border-t border-[var(--line)] pt-6 flex justify-between flex-wrap gap-4 font-mono text-xs text-[var(--ink-3)]">
+      <span>© 2026 ALEJANDRO VEGA · STACKBLEND.DEV</span>
+      <span><span class="lang-es">DISEÑADO Y CONSTRUIDO EN BOGOTÁ</span><span class="lang-en">DESIGNED & BUILT IN BOGOTÁ</span></span>
+      <a href="https://github.com/AlejandroVegaFullstackDev" target="_blank" class="hover:text-[var(--accent)]">→ GITHUB ↗</a>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- Tweaks panel React island -->
+<TweaksPanel client:only="react" />
+
+<style>
+  [data-tweak-theme="light"] [data-header] {
+    background: rgba(243,241,236,0.7) !important;
+  }
+</style>
+
+<script>
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { portfolioData as D } from '../lib/data';
+
+gsap.registerPlugin(ScrollTrigger);
+
+// ─── i18n ───────────────────────────────────────────────────────────────────
+const LANG_KEY = 'av_lang';
+const getLang = (): 'es' | 'en' => (localStorage.getItem(LANG_KEY) as 'es' | 'en') || 'es';
+const setLang = (lang: 'es' | 'en') => {
+  localStorage.setItem(LANG_KEY, lang);
+  document.documentElement.setAttribute('data-lang', lang);
+};
+document.documentElement.setAttribute('data-lang', getLang());
+
+// ─── Cursor ─────────────────────────────────────────────────────────────────
+function initCursor() {
+  if (document.documentElement.hasAttribute('data-tweak-nocursor')) return;
+  const cursor = document.createElement('div');
+  cursor.className = 'cy-cursor';
+  document.body.appendChild(cursor);
+  let tx = 0, ty = 0, x = 0, y = 0;
+  window.addEventListener('mousemove', (e) => { tx = e.clientX; ty = e.clientY; });
+  gsap.ticker.add(() => {
+    x += (tx - x) * 0.22;
+    y += (ty - y) * 0.22;
+    cursor.style.transform = `translate(${x}px, ${y}px) translate(-50%, -50%)`;
+  });
+  document.addEventListener('mouseover', (e) => {
+    const t = e.target as Element;
+    if (t?.closest?.('a, button, .cy-btn, .cy-tile, [data-cursor]')) cursor.classList.add('hover');
+  });
+  document.addEventListener('mouseout', (e) => {
+    const t = e.target as Element;
+    if (t?.closest?.('a, button, .cy-btn, .cy-tile, [data-cursor]')) cursor.classList.remove('hover');
+  });
+}
+
+// ─── Text scramble ──────────────────────────────────────────────────────────
+const SCRAMBLE_CHARS = '!<>-_\\/[]{}—=+*^?#________ABCDEF0123456789';
+function scramble(el: HTMLElement, finalText: string) {
+  const finalArr = finalText.split('');
+  let frame = 0;
+  const queue = finalArr.map((c, i) => ({
+    to: c, from: (el as any)._prev ? ((el as any)._prev[i] || '') : '',
+    start: Math.floor(Math.random() * 18), end: Math.floor(Math.random() * 30) + 18,
+  }));
+  let raf: number;
+  function update() {
+    let out = '', complete = 0;
+    for (const { to, start, end } of queue) {
+      if (frame >= end) { complete++; out += to; }
+      else if (frame >= start) out += SCRAMBLE_CHARS[Math.floor(Math.random() * SCRAMBLE_CHARS.length)];
+      else out += ' ';
+    }
+    el.textContent = out;
+    if (complete === queue.length) { (el as any)._prev = finalText; return; }
+    frame++;
+    raf = requestAnimationFrame(update);
+  }
+  cancelAnimationFrame(raf!);
+  update();
+}
+
+function initScramble() {
+  document.querySelectorAll<HTMLElement>('[data-scramble]').forEach((el) => {
+    const txt = el.textContent || '';
+    (el as any)._scrambleText = txt;
+    el.textContent = '';
+    ScrollTrigger.create({ trigger: el, start: 'top 85%', once: true, onEnter: () => scramble(el, (el as any)._scrambleText) });
+  });
+}
+
+// ─── Marquee ────────────────────────────────────────────────────────────────
+function initMarquees() {
+  document.querySelectorAll<HTMLElement>('[data-marquee]').forEach((el) => {
+    const speed = parseFloat(el.dataset.marquee || '60');
+    const inner = el.firstElementChild as HTMLElement;
+    if (!inner) return;
+    const dup = inner.cloneNode(true) as HTMLElement;
+    dup.setAttribute('aria-hidden', 'true');
+    el.appendChild(dup);
+    const w = inner.getBoundingClientRect().width;
+    gsap.to(Array.from(el.children), { x: -w, duration: w / speed, ease: 'none', repeat: -1 });
+  });
+}
+
+// ─── Reveals ────────────────────────────────────────────────────────────────
+function initReveals() {
+  if (document.documentElement.getAttribute('data-tweak-anim') === 'off') return;
+  document.querySelectorAll<HTMLElement>('[data-reveal]').forEach((el) => {
+    const kind = el.dataset.reveal || 'up';
+    const from = ({ up:{y:40,opacity:0}, fade:{opacity:0}, scale:{scale:0.92,opacity:0} } as any)[kind] || {y:40,opacity:0};
+    gsap.from(el, { ...from, duration: 0.9, ease: 'expo.out', scrollTrigger: { trigger: el, start: 'top 85%', once: true } });
+  });
+  document.querySelectorAll<HTMLElement>('[data-stagger]').forEach((g) => {
+    const items = g.querySelectorAll('[data-stagger-item]');
+    gsap.from(items, { y: 30, opacity: 0, duration: 0.7, stagger: 0.06, ease: 'expo.out', scrollTrigger: { trigger: g, start: 'top 80%', once: true } });
+  });
+}
+
+// ─── Magnetic buttons ───────────────────────────────────────────────────────
+function initMagnetic() {
+  document.querySelectorAll<HTMLElement>('[data-magnetic]').forEach((el) => {
+    el.addEventListener('mousemove', (e) => {
+      const r = el.getBoundingClientRect();
+      gsap.to(el, { x: (e.clientX - (r.left + r.width/2)) * 0.18, y: (e.clientY - (r.top + r.height/2)) * 0.22, duration: 0.4, ease: 'power3.out' });
+    });
+    el.addEventListener('mouseleave', () => gsap.to(el, { x:0, y:0, duration:0.6, ease:'elastic.out(1,0.4)' }));
+  });
+}
+
+// ─── Counters ───────────────────────────────────────────────────────────────
+function initCounters() {
+  document.querySelectorAll<HTMLElement>('[data-counter]').forEach((el) => {
+    const target = parseFloat(el.dataset.counter || '0');
+    const suffix = el.dataset.counterSuffix || '';
+    const decimals = parseInt(el.dataset.counterDecimals || '0');
+    const obj = { v: 0 };
+    gsap.to(obj, { v: target, duration: 1.6, ease: 'expo.out',
+      scrollTrigger: { trigger: el, start: 'top 85%', once: true },
+      onUpdate: () => { el.textContent = obj.v.toFixed(decimals) + suffix; } });
+  });
+}
+
+
+// ─── Boot sequence ──────────────────────────────────────────────────────────
+function bootSequence(): Promise<void> {
+  const boot = document.getElementById('boot');
+  const log = document.getElementById('bootLog');
+  if (!boot || !log) return Promise.resolve();
+  const lines = [
+    '[ OK ]  loading kernel modules ...',
+    '[ OK ]  init: spawning init.d',
+    '[ OK ]  mount /home/alejandro',
+    '[ OK ]  starting stackblend-os',
+    '[ OK ]  loading runtime: php · python · node · ts',
+    '[ OK ]  loading drivers: postgresql · mysql · bigquery',
+    '[ OK ]  authenticating: stackblend.dev .....',
+    '[ OK ]  ACCESS GRANTED.',
+    '',
+    '> launching portfolio.exe',
+  ];
+  return new Promise((resolve) => {
+    let i = 0;
+    const tick = () => {
+      if (i >= lines.length) {
+        setTimeout(() => {
+          gsap.to(boot, { opacity: 0, duration: 0.6, ease: 'power2.out', onComplete: () => { boot.style.display = 'none'; resolve(); } });
+        }, 240);
+        return;
+      }
+      const l = document.createElement('div');
+      l.textContent = lines[i++];
+      log.appendChild(l);
+      setTimeout(tick, 90 + Math.random() * 90);
+    };
+    tick();
+  });
+}
+
+// ─── Hero ────────────────────────────────────────────────────────────────────
+function paintHero() {
+  const nameEl = document.getElementById('heroName');
+  if (nameEl) {
+    nameEl.innerHTML = `<span data-l>ALEJANDRO_</span><br/><span data-l>VEGA<span style="color:var(--accent)">.</span></span>`;
+  }
+  const heroTerm = document.getElementById('heroTerm');
+  if (heroTerm) {
+    const lang = getLang();
+    const lines = lang === 'en' ? [
+      ['$ whoami','ps1'], ['alejandro_vega — full stack engineer','ok'],
+      ['$ cat .stack','ps1'], ['php · python · ts · nestjs · laravel',''],
+      ['react · angular · postgresql · bigquery',''],
+      ['$ status','ps1'], ['● online · available for hire','ok'], ['$ _','ps1'],
+    ] : [
+      ['$ whoami','ps1'], ['alejandro_vega — desarrollador full stack','ok'],
+      ['$ cat .stack','ps1'], ['php · python · ts · nestjs · laravel',''],
+      ['react · angular · postgresql · bigquery',''],
+      ['$ status','ps1'], ['● online · disponible para hire','ok'], ['$ _','ps1'],
+    ];
+    heroTerm.innerHTML = '';
+    let i = 0;
+    function nextLine() {
+      if (i >= lines.length) return;
+      const [text, cls] = lines[i++];
+      const div = document.createElement('div');
+      if (cls === 'ps1') {
+        div.className = 'cy-term-line';
+        const ps = document.createElement('span'); ps.className = 'ps1'; ps.textContent = '▸';
+        const t = document.createElement('span'); t.textContent = (text as string).replace(/^\$ /,'');
+        div.appendChild(ps);
+        div.appendChild(t);
+      } else {
+        div.className = 'cy-term-line' + (cls ? ' ' + cls : ' com');
+        div.textContent = text as string;
+      }
+      heroTerm.appendChild(div);
+      setTimeout(nextLine, 220);
+    }
+    nextLine();
+  }
+}
+
+// ─── About ───────────────────────────────────────────────────────────────────
+function paintAbout() {
+  const lang = getLang();
+  const el = document.getElementById('aboutTerm');
+  if (!el) return;
+  el.innerHTML = '';
+  const h = document.createElement('div'); h.className = 'cy-term-line';
+  h.innerHTML = `<span class="ps1">▸</span><span>cat about.md</span>`; el.appendChild(h);
+  const sep = document.createElement('div'); sep.className = 'cy-term-line com';
+  sep.textContent = '──────────────────────────────────'; el.appendChild(sep);
+  D.about[lang].forEach((line: string) => {
+    const p = document.createElement('div'); p.className = 'cy-term-line com';
+    p.textContent = line; p.style.marginBottom = '10px'; el.appendChild(p);
+  });
+  const eof = document.createElement('div'); eof.className = 'cy-term-line com';
+  eof.textContent = '[EOF]'; el.appendChild(eof);
+}
+
+// ─── Stack ───────────────────────────────────────────────────────────────────
+function paintStack() {
+  const lang = getLang();
+  const mq = document.getElementById('stackMarquee');
+  if (mq) {
+    const all = [...D.stack.languages, ...D.stack.frameworks, ...D.stack.databases, ...D.stack.cloud, ...D.stack.tools];
+    mq.innerHTML = all.map((s) => `<span style="padding:0 2rem;font-family:var(--font-display);font-size:clamp(1.5rem,4vw,3rem);letter-spacing:-0.02em;white-space:nowrap;color:var(--ink)">${s} <span style="color:var(--accent)">/</span></span>`).join('');
+  }
+  const grid = document.getElementById('stackGrid');
+  if (grid) {
+    const groups = [
+      { key: lang === 'en' ? 'languages' : 'lenguajes', items: D.stack.languages },
+      { key: 'frameworks', items: D.stack.frameworks },
+      { key: lang === 'en' ? 'databases' : 'bases de datos', items: D.stack.databases },
+      { key: lang === 'en' ? 'cloud / devops' : 'nube / devops', items: D.stack.cloud },
+      { key: lang === 'en' ? 'tools' : 'herramientas', items: D.stack.tools },
+    ];
+    grid.innerHTML = groups.map((g) => `
+      <div style="border:1px solid var(--line);padding:18px 16px;display:flex;flex-direction:column;gap:8px;background:linear-gradient(135deg,var(--panel),transparent);transition:transform 0.3s,border-color 0.3s;" class="stack-cell" data-stagger-item>
+        <div style="font-family:var(--font-mono);font-size:0.66rem;letter-spacing:0.18em;color:var(--ink-3);text-transform:uppercase;">// ${g.key}</div>
+        <ul style="display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;">${g.items.map((i) => `<li style="font-family:var(--font-mono);font-size:0.78rem;color:var(--ink);border:1px solid var(--line-2);padding:3px 8px;">${i}</li>`).join('')}</ul>
+      </div>
+    `).join('');
+  }
+}
+
+// ─── Services ────────────────────────────────────────────────────────────────
+function paintServices() {
+  const lang = getLang();
+  const grid = document.getElementById('servicesGrid');
+  if (!grid) return;
+  grid.innerHTML = D.services.map((s: any) => `
+    <div style="border:1px solid var(--line);padding:28px 28px 24px;position:relative;transition:border-color 0.3s,background 0.3s;background:var(--panel);" class="service-card" data-cursor>
+      <div style="font-family:var(--font-mono);font-size:0.78rem;color:var(--accent);letter-spacing:0.15em;">${s.n} //</div>
+      <h3 style="font-family:var(--font-display);font-size:1.6rem;font-weight:600;margin-top:12px;line-height:1.05;">${s.title[lang]}</h3>
+      <p style="color:var(--ink-2);margin-top:12px;line-height:1.55;">${s.body[lang]}</p>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:18px;">${s.tags.map((t: string) => `<span class="cy-tag">${t}</span>`).join('')}</div>
+    </div>
+  `).join('');
+}
+
+// ─── Experience ───────────────────────────────────────────────────────────────
+function paintExp() {
+  const lang = getLang();
+  const el = document.getElementById('expList');
+  if (!el) return;
+  el.innerHTML = D.experience.map((x: any, i: number) => `
+    <div style="display:grid;grid-template-columns:80px 1fr 1.4fr;gap:28px;padding:28px 0;border-bottom:1px solid var(--line);">
+      <div style="font-family:var(--font-mono);color:var(--accent);font-size:0.78rem;letter-spacing:0.1em;">$ commit_${String(D.experience.length - i).padStart(2,'0')}<br/><span style="color:var(--ink-3);">${x.period[lang]}</span></div>
+      <div>
+        <div style="font-family:var(--font-display);font-size:1.6rem;font-weight:600;">${x.company}</div>
+        <div style="font-family:var(--font-mono);font-size:0.84rem;color:var(--ink-2);margin-top:4px;">${x.role[lang]}</div>
+      </div>
+      <div>
+        <div style="color:var(--ink-2);line-height:1.55;">${x.body[lang]}</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:14px;">${x.stack.map((s: string) => `<span class="cy-tag">${s}</span>`).join('')}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ─── Projects ─────────────────────────────────────────────────────────────────
+function paintProjects() {
+  const lang = getLang();
+  const el = document.getElementById('projectsGrid');
+  if (!el) return;
+  el.innerHTML = D.projects.map((p: any) => `
+    <a href="/proyecto/${p.slug}" class="cy-tile" style="display:grid;grid-template-rows:auto 1fr auto;" data-stagger-item data-cursor>
+      <div style="display:flex;align-items:baseline;justify-content:space-between;padding:18px 22px;border-bottom:1px dashed var(--line);">
+        <span style="font-family:var(--font-mono);color:var(--accent);font-size:0.86rem;letter-spacing:0.1em;">PRJ_${p.n}</span>
+        <span style="font-family:var(--font-mono);color:var(--ink-3);font-size:0.78rem;letter-spacing:0.1em;">${p.year}</span>
+      </div>
+      <div>
+        <div style="font-family:var(--font-display);font-weight:700;font-size:2rem;padding:22px 22px 6px;line-height:1;">${p.name[lang]}</div>
+        <div style="font-family:var(--font-mono);font-size:0.78rem;color:var(--accent);letter-spacing:0.1em;padding:0 22px;text-transform:uppercase;">${p.kicker[lang]}</div>
+        <div style="color:var(--ink-2);padding:14px 22px 22px;line-height:1.55;">${p.summary[lang]}</div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;border-top:1px solid var(--line);">
+        ${p.metrics.slice(0,3).map((m: any) => `<div style="padding:14px 16px;border-right:1px solid var(--line);"><div style="font-family:var(--font-display);font-size:1.3rem;font-weight:600;">${m.v}</div><div style="font-family:var(--font-mono);font-size:0.62rem;color:var(--ink-3);letter-spacing:0.12em;text-transform:uppercase;margin-top:2px;">${m.k[lang]}</div></div>`).join('')}
+        ${Array(Math.max(0, 3 - p.metrics.length)).fill('<div style="padding:14px 16px;"></div>').join('')}
+      </div>
+    </a>
+  `).join('');
+}
+
+// ─── Terminal game ────────────────────────────────────────────────────────────
+function attachTerminalGame(container: HTMLElement, lang: 'es' | 'en') {
+  const COMMANDS: Record<string, (args: string[], lang: 'es'|'en') => string[]> = {
+    help: (_, l) => l === 'en'
+      ? ['Available commands:','  about       — who I am','  stack       — tech stack','  projects    — recent projects','  contact     — how to reach me','  whoami      — system identity','  snake       — classic game','  matrix      — matrix rain','  hack        — hacking sequence','  clear       — clear terminal']
+      : ['Comandos disponibles:','  about       — quién soy','  stack       — stack tecnológico','  projects    — proyectos recientes','  contact     — cómo contactarme','  whoami      — identidad del sistema','  snake       — juego clásico','  matrix      — lluvia matrix','  hack        — secuencia de hackeo','  clear       — limpiar terminal'],
+    whoami: (_, l) => l === 'en'
+      ? ['alejandro_vega','role: full stack engineer','loc:  bogota, co / gmt-5','avail: yes — remote / hybrid']
+      : ['alejandro_vega','rol: desarrollador full stack','loc: bogotá, co / gmt-5','disp: sí — remoto / híbrido'],
+    about: (_, l) => l === 'en'
+      ? ['3 years building high-impact systems.','Pulzo · Kiki Latam · Roda.','Automation, data pipelines, scalable APIs.','Autodidact. Results-oriented.']
+      : ['3 años construyendo sistemas de alto impacto.','Pulzo · Kiki Latam · Roda.','Automatización, pipelines, APIs escalables.','Autodidacta. Orientado a resultados.'],
+    stack: () => ['Backend:  PHP · Python · TypeScript · NestJS · Laravel','Frontend: React · Angular · Tailwind','Data:     BigQuery · PostgreSQL · MySQL · Redis','Cloud:    AWS · GCP · Docker'],
+    projects: (_, l) => l === 'en'
+      ? ['[001] CUFE/DIAN automation — Python · BigQuery','[002] Shipping platform   — NestJS · PostgreSQL','[003] Laravel task manager — Laravel · Livewire','[004] GA4+BigQuery reporting — SQL · Looker Studio']
+      : ['[001] Automatización CUFE/DIAN — Python · BigQuery','[002] Sistema de envíos      — NestJS · PostgreSQL','[003] Gestor de tareas Laravel — Laravel · Livewire','[004] Reportería GA4+BigQuery  — SQL · Looker Studio'],
+    contact: () => ['linkedin: /in/alejandrovega-stackblend','github:   /AlejandroVegaFullstackDev','response: < 24h','status:   ● available'],
+    date: () => [new Date().toString()],
+    clear: () => [],
+  };
+
+  const screen = document.createElement('div');
+  screen.className = 'tg-screen';
+  screen.tabIndex = 0;
+
+  const history: HTMLElement[] = [];
+  let cmdHistory: string[] = [];
+  let histIdx = -1;
+
+  function addLine(text: string, cls = '') {
+    const d = document.createElement('div');
+    d.className = 'tg-line' + (cls ? ' ' + cls : '');
+    d.textContent = text;
+    screen.insertBefore(d, prompt);
+    screen.scrollTop = screen.scrollHeight;
+    history.push(d);
+  }
+
+  function addLines(lines: string[], cls = '') { lines.forEach((l) => addLine(l, cls)); }
+
+  // Matrix rain
+  let matrixActive = false;
+  const overlay = document.createElement('canvas');
+  overlay.className = 'tg-overlay';
+  overlay.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;pointer-events:none;display:none;';
+
+  function startMatrix() {
+    if (matrixActive) return;
+    matrixActive = true;
+    overlay.style.display = 'block';
+    overlay.width = screen.offsetWidth;
+    overlay.height = screen.offsetHeight;
+    const ctx = overlay.getContext('2d')!;
+    const cols = Math.floor(overlay.width / 14);
+    const drops = Array(cols).fill(1);
+    const chars = 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789';
+    const iv = setInterval(() => {
+      if (!matrixActive) { clearInterval(iv); overlay.style.display = 'none'; return; }
+      ctx.fillStyle = 'rgba(0,0,0,0.05)';
+      ctx.fillRect(0, 0, overlay.width, overlay.height);
+      ctx.fillStyle = '#0f0';
+      ctx.font = '12px monospace';
+      drops.forEach((y, x) => {
+        ctx.fillText(chars[Math.floor(Math.random() * chars.length)], x * 14, y * 14);
+        if (y * 14 > overlay.height && Math.random() > 0.975) drops[x] = 0;
+        drops[x]++;
+      });
+    }, 50);
+    setTimeout(() => { matrixActive = false; }, 4000);
+  }
+
+  // Snake game
+  let snakeActive = false;
+  function startSnake() {
+    if (snakeActive) return;
+    snakeActive = true;
+    addLine(lang === 'en' ? '▶ Snake started. Arrow keys to move. Press Q to quit.' : '▶ Snake iniciado. Flechas para mover. Q para salir.', 'tg-hack');
+    const W = 20, H = 10;
+    let snake = [{x:10,y:5},{x:9,y:5},{x:8,y:5}];
+    let food = {x:Math.floor(Math.random()*W),y:Math.floor(Math.random()*H)};
+    let dir = {x:1,y:0};
+    let score = 0;
+    const gameDiv = document.createElement('div');
+    gameDiv.style.cssText = 'font-family:monospace;font-size:12px;line-height:1.2;color:#0f0;margin:4px 0;';
+    screen.insertBefore(gameDiv, prompt);
+    function render() {
+      const grid = Array.from({length:H},()=>Array(W).fill('·'));
+      snake.forEach(s=>{if(s.y>=0&&s.y<H&&s.x>=0&&s.x<W)grid[s.y][s.x]='█';});
+      if(food.y>=0&&food.y<H&&food.x>=0&&food.x<W)grid[food.y][food.x]='●';
+      gameDiv.textContent=grid.map(r=>r.join('')).join('\n')+`\n${lang==='en'?'Score':'Puntaje'}: ${score}`;
+    }
+    const keyH = (e: KeyboardEvent)=>{
+      if(!snakeActive)return;
+      if(e.key==='ArrowUp'&&dir.y===0)dir={x:0,y:-1};
+      else if(e.key==='ArrowDown'&&dir.y===0)dir={x:0,y:1};
+      else if(e.key==='ArrowLeft'&&dir.x===0)dir={x:-1,y:0};
+      else if(e.key==='ArrowRight'&&dir.x===0)dir={x:1,y:0};
+      else if(e.key==='q'||e.key==='Q'){snakeActive=false;document.removeEventListener('keydown',keyH);gameDiv.remove();}
+    };
+    document.addEventListener('keydown',keyH);
+    const iv = setInterval(()=>{
+      if(!snakeActive){clearInterval(iv);return;}
+      const head={x:snake[0].x+dir.x,y:snake[0].y+dir.y};
+      if(head.x<0||head.x>=W||head.y<0||head.y>=H||snake.some(s=>s.x===head.x&&s.y===head.y)){
+        snakeActive=false;clearInterval(iv);document.removeEventListener('keydown',keyH);
+        gameDiv.remove();addLine(`GAME OVER · ${lang==='en'?'Score':'Puntaje'}: ${score}`,'tg-err');return;
+      }
+      snake.unshift(head);
+      if(head.x===food.x&&head.y===food.y){score++;food={x:Math.floor(Math.random()*W),y:Math.floor(Math.random()*H)};}
+      else snake.pop();
+      render();
+    },120);
+    render();
+  }
+
+  // Hack sequence
+  function startHack() {
+    const steps = lang === 'en'
+      ? ['Scanning target...','Bypassing firewall...','Injecting payload...','Escalating privileges...','ACCESS GRANTED — welcome, hacker.']
+      : ['Escaneando objetivo...','Saltando firewall...','Inyectando payload...','Escalando privilegios...','ACCESO CONCEDIDO — bienvenido, hacker.'];
+    let i = 0;
+    function next() {
+      if (i >= steps.length) return;
+      addLine(steps[i++], 'tg-hack');
+      setTimeout(next, 400 + Math.random() * 400);
+    }
+    next();
+  }
+
+  const prompt = document.createElement('div');
+  prompt.className = 'tg-prompt';
+  const ps1 = document.createElement('span');
+  ps1.className = 'tg-ps1';
+  ps1.textContent = '▸';
+  const input = document.createElement('input');
+  input.className = 'tg-input';
+  input.type = 'text';
+  input.autocomplete = 'off';
+  input.spellcheck = false;
+  prompt.appendChild(ps1);
+  prompt.appendChild(input);
+  screen.appendChild(prompt);
+  container.appendChild(overlay);
+  container.appendChild(screen);
+
+  addLine(lang === 'en' ? 'stackblend.shell v1.0 — type "help" to start' : 'stackblend.shell v1.0 — escribe "help" para comenzar');
+
+  screen.addEventListener('click', () => input.focus());
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      const cmd = input.value.trim().toLowerCase();
+      input.value = '';
+      if (!cmd) return;
+      cmdHistory.unshift(cmd);
+      histIdx = -1;
+      addLine('▸ ' + cmd, 'tg-echo');
+      if (cmd === 'clear') { history.forEach((l) => l.remove()); history.length = 0; return; }
+      if (cmd === 'matrix') { startMatrix(); return; }
+      if (cmd === 'snake') { startSnake(); return; }
+      if (cmd === 'hack') { startHack(); return; }
+      const fn = COMMANDS[cmd];
+      if (fn) addLines(fn([], lang));
+      else addLine(lang === 'en' ? `Command not found: ${cmd}. Type "help".` : `Comando no encontrado: ${cmd}. Escribe "help".`, 'tg-err');
+    }
+    if (e.key === 'ArrowUp') { histIdx = Math.min(histIdx + 1, cmdHistory.length - 1); input.value = cmdHistory[histIdx] || ''; }
+    if (e.key === 'ArrowDown') { histIdx = Math.max(histIdx - 1, -1); input.value = histIdx >= 0 ? cmdHistory[histIdx] : ''; }
+  });
+}
+
+// ─── Hero parallax ────────────────────────────────────────────────────────────
+function initHeroPin() {
+  if (document.documentElement.getAttribute('data-tweak-anim') !== 'high') return;
+  const name = document.getElementById('heroName');
+  if (!name) return;
+  gsap.to(name, { yPercent: -15, ease: 'none', scrollTrigger: { trigger: '#hero', start: 'top top', end: 'bottom top', scrub: true } });
+}
+
+// ─── Main ─────────────────────────────────────────────────────────────────────
+async function start() {
+  await bootSequence();
+  paintHero();
+  paintAbout();
+  paintStack();
+  paintServices();
+  paintExp();
+  paintProjects();
+
+  // GSAP animations
+  initCursor();
+  initScramble();
+  initMarquees();
+  initReveals();
+  initMagnetic();
+  initCounters();
+  initHeroPin();
+
+  // Hero name reveal
+  gsap.from('#heroName [data-l]', { y: '100%', opacity: 0, duration: 1.2, ease: 'expo.out', stagger: 0.12, delay: 0.1 });
+
+  // Lang toggle
+  const langBtn = document.getElementById('langToggle');
+  if (langBtn) {
+    langBtn.addEventListener('click', () => {
+      setLang(getLang() === 'es' ? 'en' : 'es');
+      paintAbout(); paintStack(); paintServices(); paintExp(); paintProjects();
+      // Rebuild hero term and game with new lang
+      const heroTerm = document.getElementById('heroTerm');
+      if (heroTerm) { heroTerm.innerHTML = ''; paintHero(); }
+      const tg = document.getElementById('termGame');
+      if (tg) { tg.innerHTML = ''; attachTerminalGame(tg, getLang()); }
+    });
+  }
+
+  // Terminal game
+  const tg = document.getElementById('termGame');
+  if (tg) attachTerminalGame(tg, getLang());
+
+  setTimeout(() => ScrollTrigger.refresh(), 200);
+}
+
+start();
+</script>
+</Layout>

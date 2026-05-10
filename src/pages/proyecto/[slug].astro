@@ -1,0 +1,311 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import TweaksPanel from '../../components/TweaksPanel';
+import { portfolioData } from '../../lib/data';
+import '../../styles/global.css';
+
+export function getStaticPaths() {
+  return portfolioData.projects.map((p) => ({ params: { slug: p.slug } }));
+}
+
+const { slug } = Astro.params;
+const project = portfolioData.projects.find((p) => p.slug === slug)!;
+---
+
+<Layout title={`${project.name.es} — Alejandro Vega`}>
+
+<style>
+  .ed-display { font-family: var(--font-display); font-weight: 700; line-height: 0.9; letter-spacing: -0.03em; }
+  .ed-italic { font-family: "Fraunces", serif; font-style: italic; font-weight: 600; }
+  .ed-marker { font-family: var(--font-mono); font-size: 0.74rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink-3); }
+  .ed-num { font-family: var(--font-mono); font-size: 0.78rem; letter-spacing: 0.18em; color: var(--accent); text-transform: uppercase; }
+  .ph-bar { display: flex; align-items: center; justify-content: space-between; padding: 16px 32px; border-bottom: 1px solid var(--line); position: sticky; top: 0; background: rgba(5,5,7,0.85); backdrop-filter: blur(10px); z-index: 40; }
+  [data-tweak-theme="light"] .ph-bar { background: rgba(243,241,236,0.85); }
+  .hero-title { font-family: var(--font-display); font-weight: 800; font-size: clamp(3rem, 9vw, 9rem); line-height: 0.9; letter-spacing: -0.04em; }
+  .metric-card { border: 1px solid var(--line); padding: 24px; background: var(--panel); }
+  .metric-card .v { font-family: var(--font-display); font-size: 3.4rem; font-weight: 700; line-height: 1; color: var(--accent); }
+  .metric-card .k { font-family: var(--font-mono); font-size: 0.74rem; letter-spacing: 0.15em; color: var(--ink-3); text-transform: uppercase; margin-top: 8px; }
+  .arch-step { display: flex; align-items: center; gap: 16px; padding: 18px 22px; border: 1px solid var(--line); background: var(--panel); font-family: var(--font-mono); position: relative; }
+  .arch-step .idx { color: var(--accent); font-size: 0.78rem; letter-spacing: 0.15em; min-width: 40px; }
+  .arch-step .name { font-family: var(--font-display); font-weight: 600; font-size: 1.1rem; }
+  .arch-arrow { display: flex; align-items: center; justify-content: center; padding: 0 4px; color: var(--accent); font-family: var(--font-mono); }
+  .codeblock { font-family: var(--font-mono); font-size: 0.86rem; line-height: 1.6; background: var(--panel); border: 1px solid var(--line); padding: 24px; white-space: pre; overflow-x: auto; }
+  .codeblock .k { color: var(--accent); }
+  .codeblock .s { color: #5cffb1; }
+  .codeblock .c { color: var(--ink-3); }
+  .timeline-vert { position: relative; padding-left: 24px; }
+  .timeline-vert::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 1px; background: var(--line-2); }
+  .timeline-vert .t { position: relative; padding: 14px 0; }
+  .timeline-vert .t::before { content: ""; position: absolute; left: -29px; top: 22px; width: 10px; height: 10px; background: var(--accent); }
+  .pill { display: inline-flex; padding: 4px 10px; border: 1px solid var(--line-2); font-family: var(--font-mono); font-size: 0.74rem; }
+  .next-card { border: 1px solid var(--line); padding: 32px; transition: border-color 0.3s, transform 0.3s, background 0.3s; display: block; }
+  .next-card:hover { border-color: var(--accent); transform: translateY(-3px); background: linear-gradient(135deg, rgba(255,0,60,0.05), transparent); }
+</style>
+
+<header class="ph-bar">
+  <div class="flex items-center gap-4">
+    <a href="/" class="font-mono text-sm tracking-widest hover:text-[var(--accent)]">← <span class="lang-es">PORTAFOLIO</span><span class="lang-en">PORTFOLIO</span></a>
+    <span class="ed-marker">/ projects / {slug}</span>
+  </div>
+  <div class="flex items-center gap-3">
+    <button id="langToggle" class="font-mono text-[0.78rem] tracking-widest border border-[var(--line-2)] px-2 py-1 hover:border-[var(--accent)] hover:text-[var(--accent)] transition">
+      <span class="lang-es">EN</span><span class="lang-en">ES</span>
+    </button>
+  </div>
+</header>
+
+<main>
+
+<!-- HERO -->
+<section class="px-6 lg:px-16 pt-16 pb-20 cy-grid relative overflow-hidden">
+  <div class="max-w-[1400px] mx-auto">
+    <div class="ed-num mb-6" id="phNum"></div>
+    <h1 class="hero-title" id="phName"></h1>
+    <div class="mt-8 flex items-baseline gap-4 flex-wrap">
+      <span class="ed-italic text-2xl text-[var(--accent)]" id="phKicker"></span>
+      <span class="ed-marker" id="phYear"></span>
+    </div>
+    <p class="mt-10 text-xl lg:text-2xl text-[var(--ink-2)] leading-relaxed max-w-3xl ed-italic" id="phSummary"></p>
+  </div>
+</section>
+
+<!-- META BAR -->
+<section class="border-y border-[var(--line)] bg-[var(--bg-2)]">
+  <div class="max-w-[1400px] mx-auto px-6 lg:px-16 py-8 grid grid-cols-2 md:grid-cols-4 gap-8">
+    <div>
+      <div class="ed-marker mb-2">// ROL</div>
+      <div class="ed-display text-2xl" id="phRole"></div>
+    </div>
+    <div>
+      <div class="ed-marker mb-2">// <span class="lang-es">AÑO</span><span class="lang-en">YEAR</span></div>
+      <div class="ed-display text-2xl" id="phYear2"></div>
+    </div>
+    <div>
+      <div class="ed-marker mb-2">// STATUS</div>
+      <div class="ed-display text-2xl" style="color:var(--accent)">live · production</div>
+    </div>
+    <div>
+      <div class="ed-marker mb-2">// TYPE</div>
+      <div class="ed-display text-2xl"><span class="lang-es">Backend / Datos</span><span class="lang-en">Backend / Data</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- METRICS -->
+<section class="px-6 lg:px-16 py-20">
+  <div class="max-w-[1400px] mx-auto">
+    <div class="ed-num mb-3">// 01 / IMPACTO</div>
+    <h2 class="ed-display text-5xl lg:text-7xl mb-12">
+      <span class="lang-es">Los <span class="ed-italic" style="color:var(--accent)">números</span>.</span>
+      <span class="lang-en">The <span class="ed-italic" style="color:var(--accent)">numbers</span>.</span>
+    </h2>
+    <div class="grid md:grid-cols-3 gap-4" id="phMetrics"></div>
+  </div>
+</section>
+
+<!-- CHALLENGE / SOLUTION -->
+<section class="px-6 lg:px-16 py-20 bg-[var(--bg-2)] border-y border-[var(--line)]">
+  <div class="max-w-[1400px] mx-auto grid lg:grid-cols-2 gap-16">
+    <div>
+      <div class="ed-num mb-3">// 02 / RETO</div>
+      <h2 class="ed-display text-4xl lg:text-5xl mb-8">
+        <span class="lang-es">El <span class="ed-italic" style="color:var(--accent)">problema</span>.</span>
+        <span class="lang-en">The <span class="ed-italic" style="color:var(--accent)">problem</span>.</span>
+      </h2>
+      <p class="text-lg leading-relaxed text-[var(--ink-2)]" id="phChallenge"></p>
+    </div>
+    <div>
+      <div class="ed-num mb-3">// 03 / <span class="lang-es">SOLUCIÓN</span><span class="lang-en">SOLUTION</span></div>
+      <h2 class="ed-display text-4xl lg:text-5xl mb-8">
+        <span class="lang-es">El <span class="ed-italic" style="color:var(--accent)">enfoque</span>.</span>
+        <span class="lang-en">The <span class="ed-italic" style="color:var(--accent)">approach</span>.</span>
+      </h2>
+      <p class="text-lg leading-relaxed text-[var(--ink-2)]" id="phSolution"></p>
+    </div>
+  </div>
+</section>
+
+<!-- ARCHITECTURE -->
+<section class="px-6 lg:px-16 py-20">
+  <div class="max-w-[1400px] mx-auto">
+    <div class="ed-num mb-3">// 04 / <span class="lang-es">ARQUITECTURA</span><span class="lang-en">ARCHITECTURE</span></div>
+    <h2 class="ed-display text-5xl lg:text-7xl mb-4">
+      <span class="lang-es">Cómo se <span class="ed-italic" style="color:var(--accent)">conecta</span>.</span>
+      <span class="lang-en">How it <span class="ed-italic" style="color:var(--accent)">connects</span>.</span>
+    </h2>
+    <p class="ed-italic text-xl text-[var(--ink-2)] mb-12">— pipeline de extremo a extremo</p>
+    <div class="flex items-center flex-wrap gap-2 mb-12" id="phArch"></div>
+    <div class="grid lg:grid-cols-2 gap-8">
+      <div>
+        <div class="ed-num mb-3">// STACK</div>
+        <div class="flex flex-wrap gap-2" id="phStack"></div>
+      </div>
+      <div>
+        <div class="ed-num mb-3">// SAMPLE</div>
+        <pre class="codeblock"><code id="phCode"></code></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TIMELINE -->
+<section class="px-6 lg:px-16 py-20 bg-[var(--bg-2)] border-y border-[var(--line)]">
+  <div class="max-w-[1400px] mx-auto grid lg:grid-cols-12 gap-10">
+    <div class="lg:col-span-4">
+      <div class="ed-num mb-3">// 05 / <span class="lang-es">PROCESO</span><span class="lang-en">PROCESS</span></div>
+      <h2 class="ed-display text-4xl lg:text-5xl mb-6 sticky top-24">
+        <span class="lang-es">Del <span class="ed-italic" style="color:var(--accent)">brief</span><br/>al deploy.</span>
+        <span class="lang-en">From <span class="ed-italic" style="color:var(--accent)">brief</span><br/>to deploy.</span>
+      </h2>
+    </div>
+    <div class="lg:col-span-7 lg:col-start-6">
+      <div class="timeline-vert" id="phTimeline"></div>
+    </div>
+  </div>
+</section>
+
+<!-- LEARNINGS -->
+<section class="px-6 lg:px-16 py-20">
+  <div class="max-w-[1400px] mx-auto">
+    <div class="ed-num mb-3">// 06 / <span class="lang-es">APRENDIZAJES</span><span class="lang-en">LEARNINGS</span></div>
+    <h2 class="ed-display text-5xl lg:text-7xl mb-12">
+      <span class="lang-es">Lo que me <span class="ed-italic" style="color:var(--accent)">llevo</span>.</span>
+      <span class="lang-en">What I <span class="ed-italic" style="color:var(--accent)">take away</span>.</span>
+    </h2>
+    <div class="grid md:grid-cols-3 gap-6" id="phLearnings"></div>
+  </div>
+</section>
+
+<!-- NEXT -->
+<section class="px-6 lg:px-16 py-20 border-t border-[var(--line)]">
+  <div class="max-w-[1400px] mx-auto">
+    <div class="ed-num mb-3">// NEXT</div>
+    <h2 class="ed-display text-4xl lg:text-6xl mb-10">
+      <span class="lang-es">Otros <span class="ed-italic" style="color:var(--accent)">casos</span>.</span>
+      <span class="lang-en">More <span class="ed-italic" style="color:var(--accent)">cases</span>.</span>
+    </h2>
+    <div class="grid md:grid-cols-2 gap-6" id="phNext"></div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="px-6 lg:px-16 py-20 bg-[var(--accent)] text-black">
+  <div class="max-w-[1400px] mx-auto">
+    <div class="font-mono text-xs tracking-widest mb-4">// CTA</div>
+    <h2 class="ed-display text-6xl lg:text-9xl">
+      <span class="lang-es">¿Tienes uno parecido?</span>
+      <span class="lang-en">Got something similar?</span>
+    </h2>
+    <div class="mt-10 flex flex-wrap gap-4">
+      <a href="https://www.linkedin.com/in/alejandrovega-stackblend/" target="_blank" class="inline-flex items-center gap-2 px-6 py-3 bg-black text-white font-mono text-sm tracking-widest hover:bg-white hover:text-black transition">
+        <span class="lang-es">HABLEMOS ↗</span><span class="lang-en">LET'S TALK ↗</span>
+      </a>
+      <a href="https://github.com/AlejandroVegaFullstackDev" target="_blank" class="inline-flex items-center gap-2 px-6 py-3 border border-black font-mono text-sm tracking-widest hover:bg-black hover:text-[var(--accent)] transition">GITHUB ↗</a>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<TweaksPanel client:only="react" />
+
+<script>
+import { portfolioData as D } from '../../lib/data';
+
+const LANG_KEY = 'av_lang';
+const getLang = (): 'es' | 'en' => (localStorage.getItem(LANG_KEY) as 'es' | 'en') || 'es';
+const setLang = (lang: 'es' | 'en') => {
+  localStorage.setItem(LANG_KEY, lang);
+  document.documentElement.setAttribute('data-lang', lang);
+};
+document.documentElement.setAttribute('data-lang', getLang());
+
+// Apply stored tweaks before React mounts
+const stored = localStorage.getItem('av_tweaks');
+if (stored) {
+  try {
+    const t = JSON.parse(stored);
+    const r = document.documentElement;
+    if (t.theme) r.setAttribute('data-tweak-theme', t.theme);
+    if (t.accent) r.setAttribute('data-tweak-accent', t.accent);
+    if (t.font) r.setAttribute('data-tweak-font', t.font);
+  } catch {}
+}
+
+const slug = window.location.pathname.split('/').pop() || '';
+const p = D.projects.find((x) => x.slug === slug) || D.projects[0];
+const deep = (D.deep as any)[p.slug] || {};
+
+function paint() {
+  const lang = getLang();
+  document.title = p.name[lang] + ' — Alejandro Vega';
+
+  const set = (id: string, val: string) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+  set('phNum', `// PRJ_${p.n} · ${p.year}`);
+  set('phName', p.name[lang]);
+  set('phKicker', p.kicker[lang]);
+  set('phYear', p.year);
+  set('phYear2', p.year);
+  set('phRole', p.role[lang]);
+  set('phSummary', p.summary[lang]);
+  set('phChallenge', (deep.challenge && deep.challenge[lang]) || '—');
+  set('phSolution', (deep.solution && deep.solution[lang]) || '—');
+
+  const metrics = document.getElementById('phMetrics');
+  if (metrics) metrics.innerHTML = p.metrics.map((m: any) => `<div class="metric-card"><div class="v">${m.v}</div><div class="k">${m.k[lang]}</div></div>`).join('');
+
+  const arch = document.getElementById('phArch');
+  if (arch && deep.arch) {
+    arch.innerHTML = deep.arch.flatMap((s: string, i: number) => {
+      const step = `<div class="arch-step"><span class="idx">[${String(i+1).padStart(2,'0')}]</span><span class="name">${s}</span></div>`;
+      return i < deep.arch.length - 1 ? [step, '<div class="arch-arrow">→</div>'] : [step];
+    }).join('');
+  }
+
+  const stack = document.getElementById('phStack');
+  if (stack) stack.innerHTML = p.stack.map((s: string) => `<span class="pill">${s}</span>`).join('');
+
+  const code = document.getElementById('phCode');
+  if (code) code.innerHTML = deep.code || '// no sample available';
+
+  const timeline = document.getElementById('phTimeline');
+  if (timeline && deep.timeline) {
+    timeline.innerHTML = deep.timeline[lang].map(([k, v]: string[]) => `<div class="t"><div class="ed-num">${k}</div><div class="text-lg lg:text-xl mt-1">${v}</div></div>`).join('');
+  }
+
+  const learnings = document.getElementById('phLearnings');
+  if (learnings && deep.learnings) {
+    learnings.innerHTML = deep.learnings[lang].map(([k, v]: string[], i: number) => `
+      <div class="metric-card">
+        <div class="ed-num mb-2">${String(i+1).padStart(2,'0')} //</div>
+        <div class="ed-display text-2xl mb-3">${k}</div>
+        <p style="color:var(--ink-2);line-height:1.6;">${v}</p>
+      </div>`).join('');
+  }
+
+  const next = document.getElementById('phNext');
+  if (next) {
+    const others = D.projects.filter((x) => x.slug !== p.slug).slice(0, 2);
+    next.innerHTML = others.map((o) => `
+      <a href="/proyecto/${o.slug}" class="next-card">
+        <div class="ed-num mb-2">PRJ_${o.n} · ${o.year}</div>
+        <div class="ed-display text-3xl">${o.name[lang]}</div>
+        <div class="ed-italic text-[var(--accent)] mt-2">${o.kicker[lang]}</div>
+        <div style="color:var(--ink-2);margin-top:1rem;font-size:0.875rem;">${o.summary[lang]}</div>
+        <div class="ed-num mt-6">${lang === 'en' ? 'open ↗' : 'abrir ↗'}</div>
+      </a>`).join('');
+  }
+}
+
+paint();
+
+const langBtn = document.getElementById('langToggle');
+if (langBtn) {
+  langBtn.addEventListener('click', () => {
+    setLang(getLang() === 'es' ? 'en' : 'es');
+    paint();
+  });
+}
+</script>
+
+</Layout>
