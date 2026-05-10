@@ -451,3 +451,88 @@ img, pre, canvas, iframe { max-width: 100%; }
   border-color: var(--accent);
   color: var(--accent);
 }
+
+/* ─── GSAP MAX / ENHANCED EFFECTS ─────────────────────────────────────────── */
+
+/* Spotlight — radial glow that follows cursor */
+.cy-spotlight {
+  position: fixed;
+  top: 0; left: 0;
+  width: 700px; height: 700px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,0,60,0.055) 0%, rgba(255,0,60,0.01) 35%, transparent 65%);
+  pointer-events: none;
+  z-index: 0;
+  transform: translate(-50%, -50%);
+  mix-blend-mode: screen;
+  will-change: transform;
+}
+[data-tweak-accent="amber"]  .cy-spotlight { background: radial-gradient(circle, rgba(255,138,0,0.055) 0%, rgba(255,138,0,0.01) 35%, transparent 65%); }
+[data-tweak-accent="acid"]   .cy-spotlight { background: radial-gradient(circle, rgba(212,255,0,0.055) 0%, rgba(212,255,0,0.01) 35%, transparent 65%); }
+[data-tweak-accent="cyan"]   .cy-spotlight { background: radial-gradient(circle, rgba(0,229,255,0.055) 0%, rgba(0,229,255,0.01) 35%, transparent 65%); }
+
+/* 3-D tilt on tiles & cards */
+.cy-tile    { transform-style: preserve-3d; }
+.service-card { transform-style: preserve-3d; }
+
+/* DOOM ASCII in terminal */
+.tg-line.tg-doom {
+  color: #ff4400;
+  text-shadow: 0 0 8px rgba(255,68,0,0.9);
+  font-size: 0.68rem;
+  white-space: pre;
+  line-height: 1.15;
+}
+
+/* Now status band */
+.now-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 22px;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  color: var(--ink-3);
+  text-transform: uppercase;
+  white-space: nowrap;
+  border-right: 1px solid var(--line);
+  flex-shrink: 0;
+}
+.now-item:last-child { border-right: 0; }
+
+/* Cursor trail dot */
+.cy-trail {
+  position: fixed;
+  top: 0; left: 0;
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  pointer-events: none;
+  z-index: 9998;
+  opacity: 0.6;
+  transform: translate(-50%, -50%);
+}
+
+/* Glitch flicker on hero elements */
+@keyframes flicker {
+  0%,95%,100%    { opacity: 1; }
+  96%            { opacity: 0.4; }
+  97%            { opacity: 1; }
+  98%            { opacity: 0.2; }
+  99%            { opacity: 1; }
+}
+.cy-flicker { animation: flicker 6s infinite; }
+
+/* ─── MOBILE IMPROVEMENTS ──────────────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .tg-screen { min-height: 240px; max-height: 280px; font-size: 0.8rem; }
+  .now-item:nth-child(n+3) { display: none; }
+  /* tighter hero letter-spacing on tiny screens */
+  #heroName { letter-spacing: -0.05em !important; }
+  /* stack grid 2-col on mobile */
+  #stackGrid { grid-template-columns: repeat(2, 1fr) !important; }
+}
+@media (max-width: 480px) {
+  .cy-spotlight { display: none; }
+}
