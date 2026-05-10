@@ -58,8 +58,11 @@ html, body {
   font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
   scroll-behavior: smooth;
+  overflow-x: hidden;
+  max-width: 100%;
 }
 * { box-sizing: border-box; }
+img, pre, canvas, iframe { max-width: 100%; }
 ::selection { background: var(--accent); color: #000; }
 
 [data-lang="es"] .lang-en,
