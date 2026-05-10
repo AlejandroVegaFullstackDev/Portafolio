@@ -405,6 +405,27 @@ html, body {
   100% { background-position: -200% 0; }
 }
 
+/* Experience responsive row */
+.exp-row {
+  display: grid;
+  grid-template-columns: 80px 1fr 1.4fr;
+  gap: 28px;
+  padding: 28px 0;
+  border-bottom: 1px solid var(--line);
+}
+@media (max-width: 767px) {
+  .exp-row { grid-template-columns: 1fr; gap: 10px; }
+}
+
+/* Clip-path reveal — parent must have overflow-hidden */
+.reveal-wrap { overflow: hidden; display: block; }
+
+/* Mobile hero adjustments */
+@media (max-width: 767px) {
+  #hero { min-height: 100svh; padding-top: 0; align-items: flex-end; padding-bottom: 3rem; }
+  #hero .hero-grid { padding-top: 6rem; }
+}
+
 /* Tweaks trigger button */
 .tweaks-trigger {
   position: fixed;
