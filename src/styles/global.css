@@ -524,15 +524,77 @@ img, pre, canvas, iframe { max-width: 100%; }
 }
 .cy-flicker { animation: flicker 6s infinite; }
 
-/* ─── MOBILE IMPROVEMENTS ──────────────────────────────────────────────────── */
-@media (max-width: 640px) {
-  .tg-screen { min-height: 240px; max-height: 280px; font-size: 0.8rem; }
-  .now-item:nth-child(n+3) { display: none; }
-  /* tighter hero letter-spacing on tiny screens */
-  #heroName { letter-spacing: -0.05em !important; }
-  /* stack grid 2-col on mobile */
+/* ─── MOBILE REDESIGN (< 768px) ──────────────────────────────────────────── */
+@media (max-width: 767px) {
+  /* 1. Drastic section padding reduction — the #1 cause of bad mobile layout */
+  #about, #stack, #services, #exp, #projects, #playground, #contact {
+    padding-top: 3rem !important;
+    padding-bottom: 3rem !important;
+  }
+
+  /* 2. About: strip terminal chrome — show raw paragraphs only */
+  #about .cy-term-bar   { display: none !important; }
+  #about .cy-term       { border: none !important; background: transparent !important; box-shadow: none !important; }
+  #about .cy-term-body  { padding: 0 !important; }
+  #about [data-stagger] { margin-top: 1.5rem !important; }
+
+  /* 3. Experience: hide decorative git-log sidebar */
+  #exp .lg\:col-span-3  { display: none !important; }
+
+  /* 4. Stack: 2-col grid */
   #stackGrid { grid-template-columns: repeat(2, 1fr) !important; }
+
+  /* 5. Service cards: tighter padding */
+  .service-card { padding: 20px 18px !important; }
+
+  /* 6. Contact: scale down the mega headline */
+  #contact .cy-headline {
+    font-size: clamp(2rem, 11vw, 3.8rem) !important;
+    line-height: 0.9 !important;
+  }
+
+  /* 7. Contact footer: less margin */
+  #contact .mt-24 { margin-top: 2.5rem !important; }
+
+  /* 8. Hero name: tighter tracking */
+  #heroName { letter-spacing: -0.05em !important; }
+
+  /* 9. Hero stats row: compact */
+  #hero .grid.grid-cols-3 { gap: 0.5rem !important; }
+
+  /* 10. Stack & exp headline: cap size */
+  #stack .cy-headline, #exp .cy-headline {
+    font-size: clamp(2.4rem, 11vw, 4.5rem) !important;
+  }
+
+  /* 11. Experience rows: less vertical padding */
+  .exp-row { padding: 16px 0 !important; }
+
+  /* 12. Terminal game: smaller height */
+  #termGame { min-height: 260px !important; }
+  .tg-screen { min-height: 220px !important; max-height: 260px; font-size: 0.8rem; }
+
+  /* 13. Now band: show first 2 items only */
+  .now-item:nth-child(n+3) { display: none !important; }
+
+  /* 14. Projects grid: force 1 col (already md:grid-cols-2 but ensure) */
+  #projectsGrid { grid-template-columns: 1fr !important; }
+
+  /* 15. Section mb-14: reduce */
+  .mb-14 { margin-bottom: 2rem !important; }
+
+  /* 16. Section-level headings: less bottom margin */
+  section h2.cy-headline { margin-bottom: 2rem !important; }
 }
-@media (max-width: 480px) {
-  .cy-spotlight { display: none; }
+
+/* Very small phones */
+@media (max-width: 420px) {
+  /* About info cards: 1 col */
+  #about .grid.grid-cols-2 { grid-template-columns: 1fr !important; }
+  /* Stack: 1 col */
+  #stackGrid { grid-template-columns: 1fr !important; }
+  /* Kill spotlight and trail — performance */
+  .cy-spotlight, .cy-trail { display: none !important; }
+  /* Hero eyebrow tighter */
+  #hero .mb-8 { margin-bottom: 1rem !important; }
 }
