@@ -18,7 +18,7 @@ export const portfolioData = {
     contact: {
       linkedin: "https://www.linkedin.com/in/alejandrovega-stackblend/",
       github: "https://github.com/AlejandroVegaFullstackDev",
-      email: "alejandro.vega@stackblend.dev",
+      email: "alejandromatssuno18@gmail.com",
     },
   },
 

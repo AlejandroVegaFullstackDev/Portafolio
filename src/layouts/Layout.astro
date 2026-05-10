@@ -10,10 +10,28 @@ const { title = 'Alejandro Vega — Full Stack Engineer' } = Astro.props;
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="description" content="Alejandro Vega — Full Stack Engineer especializado en automatización, datos y backends escalables. Bogotá, Colombia." />
+  <meta property="og:title" content={title} />
+  <meta property="og:description" content="Full Stack Engineer · automatización · datos · backends escalables · Bogotá" />
+  <meta property="og:type" content="website" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <title>{title}</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&family=Bebas+Neue&family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter+Tight:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <!-- Restore theme/lang before first paint to avoid flash -->
+  <script is:inline>
+    (function(){
+      try {
+        var t = JSON.parse(localStorage.getItem('av_tweaks')||'{}');
+        var r = document.documentElement;
+        if(t.theme) r.setAttribute('data-tweak-theme',t.theme);
+        if(t.accent) r.setAttribute('data-tweak-accent',t.accent);
+        if(t.font) r.setAttribute('data-tweak-font',t.font);
+      } catch(e){}
+      var lang = localStorage.getItem('av_lang')||'es';
+      document.documentElement.setAttribute('data-lang',lang);
+    })();
+  </script>
 </head>
 <body>
   <slot />
