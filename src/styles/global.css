@@ -532,10 +532,6 @@ img, pre, canvas, iframe { max-width: 100%; }
     padding-bottom: 3.5rem !important;
   }
 
-  /* 1b. About — fix terminal stripping causing zero margin */
-  #about .cy-term-body { padding: 0.75rem 0 !important; }
-  #about .lg\:col-span-7 { padding: 0 !important; }
-
   /* 2. All section headlines: scale down */
   section h2.cy-headline {
     font-size: clamp(2.2rem, 10vw, 3.8rem) !important;
@@ -543,11 +539,18 @@ img, pre, canvas, iframe { max-width: 100%; }
     margin-bottom: 2rem !important;
   }
 
-  /* 3. About: clean terminal */
+  /* 3. About: layout y terminal limpio */
+  #about > div          { gap: 1.25rem !important; }
   #about .cy-term-bar   { display: none !important; }
   #about .cy-term       { border: none !important; background: transparent !important; }
-  #about .cy-term-body  { padding: 0 !important; }
+  #about .cy-term-body  { padding: 0.25rem 0 !important; }
   #about [data-stagger] { margin-top: 1.5rem !important; }
+  /* Ocultar prompt y separador del terminal en mobile */
+  #aboutTerm .cy-term-line:first-child  { display: none !important; }
+  #aboutTerm .cy-term-line:nth-child(2) { display: none !important; }
+  #aboutTerm .cy-term-line:last-child   { display: none !important; }
+  /* Ingecat: centrado y más pequeño en mobile */
+  #ingecatCard { display: block !important; max-width: 52% !important; margin: 1.25rem auto !important; }
 
   /* 4. Stack: 2-col */
   #stackGrid { grid-template-columns: repeat(2, 1fr) !important; }
@@ -572,12 +575,20 @@ img, pre, canvas, iframe { max-width: 100%; }
   }
   #contact .mt-24 { margin-top: 2rem !important; }
 
-  /* 9. Hero */
-  #hero { min-height: 100svh; align-items: center; }
-  #hero .hero-grid { padding-top: 5rem; padding-bottom: 2rem; }
-  #heroName { letter-spacing: -0.05em !important; }
+  /* 9. Hero — tribal full-bg + texto arriba */
+  #hero { min-height: 100svh; align-items: flex-start !important; }
+  #hero .hero-grid { padding-top: 6rem !important; padding-bottom: 5rem !important; }
+  #heroName { letter-spacing: -0.05em !important; font-size: clamp(2.8rem, 11vw, 5rem) !important; }
   #hero .grid.grid-cols-3 { gap: 0.5rem !important; }
   #hero .cy-btn { min-width: 100%; justify-content: center; }
+  /* Tribal: portrait, llena el alto del hero */
+  #heroBg {
+    height: 110% !important;
+    width: auto !important;
+    top: -5% !important;
+    bottom: auto !important;
+    right: -15% !important;
+  }
 
   /* 10. Terminal game */
   #termGame { min-height: 240px !important; }
@@ -626,6 +637,11 @@ img, pre, canvas, iframe { max-width: 100%; }
 @keyframes floatM {
   from { transform: var(--stk-rot, rotate(0deg)) translateY(0px); }
   to   { transform: var(--stk-rot, rotate(0deg)) translateY(-7px); }
+}
+
+/* Ingecat visible en tablet también */
+@media (min-width: 768px) and (max-width: 1023px) {
+  #ingecatCard { max-width: 52% !important; }
 }
 
 /* Touch hover states for project cards */
