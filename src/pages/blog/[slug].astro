@@ -17,72 +17,443 @@ const { Content } = await render(post);
 function fmtDate(d: Date) {
   return d.toLocaleDateString('es-CO', { year: 'numeric', month: 'long', day: 'numeric' });
 }
+
+function readingTime(body: string | undefined) {
+  if (!body) return '1 min';
+  return Math.max(1, Math.round(body.trim().split(/\s+/).length / 200)) + ' min';
+}
+
+const rt = readingTime(post.body);
 ---
 
 <Layout title={`${post.data.title} — Alejandro Vega`}>
   <style>
-    .prose { color: var(--ink-2); line-height: 1.8; font-size: 1.05rem; }
-    .prose h2 { font-family: var(--font-display); font-size: 1.6rem; font-weight: 600; color: var(--ink); margin: 2.4em 0 0.8em; letter-spacing: -0.02em; }
-    .prose h3 { font-family: var(--font-display); font-size: 1.2rem; font-weight: 600; color: var(--ink); margin: 2em 0 0.6em; }
-    .prose p { margin: 0 0 1.4em; }
-    .prose a { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
-    .prose ul, .prose ol { margin: 0 0 1.4em 1.4em; }
-    .prose li { margin-bottom: 0.4em; }
-    .prose blockquote { border-left: 2px solid var(--accent); padding-left: 1.2em; margin: 1.8em 0; color: var(--ink-3); font-style: italic; }
-    .prose pre { background: var(--panel); border: 1px solid var(--line); padding: 20px; overflow-x: auto; margin: 1.8em 0; border-radius: 0; }
-    .prose code { font-family: var(--font-mono); font-size: 0.88em; color: var(--accent); background: var(--panel); padding: 2px 6px; }
-    .prose pre code { color: var(--ink); background: none; padding: 0; }
-    .prose img { max-width: 100%; height: auto; display: block; margin: 2em auto; border: 1px solid var(--line); }
-    .prose hr { border: none; border-top: 1px solid var(--line); margin: 2.4em 0; }
+    /* ── Reading progress bar ── */
+    #read-bar {
+      position: fixed;
+      top: 0; left: 0;
+      height: 2px;
+      background: var(--accent);
+      width: 0%;
+      z-index: 1000;
+      transition: width 0.1s linear;
+      box-shadow: 0 0 8px var(--accent-glow);
+    }
+
+    /* ── Top nav ── */
+    .post-nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1.5rem;
+      height: 52px;
+      background: rgba(5,5,7,0.88);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--line);
+    }
+    .post-nav-back {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      color: var(--ink-3);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: color 0.2s;
+    }
+    .post-nav-back:hover { color: var(--accent); }
+    .post-nav-logo {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      letter-spacing: 0.14em;
+      color: var(--ink-3);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .post-nav-logo:hover { color: var(--ink); }
+    .post-nav-rt {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      color: var(--ink-3);
+    }
+
+    /* ── Header ── */
+    .post-header {
+      padding: 7rem 1.5rem 4rem;
+      max-width: 860px;
+      margin: 0 auto;
+      position: relative;
+    }
+    @media (min-width: 1024px) {
+      .post-header { padding: 8rem 2rem 5rem; }
+    }
+    .post-tags-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 1.5rem;
+    }
+    .post-tag {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.12em;
+      border: 1px solid var(--accent);
+      padding: 2px 9px;
+      color: var(--accent);
+    }
+    .post-h1 {
+      font-family: var(--font-display);
+      font-size: clamp(2.2rem, 6vw, 4rem);
+      font-weight: 700;
+      letter-spacing: -0.04em;
+      line-height: 1.05;
+      color: var(--ink);
+      margin-bottom: 1.25rem;
+    }
+    .post-desc {
+      font-size: 1.05rem;
+      color: var(--ink-2);
+      line-height: 1.65;
+      margin-bottom: 1.5rem;
+      max-width: 58ch;
+    }
+    .post-meta-row {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--ink-3);
+      flex-wrap: wrap;
+    }
+    .post-meta-row .accent { color: var(--accent); }
+    .post-divider {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-top: 2.5rem;
+    }
+    .post-divider-line { flex: 1; height: 1px; background: var(--line); }
+    .post-divider-dot { width: 6px; height: 6px; background: var(--accent); flex-shrink: 0; }
+
+    /* ── Content layout ── */
+    .post-layout {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 3rem;
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 3rem 1.5rem 5rem;
+    }
+    @media (min-width: 1024px) {
+      .post-layout {
+        grid-template-columns: 1fr 220px;
+        gap: 4rem;
+        padding: 3rem 2rem 6rem;
+        max-width: 1100px;
+        align-items: start;
+      }
+    }
+
+    /* ── Sidebar ── */
+    .post-sidebar {
+      display: none;
+    }
+    @media (min-width: 1024px) {
+      .post-sidebar {
+        display: block;
+        position: sticky;
+        top: 80px;
+      }
+    }
+    .sidebar-label {
+      font-family: var(--font-mono);
+      font-size: 0.62rem;
+      letter-spacing: 0.18em;
+      color: var(--accent);
+      margin-bottom: 0.75rem;
+    }
+    .sidebar-block {
+      border: 1px solid var(--line);
+      padding: 16px 14px;
+      margin-bottom: 1rem;
+      background: var(--panel);
+      position: relative;
+    }
+    .sidebar-block::before {
+      content: '';
+      position: absolute;
+      top: -1px; left: -1px;
+      width: 10px; height: 10px;
+      border-top: 1px solid var(--accent);
+      border-left: 1px solid var(--accent);
+    }
+    .sidebar-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      padding: 5px 0;
+      border-bottom: 1px solid var(--line);
+      gap: 8px;
+    }
+    .sidebar-row:last-child { border-bottom: none; }
+    .sidebar-row-key { color: var(--ink-3); }
+    .sidebar-row-val { color: var(--ink); text-align: right; }
+
+    /* ── Prose ── */
+    .prose {
+      color: var(--ink-2);
+      line-height: 1.82;
+      font-size: 1.05rem;
+    }
+    .prose h2 {
+      font-family: var(--font-display);
+      font-size: clamp(1.4rem, 3vw, 1.9rem);
+      font-weight: 700;
+      color: var(--ink);
+      margin: 2.8em 0 0.9em;
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+      position: relative;
+      padding-left: 1rem;
+    }
+    .prose h2::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0.15em; bottom: 0.1em;
+      width: 3px;
+      background: var(--accent);
+    }
+    .prose h3 {
+      font-family: var(--font-display);
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--ink);
+      margin: 2.2em 0 0.7em;
+      letter-spacing: -0.02em;
+    }
+    .prose p { margin: 0 0 1.5em; }
+    .prose a { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
+    .prose a:hover { color: var(--accent-2); }
+    .prose ul, .prose ol { margin: 0 0 1.5em; padding-left: 1.5rem; }
+    .prose li { margin-bottom: 0.5em; }
+    .prose strong { color: var(--ink); font-weight: 600; }
+    .prose em { color: var(--ink); }
+    .prose blockquote {
+      margin: 2em 0;
+      padding: 1rem 1.25rem;
+      border-left: 0;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-left: 3px solid var(--accent);
+      color: var(--ink-2);
+      font-style: normal;
+      position: relative;
+    }
+    .prose blockquote::before {
+      content: '//';
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 0.5rem;
+      font-style: normal;
+    }
+    .prose pre {
+      margin: 2em 0;
+      padding: 0;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 0;
+    }
+    .prose pre::before {
+      content: '$ ';
+      display: block;
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      color: var(--ink-3);
+      background: var(--bg-2);
+      padding: 8px 16px;
+      border-bottom: 1px solid var(--line);
+      letter-spacing: 0.06em;
+    }
+    .prose pre code {
+      display: block;
+      background: var(--panel);
+      padding: 18px 16px;
+      overflow-x: auto;
+      font-family: var(--font-mono);
+      font-size: 0.84rem;
+      color: var(--ink);
+      line-height: 1.7;
+    }
+    .prose :not(pre) > code {
+      font-family: var(--font-mono);
+      font-size: 0.85em;
+      color: var(--accent);
+      background: var(--panel);
+      padding: 2px 6px;
+      border: 1px solid var(--line);
+    }
+    .prose img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      margin: 2.5em auto;
+      border: 1px solid var(--line);
+    }
+    .prose hr {
+      border: none;
+      margin: 3em 0;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .prose hr::before, .prose hr::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--line);
+    }
+    .prose hr::after { content: '·'; flex: 0; color: var(--accent); font-size: 1.2rem; }
+
+    /* ── Footer ── */
+    .post-footer {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem 5rem;
+      border-top: 1px solid var(--line);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    @media (min-width: 1024px) { .post-footer { padding: 2rem 2rem 5rem; } }
+    .footer-link {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      color: var(--ink-3);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: color 0.2s;
+    }
+    .footer-link:hover { color: var(--accent); }
+    .footer-link.accent { color: var(--accent); }
+    .footer-link.accent:hover { color: var(--ink); }
   </style>
 
-  <main style="min-height:100vh;padding:80px 24px 80px;max-width:720px;margin:0 auto;">
-    <a href="/blog" style="font-family:var(--font-mono);font-size:0.74rem;color:var(--ink-3);letter-spacing:0.12em;text-decoration:none;display:inline-flex;align-items:center;gap:8px;margin-bottom:48px;">
-      ← blog
-    </a>
+  <!-- Reading progress -->
+  <div id="read-bar"></div>
 
-    <header style="margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--line);">
+  <!-- Fixed nav -->
+  <nav class="post-nav">
+    <a href="/blog" class="post-nav-back">← blog</a>
+    <span class="post-nav-rt">{rt} lectura</span>
+    <a href="/" class="post-nav-logo">AV/_</a>
+  </nav>
+
+  <main>
+    <!-- Header -->
+    <div class="post-header">
       {post.data.tags.length > 0 && (
-        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px;">
+        <div class="post-tags-row">
           {post.data.tags.map(tag => (
-            <span style="font-family:var(--font-mono);font-size:0.68rem;letter-spacing:0.1em;border:1px solid var(--line-2);padding:2px 8px;color:var(--accent);">
-              {tag}
-            </span>
+            <span class="post-tag">{tag}</span>
           ))}
         </div>
       )}
-      <h1 style="font-family:var(--font-display);font-size:clamp(2rem,5vw,3.2rem);font-weight:700;letter-spacing:-0.04em;line-height:1.1;margin-bottom:16px;">
-        {post.data.title}
-      </h1>
+      <h1 class="post-h1">{post.data.title}</h1>
       {post.data.description && (
-        <p style="font-size:1rem;color:var(--ink-3);line-height:1.55;margin-bottom:16px;">
-          {post.data.description}
-        </p>
+        <p class="post-desc">{post.data.description}</p>
       )}
-      <span style="font-family:var(--font-mono);font-size:0.72rem;color:var(--ink-3);letter-spacing:0.1em;">
-        {fmtDate(post.data.date)}
-      </span>
-    </header>
+      <div class="post-meta-row">
+        <span class="accent">{fmtDate(post.data.date)}</span>
+        <span>·</span>
+        <span>{rt} de lectura</span>
+        <span>·</span>
+        <span>Alejandro Vega</span>
+      </div>
+      <div class="post-divider">
+        <div class="post-divider-line"></div>
+        <div class="post-divider-dot"></div>
+        <div class="post-divider-line" style="max-width:24px;"></div>
+      </div>
+    </div>
 
-    {post.data.cover && (
-      <img
-        src={post.data.cover}
-        alt={post.data.title}
-        style="width:100%;height:auto;object-fit:cover;border:1px solid var(--line);margin-bottom:48px;"
-      />
-    )}
+    <!-- Layout: article + sidebar -->
+    <div class="post-layout">
+      <!-- Article -->
+      <article class="prose">
+        <Content />
+      </article>
 
-    <article class="prose">
-      <Content />
-    </article>
+      <!-- Sidebar -->
+      <aside class="post-sidebar">
+        <div class="sidebar-label">// INFO</div>
+        <div class="sidebar-block">
+          <div class="sidebar-row">
+            <span class="sidebar-row-key">fecha</span>
+            <span class="sidebar-row-val">{post.data.date.toLocaleDateString('es-CO', { day: '2-digit', month: '2-digit', year: '2-digit' })}</span>
+          </div>
+          <div class="sidebar-row">
+            <span class="sidebar-row-key">lectura</span>
+            <span class="sidebar-row-val">{rt}</span>
+          </div>
+          <div class="sidebar-row">
+            <span class="sidebar-row-key">autor</span>
+            <span class="sidebar-row-val">AV</span>
+          </div>
+          {post.data.tags.length > 0 && (
+            <div class="sidebar-row">
+              <span class="sidebar-row-key">tags</span>
+              <span class="sidebar-row-val" style="display:flex;flex-wrap:wrap;justify-content:flex-end;gap:4px;">
+                {post.data.tags.map(t => (
+                  <span style="font-size:0.6rem;border:1px solid var(--line-2);padding:1px 5px;color:var(--ink-3);">{t}</span>
+                ))}
+              </span>
+            </div>
+          )}
+        </div>
 
-    <footer style="margin-top:64px;padding-top:24px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
-      <a href="/blog" style="font-family:var(--font-mono);font-size:0.74rem;color:var(--ink-3);letter-spacing:0.12em;text-decoration:none;">
-        ← todos los posts
-      </a>
-      <a href="/" style="font-family:var(--font-mono);font-size:0.74rem;color:var(--accent);letter-spacing:0.12em;text-decoration:none;">
-        AV/_ ↗
-      </a>
+        <div style="margin-top:1.5rem;">
+          <div class="sidebar-label">// LINKS</div>
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <a href="/blog" class="footer-link">← todos los posts</a>
+            <a href="/" class="footer-link accent">AV/_ ↗</a>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <!-- Footer -->
+    <footer class="post-footer">
+      <a href="/blog" class="footer-link">← todos los posts</a>
+      <a href="/" class="footer-link accent">AV/_ ↗</a>
     </footer>
   </main>
+
+  <script>
+    // Reading progress bar
+    const bar = document.getElementById('read-bar');
+    if (bar) {
+      function updateBar() {
+        const doc = document.documentElement;
+        const scrolled = doc.scrollTop / (doc.scrollHeight - doc.clientHeight);
+        bar.style.width = (scrolled * 100) + '%';
+      }
+      window.addEventListener('scroll', updateBar, { passive: true });
+      updateBar();
+    }
+  </script>
 </Layout>
