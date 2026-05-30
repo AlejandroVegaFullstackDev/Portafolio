@@ -901,7 +901,7 @@ function attachTerminalGame(container: HTMLElement, lang: 'es' | 'en') {
     const hdr = document.createElement('div');
     hdr.className = 'tg-line tg-hack';
     hdr.textContent = isTouch
-      ? (lang==='en' ? '▶ SNAKE — swipe or D-pad' : '▶ SNAKE — desliza o usa el pad')
+      ? (lang==='en' ? '▶ SNAKE — swipe to move' : '▶ SNAKE — desliza para mover')
       : (lang==='en' ? '▶ SNAKE — arrows · Q quit' : '▶ SNAKE — flechas · Q salir');
 
     const canvas = document.createElement('canvas');
@@ -913,27 +913,8 @@ function attachTerminalGame(container: HTMLElement, lang: 'es' | 'en') {
     scoreLine.className = 'tg-line tg-echo';
     scoreLine.textContent = `${lang==='en'?'Score':'Puntaje'}: 0`;
 
-    // D-pad (touch only)
-    let dpad: HTMLElement | null = null;
-    if (isTouch) {
-      dpad = document.createElement('div');
-      dpad.style.cssText = 'display:grid;grid-template-columns:repeat(3,50px);grid-template-rows:repeat(2,50px);gap:4px;margin:8px auto 4px;width:158px;';
-      const mkBtn = (txt: string, col: number, row: number, fn: ()=>void) => {
-        const b = document.createElement('button');
-        b.textContent = txt;
-        b.style.cssText = `grid-column:${col};grid-row:${row};background:var(--panel);border:1px solid var(--line-2);color:var(--accent);font-size:1.4rem;line-height:1;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;`;
-        b.addEventListener('touchstart', (e)=>{ fn(); e.preventDefault(); }, {passive:false});
-        dpad!.appendChild(b);
-      };
-      mkBtn('↑',2,1,()=>{ if(dir.y===0) dir={x:0,y:-1}; });
-      mkBtn('←',1,2,()=>{ if(dir.x===0) dir={x:-1,y:0}; });
-      mkBtn('↓',2,2,()=>{ if(dir.y===0) dir={x:0,y:1}; });
-      mkBtn('→',3,2,()=>{ if(dir.x===0) dir={x:1,y:0}; });
-    }
-
     screen.insertBefore(scoreLine, prompt);
-    if (dpad) screen.insertBefore(dpad, scoreLine);
-    screen.insertBefore(canvas, dpad ?? scoreLine);
+    screen.insertBefore(canvas, scoreLine);
     screen.insertBefore(hdr, canvas);
 
     const ctx = canvas.getContext('2d')!;
@@ -963,7 +944,7 @@ function attachTerminalGame(container: HTMLElement, lang: 'es' | 'en') {
     let iv: ReturnType<typeof setInterval>;
     function cleanup(msg: string, cls: string) {
       snakeActive=false; clearInterval(iv); document.removeEventListener('keydown',keyH);
-      hdr.remove(); canvas.remove(); scoreLine.remove(); if(dpad) dpad.remove();
+      hdr.remove(); canvas.remove(); scoreLine.remove();
       addLine(msg, cls);
     }
 
@@ -1065,6 +1046,24 @@ function attachTerminalGame(container: HTMLElement, lang: 'es' | 'en') {
     setTimeout(next, 80);
   }
 
+  // ── execCmd: lógica de ejecución extraída ────────────────────────────────
+  function execCmd(raw: string) {
+    const cmd = raw.trim().toLowerCase();
+    if (!cmd) return;
+    cmdHistory.unshift(cmd);
+    histIdx = -1;
+    addLine('▸ ' + cmd, 'tg-echo');
+    if (cmd === 'clear') { history.forEach((l) => l.remove()); history.length = 0; return; }
+    if (cmd === 'matrix') { startMatrix(); return; }
+    if (cmd === 'snake')  { startSnake();  return; }
+    if (cmd === 'hack')   { startHack();   return; }
+    if (cmd === 'doom')   { startDoom();   return; }
+    const fn = COMMANDS[cmd];
+    if (fn) addLines(fn([], lang));
+    else addLine(lang === 'en' ? `Command not found: ${cmd}. Type "help".` : `Comando no encontrado: ${cmd}. Escribe "help".`, 'tg-err');
+  }
+
+  // ── Prompt ────────────────────────────────────────────────────────────────
   const prompt = document.createElement('div');
   prompt.className = 'tg-prompt';
   const ps1 = document.createElement('span');
@@ -1075,34 +1074,59 @@ function attachTerminalGame(container: HTMLElement, lang: 'es' | 'en') {
   input.type = 'text';
   input.autocomplete = 'off';
   input.spellcheck = false;
+  input.setAttribute('enterkeyhint', 'go');
+
+  // Botón ↵ visible solo en touch
+  const sendBtn = document.createElement('button');
+  sendBtn.textContent = '↵';
+  sendBtn.style.cssText = 'display:none;background:var(--accent);color:#000;border:0;font-family:var(--font-mono);font-size:1rem;padding:0 12px;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;flex-shrink:0;align-self:stretch;';
+  if (window.matchMedia('(hover:none)').matches) sendBtn.style.display = 'block';
+  sendBtn.addEventListener('touchstart', (e) => {
+    const val = input.value; input.value = '';
+    execCmd(val); input.focus(); e.preventDefault();
+  }, { passive: false });
+
   prompt.appendChild(ps1);
   prompt.appendChild(input);
+  prompt.appendChild(sendBtn);
   screen.appendChild(prompt);
   container.appendChild(overlay);
   container.appendChild(screen);
+
+  // ── Chips de comandos rápidos (solo touch) ────────────────────────────────
+  if (window.matchMedia('(hover:none)').matches) {
+    const chips = document.createElement('div');
+    chips.style.cssText = 'display:flex;gap:5px;padding:8px 10px;border-top:1px solid var(--line-2);flex-wrap:wrap;background:var(--bg-2);';
+    const cmds = ['snake','hack','matrix','help','doom'];
+    cmds.forEach(c => {
+      const b = document.createElement('button');
+      b.textContent = c;
+      b.style.cssText = 'font-family:var(--font-mono);font-size:0.68rem;padding:5px 9px;border:1px solid var(--line-2);color:var(--accent);background:transparent;letter-spacing:0.08em;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;';
+      b.addEventListener('touchstart', (e) => {
+        addLine('▸ ' + c, 'tg-echo');
+        if      (c === 'snake')  startSnake();
+        else if (c === 'hack')   startHack();
+        else if (c === 'matrix') startMatrix();
+        else if (c === 'doom')   startDoom();
+        else execCmd(c);
+        e.preventDefault();
+      }, { passive: false });
+      chips.appendChild(b);
+    });
+    container.appendChild(chips);
+  }
 
   addLine(lang === 'en' ? 'stackblend.shell v1.0 — type "help" to start' : 'stackblend.shell v1.0 — escribe "help" para comenzar');
 
   screen.addEventListener('click', () => input.focus());
   input.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') {
-      const cmd = input.value.trim().toLowerCase();
-      input.value = '';
-      if (!cmd) return;
-      cmdHistory.unshift(cmd);
-      histIdx = -1;
-      addLine('▸ ' + cmd, 'tg-echo');
-      if (cmd === 'clear') { history.forEach((l) => l.remove()); history.length = 0; return; }
-      if (cmd === 'matrix') { startMatrix(); return; }
-      if (cmd === 'snake') { startSnake(); return; }
-      if (cmd === 'hack') { startHack(); return; }
-      if (cmd === 'doom') { startDoom(); return; }
-      const fn = COMMANDS[cmd];
-      if (fn) addLines(fn([], lang));
-      else addLine(lang === 'en' ? `Command not found: ${cmd}. Type "help".` : `Comando no encontrado: ${cmd}. Escribe "help".`, 'tg-err');
-    }
-    if (e.key === 'ArrowUp') { histIdx = Math.min(histIdx + 1, cmdHistory.length - 1); input.value = cmdHistory[histIdx] || ''; }
+    if (e.key === 'Enter') { const val = input.value; input.value = ''; execCmd(val); }
+    if (e.key === 'ArrowUp')   { histIdx = Math.min(histIdx + 1, cmdHistory.length - 1); input.value = cmdHistory[histIdx] || ''; }
     if (e.key === 'ArrowDown') { histIdx = Math.max(histIdx - 1, -1); input.value = histIdx >= 0 ? cmdHistory[histIdx] : ''; }
+  });
+  // Fallback keyup para iOS (el botón Return a veces no dispara keydown)
+  input.addEventListener('keyup', (e) => {
+    if (e.key === 'Enter' && input.value.trim()) { const val = input.value; input.value = ''; execCmd(val); }
   });
 }
 
