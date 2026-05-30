@@ -49,19 +49,35 @@ const tickerItems = [
       <span class="font-mono text-[var(--accent)] font-semibold tracking-widest">AV/_</span>
       <span class="font-mono text-[var(--ink-3)] tracking-widest text-[0.7rem] hidden sm:inline">stackblend.dev</span>
     </div>
-    <!-- Center: nav -->
-    <nav class="absolute left-1/2 -translate-x-1/2 flex items-center gap-6">
+    <!-- Center: nav — desktop only -->
+    <nav class="hidden md:flex absolute left-1/2 -translate-x-1/2 items-center gap-5">
+      <a href="#projects" class="font-mono text-[0.74rem] tracking-widest text-[var(--ink-3)] hover:text-[var(--accent)] transition">projects</a>
+      <a href="#exp" class="font-mono text-[0.74rem] tracking-widest text-[var(--ink-3)] hover:text-[var(--accent)] transition">experience</a>
       <a href="/blog" class="font-mono text-[0.74rem] tracking-widest text-[var(--ink-3)] hover:text-[var(--accent)] transition">blog</a>
       <a href="/about" class="font-mono text-[0.74rem] tracking-widest text-[var(--ink-3)] hover:text-[var(--accent)] transition">about</a>
     </nav>
-    <!-- Right: status + lang -->
-    <div class="flex items-center gap-4 ml-auto">
-      <span class="cy-status"><span class="lang-es">disponible</span><span class="lang-en">available</span></span>
+    <!-- Right: status + lang + mobile btn -->
+    <div class="flex items-center gap-3 ml-auto">
+      <span class="cy-status hidden sm:inline-flex"><span class="lang-es">disponible</span><span class="lang-en">available</span></span>
       <button id="langToggle" class="font-mono text-[0.78rem] tracking-widest border border-[var(--line-2)] px-2 py-1 hover:border-[var(--accent)] hover:text-[var(--accent)] transition">
         <span class="lang-es">EN</span><span class="lang-en">ES</span>
       </button>
+      <button id="mobileMenuBtn" class="md:hidden w-8 h-8 flex items-center justify-center border border-[var(--line-2)] font-mono text-base text-[var(--ink-3)] hover:border-[var(--accent)] hover:text-[var(--accent)] transition" aria-label="menu">≡</button>
     </div>
   </div>
+  <!-- Mobile menu dropdown -->
+  <nav id="mobileMenu" class="hidden md:hidden border-t border-[var(--line)] px-6 py-5" style="background:rgba(5,5,7,0.97);">
+    <div class="flex flex-col gap-4">
+      <a href="#projects" class="mob-link font-mono text-sm tracking-widest text-[var(--ink-2)] hover:text-[var(--accent)] transition flex items-center gap-2"><span class="text-[var(--accent)] text-xs">▸</span>projects</a>
+      <a href="#exp" class="mob-link font-mono text-sm tracking-widest text-[var(--ink-2)] hover:text-[var(--accent)] transition flex items-center gap-2"><span class="text-[var(--accent)] text-xs">▸</span>experience</a>
+      <a href="#stack" class="mob-link font-mono text-sm tracking-widest text-[var(--ink-2)] hover:text-[var(--accent)] transition flex items-center gap-2"><span class="text-[var(--accent)] text-xs">▸</span>stack</a>
+      <a href="#contact" class="mob-link font-mono text-sm tracking-widest text-[var(--ink-2)] hover:text-[var(--accent)] transition flex items-center gap-2"><span class="text-[var(--accent)] text-xs">▸</span>contact</a>
+      <div class="border-t border-[var(--line)] pt-4 flex gap-4">
+        <a href="/blog" class="font-mono text-xs tracking-widest text-[var(--ink-3)] hover:text-[var(--accent)] transition">blog ↗</a>
+        <a href="/about" class="font-mono text-xs tracking-widest text-[var(--ink-3)] hover:text-[var(--accent)] transition">about ↗</a>
+      </div>
+    </div>
+  </nav>
   <!-- Ticker -->
   <div style="display:flex;align-items:center;height:30px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);overflow:hidden;background:var(--bg-2);position:relative;max-width:100vw;">
     <div class="cy-marquee" data-marquee="80">
@@ -1496,6 +1512,23 @@ async function start() {
       if (heroTerm) { heroTerm.innerHTML = ''; paintHero(); }
       const tg = document.getElementById('termGame');
       if (tg) { tg.innerHTML = ''; attachTerminalGame(tg, getLang()); }
+    });
+  }
+
+  // Mobile menu
+  const menuBtn = document.getElementById('mobileMenuBtn');
+  const mobileMenu = document.getElementById('mobileMenu');
+  if (menuBtn && mobileMenu) {
+    menuBtn.addEventListener('click', () => {
+      const open = !mobileMenu.classList.contains('hidden');
+      mobileMenu.classList.toggle('hidden');
+      menuBtn.textContent = open ? '≡' : '✕';
+    });
+    mobileMenu.querySelectorAll('a').forEach(a => {
+      a.addEventListener('click', () => {
+        mobileMenu.classList.add('hidden');
+        menuBtn.textContent = '≡';
+      });
     });
   }
 
