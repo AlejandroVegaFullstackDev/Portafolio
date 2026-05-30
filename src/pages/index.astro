@@ -263,6 +263,22 @@ const tickerItems = [
 </section>
 
 
+<!-- PROJECTS -->
+<section id="projects" class="relative px-6 lg:px-20 py-24 lg:py-36 border-y border-[var(--line)]">
+  <div class="max-w-[1480px] mx-auto">
+    <div class="cy-eyebrow mb-4" data-scramble>
+      <span class="lang-es">// 03 _ PROYECTOS</span>
+      <span class="lang-en">// 03 _ PROJECTS</span>
+    </div>
+    <h2 class="cy-headline text-5xl lg:text-7xl mb-12" data-reveal="up">
+      <span class="lang-es">Casos que <span class="text-[var(--accent)]">construí</span>.</span>
+      <span class="lang-en">Cases I <span class="text-[var(--accent)]">built</span>.</span>
+    </h2>
+    <div class="grid sm:grid-cols-2 gap-4 lg:gap-6" id="projectsGrid" data-stagger></div>
+  </div>
+</section>
+
+
 <!-- EXPERIENCE -->
 <section id="exp" class="relative px-6 lg:px-20 py-24 lg:py-36 bg-[var(--bg-2)] border-y border-[var(--line)] cy-scanlines">
   <div class="max-w-[1480px] mx-auto">
@@ -729,6 +745,31 @@ function paintExp() {
   `).join('');
 }
 
+
+// ─── Projects ─────────────────────────────────────────────────────────────────
+function paintProjects() {
+  const lang = getLang();
+  const grid = document.getElementById('projectsGrid');
+  if (!grid) return;
+  grid.innerHTML = D.projects.map((p: any) => `
+    <a href="/proyecto/${p.slug}" class="cy-tile proj-card" data-stagger-item style="display:block;text-decoration:none;color:inherit;padding:1.5rem;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;">
+        <span class="cy-num" style="font-size:0.72rem;">PRJ_${p.n} · ${p.year}</span>
+        <span style="font-family:var(--font-mono);font-size:1rem;color:var(--accent);">↗</span>
+      </div>
+      <h3 style="font-family:var(--font-display);font-size:clamp(1.4rem,2.8vw,2rem);font-weight:700;line-height:0.95;letter-spacing:-0.03em;margin-bottom:0.6rem;">${p.name[lang]}</h3>
+      <p style="font-family:var(--font-mono);font-size:0.75rem;color:var(--accent);margin-bottom:1rem;letter-spacing:0.06em;">${p.kicker[lang]}</p>
+      <p style="color:var(--ink-2);font-size:0.875rem;line-height:1.6;margin-bottom:1.25rem;">${p.summary[lang].slice(0,140)}${p.summary[lang].length>140?'…':''}</p>
+      <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:1.25rem;">
+        ${p.stack.slice(0,4).map((s:string)=>`<span class="cy-tag">${s}</span>`).join('')}
+      </div>
+      <div style="padding-top:1rem;border-top:1px solid var(--line);display:flex;align-items:center;gap:8px;font-family:var(--font-mono);font-size:0.7rem;letter-spacing:0.18em;color:var(--accent);text-transform:uppercase;">
+        <span style="width:18px;height:1px;background:var(--accent);flex-shrink:0;display:inline-block;"></span>
+        ${lang==='en'?'OPEN CASE':'VER CASO'}
+      </div>
+    </a>
+  `).join('');
+}
 
 // ─── Terminal game ────────────────────────────────────────────────────────────
 function attachTerminalGame(container: HTMLElement, lang: 'es' | 'en') {
@@ -1383,6 +1424,7 @@ async function start() {
   paintAbout();
   paintStack();
   paintExp();
+  paintProjects();
   // GSAP animations
   initCursor();
   initScramble();
@@ -1415,7 +1457,7 @@ async function start() {
   if (langBtn) {
     langBtn.addEventListener('click', () => {
       setLang(getLang() === 'es' ? 'en' : 'es');
-      paintAbout(); paintStack(); paintExp();
+      paintAbout(); paintStack(); paintExp(); paintProjects();
       init3DTiles();
       // Rebuild hero term and game with new lang
       const heroTerm = document.getElementById('heroTerm');
