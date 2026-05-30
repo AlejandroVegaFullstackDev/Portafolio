@@ -8,13 +8,15 @@ export const portfolioData = {
     education: { es: "Formado en SENA", en: "Educated at SENA" },
     title: { es: "Desarrollador Full Stack", en: "Full Stack Developer" },
     tagline: {
-      es: "Especialista en automatización de procesos y arquitecturas escalables.",
-      en: "Specialist in process automation and scalable architectures.",
+      es: "Especialista en automatización de procesos y arquitecturas escalables. Backend, datos y APIs que aguantan tráfico real, no demos.",
+      en: "Specialist in process automation and scalable architectures. Backend, data and APIs that handle real traffic, not demos.",
     },
     status: {
       es: "Disponible para incorporación inmediata",
       en: "Available for immediate hire",
     },
+    projectCount: 7,
+    timezone: "GMT-5",
     contact: {
       linkedin: "https://www.linkedin.com/in/alejandrovega-stackblend/",
       github: "https://github.com/AlejandroVegaFullstackDev",

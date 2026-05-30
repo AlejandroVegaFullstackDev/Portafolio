@@ -1,0 +1,21 @@
+User-agent: *
+Disallow: /api/
+Disallow: /_astro/
+Allow: /
+
+User-agent: GPTBot
+Disallow: /
+
+User-agent: ChatGPT-User
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+User-agent: anthropic-ai
+Disallow: /
+
+User-agent: Claude-Web
+Disallow: /
+
+Sitemap: https://4ledmt.dev/sitemap.xml

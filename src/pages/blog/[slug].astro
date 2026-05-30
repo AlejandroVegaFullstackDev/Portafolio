@@ -1,0 +1,88 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getCollection, render } from 'astro:content';
+import '../../styles/global.css';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  return posts.map(post => ({
+    params: { slug: post.slug },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+
+function fmtDate(d: Date) {
+  return d.toLocaleDateString('es-CO', { year: 'numeric', month: 'long', day: 'numeric' });
+}
+---
+
+<Layout title={`${post.data.title} — Alejandro Vega`}>
+  <style>
+    .prose { color: var(--ink-2); line-height: 1.8; font-size: 1.05rem; }
+    .prose h2 { font-family: var(--font-display); font-size: 1.6rem; font-weight: 600; color: var(--ink); margin: 2.4em 0 0.8em; letter-spacing: -0.02em; }
+    .prose h3 { font-family: var(--font-display); font-size: 1.2rem; font-weight: 600; color: var(--ink); margin: 2em 0 0.6em; }
+    .prose p { margin: 0 0 1.4em; }
+    .prose a { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
+    .prose ul, .prose ol { margin: 0 0 1.4em 1.4em; }
+    .prose li { margin-bottom: 0.4em; }
+    .prose blockquote { border-left: 2px solid var(--accent); padding-left: 1.2em; margin: 1.8em 0; color: var(--ink-3); font-style: italic; }
+    .prose pre { background: var(--panel); border: 1px solid var(--line); padding: 20px; overflow-x: auto; margin: 1.8em 0; border-radius: 0; }
+    .prose code { font-family: var(--font-mono); font-size: 0.88em; color: var(--accent); background: var(--panel); padding: 2px 6px; }
+    .prose pre code { color: var(--ink); background: none; padding: 0; }
+    .prose img { max-width: 100%; height: auto; display: block; margin: 2em auto; border: 1px solid var(--line); }
+    .prose hr { border: none; border-top: 1px solid var(--line); margin: 2.4em 0; }
+  </style>
+
+  <main style="min-height:100vh;padding:80px 24px 80px;max-width:720px;margin:0 auto;">
+    <a href="/blog" style="font-family:var(--font-mono);font-size:0.74rem;color:var(--ink-3);letter-spacing:0.12em;text-decoration:none;display:inline-flex;align-items:center;gap:8px;margin-bottom:48px;">
+      ← blog
+    </a>
+
+    <header style="margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--line);">
+      {post.data.tags.length > 0 && (
+        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px;">
+          {post.data.tags.map(tag => (
+            <span style="font-family:var(--font-mono);font-size:0.68rem;letter-spacing:0.1em;border:1px solid var(--line-2);padding:2px 8px;color:var(--accent);">
+              {tag}
+            </span>
+          ))}
+        </div>
+      )}
+      <h1 style="font-family:var(--font-display);font-size:clamp(2rem,5vw,3.2rem);font-weight:700;letter-spacing:-0.04em;line-height:1.1;margin-bottom:16px;">
+        {post.data.title}
+      </h1>
+      {post.data.description && (
+        <p style="font-size:1rem;color:var(--ink-3);line-height:1.55;margin-bottom:16px;">
+          {post.data.description}
+        </p>
+      )}
+      <span style="font-family:var(--font-mono);font-size:0.72rem;color:var(--ink-3);letter-spacing:0.1em;">
+        {fmtDate(post.data.date)}
+      </span>
+    </header>
+
+    {post.data.cover && (
+      <img
+        src={post.data.cover}
+        alt={post.data.title}
+        style="width:100%;height:auto;object-fit:cover;border:1px solid var(--line);margin-bottom:48px;"
+      />
+    )}
+
+    <article class="prose">
+      <Content />
+    </article>
+
+    <footer style="margin-top:64px;padding-top:24px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+      <a href="/blog" style="font-family:var(--font-mono);font-size:0.74rem;color:var(--ink-3);letter-spacing:0.12em;text-decoration:none;">
+        ← todos los posts
+      </a>
+      <a href="/" style="font-family:var(--font-mono);font-size:0.74rem;color:var(--accent);letter-spacing:0.12em;text-decoration:none;">
+        AV/_ ↗
+      </a>
+    </footer>
+  </main>
+</Layout>

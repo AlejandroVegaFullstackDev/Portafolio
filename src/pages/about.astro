@@ -1,0 +1,185 @@
+---
+import Layout from '../layouts/Layout.astro';
+import '../styles/global.css';
+---
+
+<Layout title="About — Alejandro Vega">
+<style>
+  .ab-card {
+    border: 1px solid var(--line);
+    padding: 24px;
+    background: var(--panel);
+    position: relative;
+  }
+  .ab-card::before {
+    content: '';
+    position: absolute;
+    top: -1px; left: -1px;
+    width: 10px; height: 10px;
+    border-top: 1px solid var(--accent);
+    border-left: 1px solid var(--accent);
+  }
+  .twitch-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    border: 1px solid #9146ff;
+    padding: 12px 24px;
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+    letter-spacing: 0.1em;
+    color: #9146ff;
+    text-decoration: none;
+    transition: background 0.2s, color 0.2s;
+  }
+  .twitch-btn:hover {
+    background: #9146ff;
+    color: #fff;
+  }
+  .interest-tag {
+    display: inline-block;
+    border: 1px solid var(--line-2);
+    padding: 5px 12px;
+    font-family: var(--font-mono);
+    font-size: 0.74rem;
+    letter-spacing: 0.08em;
+    color: var(--ink-2);
+  }
+  .section-label {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.2em;
+    color: var(--accent);
+    margin-bottom: 14px;
+    text-transform: uppercase;
+  }
+</style>
+
+<main style="min-height:100vh;padding:0 0 80px;">
+
+  <!-- Nav -->
+  <header style="position:fixed;top:0;left:0;right:0;z-index:40;background:rgba(5,5,7,0.8);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);">
+    <div style="padding:0 24px;height:48px;display:flex;align-items:center;justify-content:space-between;max-width:1200px;margin:0 auto;">
+      <a href="/" style="font-family:var(--font-mono);font-size:0.82rem;font-weight:600;letter-spacing:0.15em;color:var(--accent);text-decoration:none;">AV/_</a>
+      <nav style="display:flex;gap:24px;">
+        <a href="/" style="font-family:var(--font-mono);font-size:0.74rem;letter-spacing:0.1em;color:var(--ink-3);text-decoration:none;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--ink-3)'">portafolio</a>
+        <a href="/blog" style="font-family:var(--font-mono);font-size:0.74rem;letter-spacing:0.1em;color:var(--ink-3);text-decoration:none;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--ink-3)'">blog</a>
+      </nav>
+    </div>
+  </header>
+
+  <div style="padding:100px 24px 0;max-width:960px;margin:0 auto;">
+
+    <!-- Hero -->
+    <section style="padding-bottom:64px;border-bottom:1px solid var(--line);margin-bottom:64px;">
+      <div class="section-label">// SOBRE MÍ</div>
+      <h1 style="font-family:var(--font-display);font-size:clamp(3rem,8vw,6rem);font-weight:700;letter-spacing:-0.05em;line-height:0.9;margin-bottom:28px;">
+        Alejandro<br/><span style="color:var(--accent);">Vega.</span>
+      </h1>
+      <p style="font-size:1.15rem;color:var(--ink-2);line-height:1.7;max-width:560px;">
+        Dev Full Stack de día, curioso empedernido de noche. Bogotá, Colombia.
+        Construyo cosas en internet y de vez en cuando las rompo para ver cómo funcionan.
+      </p>
+    </section>
+
+    <!-- Grid principal -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-bottom:64px;">
+
+      <!-- Twitch -->
+      <div class="ab-card" style="grid-column:1/-1;">
+        <div class="section-label">// TWITCH</div>
+        <p style="color:var(--ink-2);font-size:0.95rem;line-height:1.65;margin-bottom:20px;">
+          <!-- EDITA AQUÍ: describe qué stremeas -->
+          De vez en cuando me encuentro en vivo. Puede ser código en directo, gaming, charla random
+          o las tres cosas al mismo tiempo. Sin horario fijo, sin guión.
+        </p>
+        <a href="https://www.twitch.tv/4ledmt" target="_blank" rel="noopener" class="twitch-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714z"/></svg>
+          twitch.tv/4ledmt
+        </a>
+      </div>
+
+      <!-- Música -->
+      <div class="ab-card">
+        <div class="section-label">// MÚSICA</div>
+        <p style="color:var(--ink-2);font-size:0.9rem;line-height:1.6;margin-bottom:16px;">
+          <!-- EDITA AQUÍ: géneros y artistas que te gustan -->
+          La música es fondo constante. Desde synthwave hasta lo que no tiene nombre fácil.
+        </p>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;">
+          <!-- EDITA AQUÍ: tus géneros reales -->
+          <span class="interest-tag">synthwave</span>
+          <span class="interest-tag">hip-hop</span>
+          <span class="interest-tag">electrónica</span>
+          <span class="interest-tag">rock</span>
+        </div>
+      </div>
+
+      <!-- Historia & intereses -->
+      <div class="ab-card">
+        <div class="section-label">// INTERESES</div>
+        <p style="color:var(--ink-2);font-size:0.9rem;line-height:1.6;margin-bottom:16px;">
+          <!-- EDITA AQUÍ: tus intereses específicos -->
+          Historia militar, geopolítica, civilizaciones antiguas. El pasado explica el presente mejor que cualquier análisis.
+        </p>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;">
+          <span class="interest-tag">historia</span>
+          <span class="interest-tag">geopolítica</span>
+          <span class="interest-tag">tecnología</span>
+          <span class="interest-tag">videojuegos</span>
+        </div>
+      </div>
+
+      <!-- Dev -->
+      <div class="ab-card" style="grid-column:1/-1;">
+        <div class="section-label">// LO QUE HAGO</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px;">
+          <div>
+            <div style="font-family:var(--font-mono);font-size:0.72rem;color:var(--ink-3);margin-bottom:8px;">backend</div>
+            <p style="color:var(--ink-2);font-size:0.88rem;line-height:1.55;">NestJS, Laravel, Python. APIs que aguantan tráfico real.</p>
+          </div>
+          <div>
+            <div style="font-family:var(--font-mono);font-size:0.72rem;color:var(--ink-3);margin-bottom:8px;">datos</div>
+            <p style="color:var(--ink-2);font-size:0.88rem;line-height:1.55;">BigQuery, ETL, pipelines. Decisiones con datos, no con intuición.</p>
+          </div>
+          <div>
+            <div style="font-family:var(--font-mono);font-size:0.72rem;color:var(--ink-3);margin-bottom:8px;">automatización</div>
+            <p style="color:var(--ink-2);font-size:0.88rem;line-height:1.55;">Si algo se puede automatizar, ya no debería hacerse a mano.</p>
+          </div>
+        </div>
+        <div style="margin-top:20px;padding-top:20px;border-top:1px solid var(--line);">
+          <a href="/" style="font-family:var(--font-mono);font-size:0.78rem;letter-spacing:0.1em;color:var(--accent);text-decoration:none;">
+            → ver portafolio completo
+          </a>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Footer links -->
+    <div style="display:flex;flex-wrap:wrap;gap:24px;align-items:center;padding-top:24px;border-top:1px solid var(--line);">
+      <a href="https://www.twitch.tv/4ledmt" target="_blank" rel="noopener"
+        style="font-family:var(--font-mono);font-size:0.74rem;letter-spacing:0.1em;color:var(--ink-3);text-decoration:none;"
+        onmouseover="this.style.color='#9146ff'" onmouseout="this.style.color='var(--ink-3)'">
+        twitch ↗
+      </a>
+      <a href="https://github.com/AlejandroVegaFullstackDev" target="_blank" rel="noopener"
+        style="font-family:var(--font-mono);font-size:0.74rem;letter-spacing:0.1em;color:var(--ink-3);text-decoration:none;"
+        onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--ink-3)'">
+        github ↗
+      </a>
+      <a href="https://www.linkedin.com/in/alejandrovega-stackblend/" target="_blank" rel="noopener"
+        style="font-family:var(--font-mono);font-size:0.74rem;letter-spacing:0.1em;color:var(--ink-3);text-decoration:none;"
+        onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--ink-3)'">
+        linkedin ↗
+      </a>
+      <a href="/blog"
+        style="font-family:var(--font-mono);font-size:0.74rem;letter-spacing:0.1em;color:var(--ink-3);text-decoration:none;"
+        onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--ink-3)'">
+        blog ↗
+      </a>
+    </div>
+
+  </div>
+</main>
+</Layout>

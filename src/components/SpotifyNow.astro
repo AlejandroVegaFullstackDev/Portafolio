@@ -1,0 +1,376 @@
+---
+// SpotifyNow.astro — fixed now-playing widget, driven by 'spotify:update' custom event
+---
+
+<div id="spWidget" aria-live="polite" aria-label="Now playing on Spotify">
+  <span class="sp-c sp-tl"></span>
+  <span class="sp-c sp-tr"></span>
+  <span class="sp-c sp-bl"></span>
+  <span class="sp-c sp-br"></span>
+
+  <div class="sp-head">
+    <span class="sp-label">// NOW_PLAYING</span>
+    <div class="sp-eq" id="spEq">
+      <span></span><span></span><span></span><span></span>
+    </div>
+  </div>
+
+  <div class="sp-body">
+    <div class="sp-art-wrap">
+      <img id="spArt" src="" alt="" width="56" height="56" />
+      <div class="sp-art-scan"></div>
+    </div>
+    <div class="sp-meta">
+      <div id="spTitle" class="sp-title">—</div>
+      <div id="spArtist" class="sp-artist">—</div>
+      <div class="sp-prog-row">
+        <div class="sp-prog-track">
+          <div id="spBar" class="sp-prog-fill"></div>
+        </div>
+        <span id="spTime" class="sp-time">0:00</span>
+      </div>
+      <a id="spLink" href="#" target="_blank" rel="noopener noreferrer" class="sp-link">
+        ↗ SPOTIFY
+      </a>
+    </div>
+  </div>
+</div>
+
+<style>
+#spWidget {
+  position: fixed;
+  bottom: 24px;
+  left: 24px;
+  z-index: 200;
+  width: 268px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  display: none;
+  flex-direction: column;
+  overflow: hidden;
+  will-change: transform, opacity;
+}
+
+.sp-c {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border-color: var(--accent);
+  border-style: solid;
+  pointer-events: none;
+}
+.sp-tl { top: -1px; left: -1px; border-width: 1px 0 0 1px; }
+.sp-tr { top: -1px; right: -1px; border-width: 1px 1px 0 0; }
+.sp-bl { bottom: -1px; left: -1px; border-width: 0 0 1px 1px; }
+.sp-br { bottom: -1px; right: -1px; border-width: 0 1px 1px 0; }
+
+.sp-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 7px 12px;
+  border-bottom: 1px solid var(--line);
+  background: rgba(255, 0, 60, 0.05);
+}
+.sp-label {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.16em;
+  color: var(--accent);
+}
+.sp-eq {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 12px;
+}
+.sp-eq span {
+  display: block;
+  width: 3px;
+  height: 4px;
+  background: var(--accent);
+  border-radius: 1px;
+  transform-origin: bottom center;
+}
+
+.sp-body {
+  display: flex;
+  gap: 12px;
+  padding: 12px;
+  align-items: flex-start;
+}
+
+.sp-art-wrap {
+  position: relative;
+  flex-shrink: 0;
+  width: 56px;
+  height: 56px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  background: var(--bg-2);
+}
+.sp-art-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.sp-art-scan {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,0.18) 2px,
+    rgba(0,0,0,0.18) 3px
+  );
+  pointer-events: none;
+}
+
+.sp-meta {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.sp-title {
+  font-family: var(--font-display);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-height: 1.1em;
+}
+.sp-artist {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--ink-3);
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-height: 1em;
+}
+
+.sp-prog-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+}
+.sp-prog-track {
+  flex: 1;
+  height: 2px;
+  background: var(--line);
+  position: relative;
+  overflow: hidden;
+}
+.sp-prog-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 0%;
+  background: var(--accent);
+  box-shadow: 0 0 8px var(--accent);
+}
+.sp-time {
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  color: var(--ink-3);
+  flex-shrink: 0;
+  letter-spacing: 0.04em;
+}
+.sp-link {
+  display: inline-block;
+  margin-top: 4px;
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.12em;
+  color: var(--ink-3);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.sp-link:hover { color: var(--accent); }
+
+@media (max-width: 480px) {
+  #spWidget { width: calc(100vw - 32px); bottom: 16px; left: 16px; }
+}
+</style>
+
+<script>
+import gsap from 'gsap';
+
+const CHARS = '!<>-_\\/[]{}—=+*^?#________ABCDEF0123456789';
+
+function scramble(el: HTMLElement, text: string) {
+  const arr = text.split('');
+  let frame = 0;
+  const q = arr.map((c) => ({
+    to: c,
+    start: Math.floor(Math.random() * 8),
+    end: Math.floor(Math.random() * 14) + 8,
+  }));
+  let raf = 0;
+  function tick() {
+    let out = '', done = 0;
+    for (const { to, start, end } of q) {
+      if (frame >= end) { done++; out += to; }
+      else if (frame >= start) out += CHARS[Math.floor(Math.random() * CHARS.length)];
+      else out += ' ';
+    }
+    el.textContent = out;
+    if (done === q.length) return;
+    frame++;
+    raf = requestAnimationFrame(tick);
+  }
+  cancelAnimationFrame(raf);
+  tick();
+}
+
+function fmt(ms: number) {
+  const s = Math.floor(ms / 1000);
+  return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+}
+
+const widget   = document.getElementById('spWidget')    as HTMLElement;
+const artEl    = document.getElementById('spArt')       as HTMLImageElement;
+const titleEl  = document.getElementById('spTitle')     as HTMLElement;
+const artistEl = document.getElementById('spArtist')    as HTMLElement;
+const barEl    = document.getElementById('spBar')       as HTMLElement;
+const timeEl   = document.getElementById('spTime')      as HTMLElement;
+const linkEl   = document.getElementById('spLink')      as HTMLAnchorElement;
+const eqEl     = document.getElementById('spEq')        as HTMLElement;
+const eqBars   = Array.from(eqEl.querySelectorAll('span')) as HTMLElement[];
+
+let visible      = false;
+let currentTrack = '';
+let progress     = 0;
+let duration     = 0;
+let playing      = false;
+let tickId: ReturnType<typeof setInterval> | null = null;
+let floatTl: gsap.core.Tween | null = null;
+
+// ── EQ ────────────────────────────────────────────────────────────────────────
+function startEQ() {
+  eqBars.forEach((bar, i) => {
+    gsap.to(bar, {
+      scaleY: () => gsap.utils.random(0.25, 1.5),
+      duration: 0.16 + i * 0.06,
+      ease: 'power1.inOut',
+      repeat: -1,
+      yoyo: true,
+      delay: i * 0.05,
+      transformOrigin: 'bottom center',
+    });
+  });
+}
+
+function stopEQ() {
+  gsap.to(eqBars, { scaleY: 0.2, duration: 0.3, ease: 'power2.out', overwrite: true, transformOrigin: 'bottom center' });
+}
+
+// ── Progress tick ─────────────────────────────────────────────────────────────
+function startTick() {
+  if (tickId) clearInterval(tickId);
+  tickId = setInterval(() => {
+    if (!playing || !duration) return;
+    progress = Math.min(progress + 1000, duration);
+    gsap.to(barEl, { width: `${(progress / duration) * 100}%`, duration: 0.8, ease: 'none', overwrite: true });
+    timeEl.textContent = fmt(progress);
+  }, 1000);
+}
+
+// ── Show ──────────────────────────────────────────────────────────────────────
+function show(data: {
+  isPlaying: boolean; title: string; artist: string;
+  songUrl: string; albumImageUrl: string | null;
+  progress_ms: number; duration_ms: number;
+}) {
+  const trackKey = `${data.title}||${data.artist}`;
+  const changed  = trackKey !== currentTrack;
+
+  if (!visible) {
+    widget.style.display = 'flex';
+    gsap.fromTo(widget,
+      { y: 90, opacity: 0, scale: 0.9 },
+      {
+        y: 0, opacity: 1, scale: 1, duration: 0.95, ease: 'expo.out',
+        onComplete() {
+          floatTl = gsap.to(widget, { y: -5, duration: 3.4, ease: 'sine.inOut', repeat: -1, yoyo: true });
+        },
+      }
+    );
+    visible = true;
+    startEQ();
+  }
+
+  if (changed) {
+    currentTrack = trackKey;
+
+    // Album art crossfade
+    if (data.albumImageUrl) {
+      gsap.to(artEl, {
+        opacity: 0, scale: 0.82, duration: 0.22, ease: 'power2.in',
+        onComplete() {
+          artEl.src = data.albumImageUrl!;
+          artEl.onload = () =>
+            gsap.to(artEl, { opacity: 1, scale: 1, duration: 0.38, ease: 'back.out(1.5)' });
+        },
+      });
+    }
+
+    // Title scramble + header glitch
+    scramble(titleEl, data.title.toUpperCase());
+
+    // Artist slide-up
+    gsap.fromTo(artistEl,
+      { opacity: 0, y: 8 },
+      {
+        opacity: 1, y: 0, duration: 0.38, ease: 'power2.out', delay: 0.12,
+        onStart() { artistEl.textContent = data.artist.toUpperCase(); },
+      }
+    );
+
+    // Corner accent flash
+    gsap.fromTo('.sp-c', { opacity: 0.2 }, { opacity: 1, duration: 0.06, yoyo: true, repeat: 5, ease: 'none' });
+  }
+
+  linkEl.href = data.songUrl || '#';
+  progress  = data.progress_ms;
+  duration  = data.duration_ms;
+  playing   = data.isPlaying;
+
+  if (duration > 0) {
+    gsap.to(barEl, { width: `${(progress / duration) * 100}%`, duration: 1, ease: 'power1.out', overwrite: true });
+    timeEl.textContent = fmt(progress);
+  }
+
+  if (playing) startTick();
+}
+
+// ── Hide ──────────────────────────────────────────────────────────────────────
+function hide() {
+  if (!visible) return;
+  floatTl?.kill();
+  floatTl = null;
+  if (tickId) { clearInterval(tickId); tickId = null; }
+  playing = false;
+  stopEQ();
+  gsap.to(widget, {
+    y: 90, opacity: 0, scale: 0.92, duration: 0.6, ease: 'power2.in',
+    onComplete() { widget.style.display = 'none'; visible = false; currentTrack = ''; },
+  });
+}
+
+// ── Listen for data from initNowPlaying ───────────────────────────────────────
+window.addEventListener('spotify:update', (e) => {
+  const data = (e as CustomEvent).detail;
+  if (data?.isPlaying) show(data);
+  else hide();
+});
+</script>

@@ -8,8 +8,9 @@ export function getStaticPaths() {
   return portfolioData.projects.map((p) => ({ params: { slug: p.slug } }));
 }
 
+const D = portfolioData;
 const { slug } = Astro.params;
-const project = portfolioData.projects.find((p) => p.slug === slug)!;
+const project = D.projects.find((p) => p.slug === slug)!;
 ---
 
 <Layout title={`${project.name.es} — Alejandro Vega`}>
@@ -197,10 +198,10 @@ const project = portfolioData.projects.find((p) => p.slug === slug)!;
       <span class="lang-en">Got something similar?</span>
     </h2>
     <div class="mt-10 flex flex-wrap gap-4">
-      <a href="https://www.linkedin.com/in/alejandrovega-stackblend/" target="_blank" class="inline-flex items-center gap-2 px-6 py-3 bg-black text-white font-mono text-sm tracking-widest hover:bg-white hover:text-black transition">
+      <a href={D.identity.contact.linkedin} target="_blank" class="inline-flex items-center gap-2 px-6 py-3 bg-black text-white font-mono text-sm tracking-widest hover:bg-white hover:text-black transition">
         <span class="lang-es">HABLEMOS ↗</span><span class="lang-en">LET'S TALK ↗</span>
       </a>
-      <a href="https://github.com/AlejandroVegaFullstackDev" target="_blank" class="inline-flex items-center gap-2 px-6 py-3 border border-black font-mono text-sm tracking-widest hover:bg-black hover:text-[var(--accent)] transition">GITHUB ↗</a>
+      <a href={D.identity.contact.github} target="_blank" class="inline-flex items-center gap-2 px-6 py-3 border border-black font-mono text-sm tracking-widest hover:bg-black hover:text-[var(--accent)] transition">GITHUB ↗</a>
     </div>
   </div>
 </section>

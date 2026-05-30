@@ -598,3 +598,38 @@ img, pre, canvas, iframe { max-width: 100%; }
   /* Hero eyebrow tighter */
   #hero .mb-8 { margin-bottom: 1rem !important; }
 }
+
+/* ─── ANARCHIC EXTRAS ───────────────────────────────────────────────────────── */
+
+.cy-noise-dot {
+  position: absolute;
+  border-radius: 50%;
+  background: var(--accent);
+  pointer-events: none;
+  z-index: 2;
+  opacity: 0;
+}
+
+@keyframes scanline-scroll {
+  0% { background-position: 0 0; }
+  100% { background-position: 0 100px; }
+}
+
+/* RGB aberration ghost — layered on h2 via JS filter */
+section h2.cy-headline { will-change: filter; }
+
+/* Stack cell — GSAP handles hover, remove CSS transitions */
+.stack-cell { transition: none !important; }
+
+/* Exp row — GSAP handles hover */
+.exp-row { transition: none !important; cursor: default; }
+
+/* Tag — GSAP handles hover */
+.cy-tag { cursor: default; }
+
+/* Hero chars — 3d preserve for wild rotations */
+#heroName { transform-style: preserve-3d; perspective: 800px; }
+#heroName .hc { transform-style: preserve-3d; will-change: transform; }
+
+/* Section parallax wrapper needs overflow visible */
+section h2.cy-headline { overflow: visible; }
