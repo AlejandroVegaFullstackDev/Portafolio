@@ -254,9 +254,12 @@ let duration     = 0;
 let playing      = false;
 let tickId: ReturnType<typeof setInterval> | null = null;
 let floatTl: gsap.core.Tween | null = null;
+let eqRunning    = false;
 
 // ── EQ ────────────────────────────────────────────────────────────────────────
 function startEQ() {
+  if (eqRunning) return;
+  eqRunning = true;
   eqBars.forEach((bar, i) => {
     gsap.to(bar, {
       scaleY: () => gsap.utils.random(0.25, 1.5),
@@ -271,6 +274,7 @@ function startEQ() {
 }
 
 function stopEQ() {
+  eqRunning = false;
   gsap.to(eqBars, { scaleY: 0.2, duration: 0.3, ease: 'power2.out', overwrite: true, transformOrigin: 'bottom center' });
 }
 
@@ -287,7 +291,7 @@ function startTick() {
 
 // ── Show ──────────────────────────────────────────────────────────────────────
 function show(data: {
-  isPlaying: boolean; title: string; artist: string;
+  isPlaying: boolean; isRecent?: boolean; title: string; artist: string;
   songUrl: string; albumImageUrl: string | null;
   progress_ms: number; duration_ms: number;
 }) {
@@ -350,7 +354,12 @@ function show(data: {
     timeEl.textContent = fmt(progress);
   }
 
-  if (playing) startTick();
+  if (playing) {
+    startEQ();
+    startTick();
+  } else {
+    stopEQ();
+  }
 }
 
 // ── Hide ──────────────────────────────────────────────────────────────────────
@@ -370,7 +379,7 @@ function hide() {
 // ── Listen for data from initNowPlaying ───────────────────────────────────────
 window.addEventListener('spotify:update', (e) => {
   const data = (e as CustomEvent).detail;
-  if (data?.isPlaying) show(data);
+  if (data?.title && data?.artist) show(data);
   else hide();
 });
 </script>

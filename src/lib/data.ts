@@ -5,17 +5,17 @@ export const portfolioData = {
     initials: "AV",
     location: { es: "Bogotá, Colombia", en: "Bogotá, Colombia" },
     yearsExp: 4,
-    education: { es: "Formado en SENA", en: "Educated at SENA" },
-    title: { es: "Desarrollador Full Stack", en: "Full Stack Developer" },
+    education: { es: "SENA 1.5 años y 3 años en UNIMINUTO", en: "1.5 years at SENA and 3 years at UNIMINUTO" },
+    title: { es: "Desarrollador Full Stack Semi Senior", en: "Semi Senior Full Stack Developer" },
     tagline: {
-      es: "Especialista en automatización de procesos y arquitecturas escalables. Backend, datos y APIs que aguantan tráfico real, no demos.",
-      en: "Specialist in process automation and scalable architectures. Backend, data and APIs that handle real traffic, not demos.",
+      es: "Desarrollo productos web de punta a punta: frontend, backend, automatización, datos y plataformas internas que sí aguantan operación real.",
+      en: "I build end-to-end web products: frontend, backend, automation, data and internal platforms for real operations.",
     },
     status: {
       es: "Disponible para incorporación inmediata",
       en: "Available for immediate hire",
     },
-    projectCount: 7,
+    projectCount: 4,
     timezone: "GMT-5",
     contact: {
       linkedin: "https://www.linkedin.com/in/alejandrovega-stackblend/",
@@ -26,14 +26,14 @@ export const portfolioData = {
 
   about: {
     es: [
-      "Soy Desarrollador Full Stack con 4 años de experiencia liderando soluciones de alto impacto en empresas como Pulzo y Kiki Latam.",
-      "Me especializo en diseñar e implementar sistemas eficientes, escalables y sostenibles, con enfoque en mejora continua, automatización y calidad del código.",
-      "Resuelvo problemas complejos mediante automatización y uso estratégico de datos (BigQuery) para la toma de decisiones. Autodidacta, adaptable y orientado a resultados.",
+      "Soy Desarrollador Full Stack Semi Senior con 4 años de experiencia construyendo soluciones web, APIs, automatizaciones y plataformas internas para equipos reales.",
+      "Trabajo cómodo en todo el ciclo: frontend, backend, bases de datos, integraciones, despliegue y mejora continua. También disfruto mucho construir interfaces claras y usables.",
+      "Me gusta resolver fricción operativa: procesos manuales, integraciones rotas, reportes lentos o sistemas que necesitan escalar sin perder claridad.",
     ],
     en: [
-      "Full Stack Developer with 4 years of experience leading high-impact solutions at companies like Pulzo and Kiki Latam.",
-      "I specialize in designing and implementing efficient, scalable and sustainable systems, with a focus on continuous improvement, automation and code quality.",
-      "I solve complex problems through automation and strategic use of data (BigQuery) for decision-making. Self-taught, adaptable and results-oriented.",
+      "Semi Senior Full Stack Developer with 4 years of experience building web solutions, APIs, automations and internal platforms for real teams.",
+      "I work comfortably across the full cycle: frontend, backend, databases, integrations, deployment and continuous improvement. I also really enjoy building clear, usable interfaces.",
+      "I like solving operational friction: manual processes, brittle integrations, slow reports or systems that need to scale without losing clarity.",
     ],
   },
 
