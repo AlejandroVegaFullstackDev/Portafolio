@@ -82,12 +82,12 @@ const project = D.projects.find((p) => p.slug === slug)!;
       <div class="ed-display text-2xl" id="phYear2"></div>
     </div>
     <div>
-      <div class="ed-marker mb-2">// STATUS</div>
-      <div class="ed-display text-2xl" style="color:var(--accent)">live · production</div>
+      <div class="ed-marker mb-2">// GITHUB</div>
+      <div class="ed-display text-2xl" id="phGithub"></div>
     </div>
     <div>
-      <div class="ed-marker mb-2">// TYPE</div>
-      <div class="ed-display text-2xl"><span class="lang-es">Full Stack / Backend</span><span class="lang-en">Full Stack / Backend</span></div>
+      <div class="ed-marker mb-2">// STACK</div>
+      <div class="ed-display text-xl" id="phStackMeta"></div>
     </div>
   </div>
 </section>
@@ -250,6 +250,18 @@ function paint() {
   set('phRole', p.role[lang]);
   set('phSummary', p.summary[lang]);
   set('phChallenge', (deep.challenge && deep.challenge[lang]) || '—');
+
+  const ghEl = document.getElementById('phGithub');
+  if (ghEl) {
+    const gh = (p as any).github;
+    if (gh) {
+      ghEl.innerHTML = `<a href="${gh}" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none;font-size:1rem;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">ver repo ↗</a>`;
+    } else {
+      ghEl.textContent = 'privado';
+    }
+  }
+  const stackMeta = document.getElementById('phStackMeta');
+  if (stackMeta) stackMeta.textContent = p.stack.slice(0, 3).join(' · ');
   set('phSolution', (deep.solution && deep.solution[lang]) || '—');
 
   const metrics = document.getElementById('phMetrics');
