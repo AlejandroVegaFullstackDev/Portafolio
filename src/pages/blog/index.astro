@@ -10,86 +10,267 @@ const posts = (await getCollection('blog')).sort(
 function fmtDate(d: Date) {
   return d.toLocaleDateString('es-CO', { year: 'numeric', month: '2-digit', day: '2-digit' });
 }
+
+function readingTime(body: string | undefined) {
+  if (!body) return '1 min';
+  const words = body.trim().split(/\s+/).length;
+  return Math.max(1, Math.round(words / 200)) + ' min';
+}
 ---
 
 <Layout title="Blog — Alejandro Vega">
   <style>
-    .post-card {
-      border: 1px solid var(--line);
-      padding: 28px 24px;
-      display: block;
+    body { background: var(--bg); }
+
+    /* Header */
+    .blog-header {
+      border-bottom: 1px solid var(--line);
+      padding: 5rem 1.5rem 3.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+    @media (min-width: 1024px) {
+      .blog-header { padding: 6rem 5rem 4rem; }
+    }
+    .blog-bg-word {
+      position: absolute;
+      right: -0.04em;
+      top: 50%;
+      transform: translateY(-50%);
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: clamp(10rem, 22vw, 20rem);
+      line-height: 1;
+      color: var(--line);
+      letter-spacing: -0.04em;
+      select: none;
+      pointer-events: none;
+      user-select: none;
+    }
+    .blog-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      color: var(--ink-3);
+      text-decoration: none;
+      margin-bottom: 2.5rem;
+      transition: color 0.2s;
+    }
+    .blog-back:hover { color: var(--accent); }
+    .blog-eyebrow {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      color: var(--accent);
+      margin-bottom: 0.75rem;
+    }
+    .blog-h1 {
+      font-family: var(--font-display);
+      font-size: clamp(3rem, 8vw, 6.5rem);
+      font-weight: 700;
+      letter-spacing: -0.04em;
+      line-height: 0.95;
+      color: var(--ink);
+    }
+    .blog-meta-strip {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--ink-3);
+      margin-top: 1.25rem;
+      flex-wrap: wrap;
+    }
+    .blog-meta-strip .dot-sep { color: var(--line-2); }
+
+    /* Post list */
+    .posts-wrap {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1.5rem 6rem;
+    }
+    @media (min-width: 1024px) {
+      .posts-wrap { padding: 0 5rem 6rem; }
+    }
+
+    .post-row {
+      display: grid;
+      grid-template-columns: 56px 1fr auto;
+      gap: 1.25rem;
+      align-items: start;
+      padding: 2.25rem 0;
+      border-bottom: 1px solid var(--line);
       text-decoration: none;
       color: inherit;
-      transition: border-color 0.2s, background 0.2s;
       position: relative;
+      transition: background 0.2s;
     }
-    .post-card:hover {
-      border-color: var(--accent);
-      background: var(--panel);
-    }
-    .post-card::before {
+    .post-row::after {
       content: '';
       position: absolute;
-      top: -1px; left: -1px;
-      width: 12px; height: 12px;
-      border-top: 1px solid var(--accent);
-      border-left: 1px solid var(--accent);
-      opacity: 0;
-      transition: opacity 0.2s;
+      left: 0; bottom: -1px;
+      height: 1px; width: 0;
+      background: var(--accent);
+      transition: width 0.45s cubic-bezier(0.22,1,0.36,1);
     }
-    .post-card:hover::before { opacity: 1; }
+    .post-row:hover::after { width: 100%; }
+
+    .post-num {
+      font-family: var(--font-display);
+      font-size: clamp(2.8rem, 5vw, 4rem);
+      font-weight: 700;
+      color: var(--line-2);
+      line-height: 1;
+      padding-top: 0.1em;
+      letter-spacing: -0.04em;
+      transition: color 0.25s;
+    }
+    .post-row:hover .post-num { color: var(--line); }
+
+    .post-body { min-width: 0; }
+    .post-title {
+      font-family: var(--font-display);
+      font-size: clamp(1.4rem, 3.5vw, 2.2rem);
+      font-weight: 600;
+      letter-spacing: -0.025em;
+      line-height: 1.1;
+      color: var(--ink);
+      margin-bottom: 0.5rem;
+      transition: color 0.2s;
+    }
+    .post-row:hover .post-title { color: var(--ink); }
+
+    .post-desc {
+      font-size: 0.88rem;
+      color: var(--ink-2);
+      line-height: 1.6;
+      margin-bottom: 0.85rem;
+      max-width: 65ch;
+    }
+    .post-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: center;
+    }
+    .post-date {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      color: var(--accent);
+      letter-spacing: 0.08em;
+    }
+    .post-rt {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      color: var(--ink-3);
+    }
+    .post-tag {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.08em;
+      border: 1px solid var(--line-2);
+      padding: 2px 7px;
+      color: var(--ink-3);
+    }
+
+    .post-arrow {
+      font-family: var(--font-mono);
+      font-size: 1.1rem;
+      color: var(--line-2);
+      align-self: center;
+      transition: color 0.2s, transform 0.25s;
+    }
+    .post-row:hover .post-arrow {
+      color: var(--accent);
+      transform: translateX(5px);
+    }
+
+    /* Mobile */
+    @media (max-width: 600px) {
+      .post-row { grid-template-columns: 40px 1fr auto; gap: 0.75rem; padding: 1.75rem 0; }
+      .post-num { font-size: 2.2rem; }
+      .post-title { font-size: 1.25rem; }
+      .post-arrow { display: none; }
+    }
+
+    /* Empty state */
+    .blog-empty {
+      font-family: var(--font-mono);
+      color: var(--ink-3);
+      text-align: center;
+      padding: 6rem 0;
+      font-size: 0.85rem;
+    }
+
+    /* Theme accent line at top */
+    .blog-accent-bar {
+      height: 2px;
+      background: var(--accent);
+      width: 56px;
+      margin-bottom: 1.5rem;
+    }
   </style>
 
-  <main style="min-height:100vh;padding:80px 24px 60px;max-width:860px;margin:0 auto;">
-    <header style="margin-bottom:56px;">
-      <a href="/" style="font-family:var(--font-mono);font-size:0.74rem;color:var(--ink-3);letter-spacing:0.12em;text-decoration:none;display:inline-flex;align-items:center;gap:8px;margin-bottom:32px;">
-        ← AV/_
-      </a>
-      <div style="font-family:var(--font-mono);font-size:0.72rem;letter-spacing:0.18em;color:var(--accent);margin-bottom:12px;">// BLOG</div>
-      <h1 style="font-family:var(--font-display);font-size:clamp(2.4rem,6vw,4.5rem);font-weight:700;letter-spacing:-0.04em;line-height:1;">
-        Notas sueltas.
-      </h1>
-      <p style="font-family:var(--font-mono);font-size:0.82rem;color:var(--ink-3);margin-top:12px;">
-        {posts.length} {posts.length === 1 ? 'entrada' : 'entradas'} · programación · música · vida · historia
-      </p>
-    </header>
-
-    <div style="display:flex;flex-direction:column;gap:2px;">
-      {posts.map((post, i) => (
-        <a href={`/blog/${post.slug}`} class="post-card">
-          <div style="display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:10px;">
-            <span style="font-family:var(--font-mono);font-size:0.7rem;color:var(--accent);letter-spacing:0.1em;">
-              {String(i + 1).padStart(2, '0')}
-            </span>
-            <span style="font-family:var(--font-mono);font-size:0.7rem;color:var(--ink-3);">
-              {fmtDate(post.data.date)}
-            </span>
-          </div>
-          <h2 style="font-family:var(--font-display);font-size:1.35rem;font-weight:600;margin-bottom:8px;">
-            {post.data.title}
-          </h2>
-          {post.data.description && (
-            <p style="font-size:0.9rem;color:var(--ink-2);line-height:1.55;margin-bottom:14px;">
-              {post.data.description}
-            </p>
-          )}
-          {post.data.tags.length > 0 && (
-            <div style="display:flex;flex-wrap:wrap;gap:6px;">
-              {post.data.tags.map(tag => (
-                <span style="font-family:var(--font-mono);font-size:0.68rem;letter-spacing:0.08em;border:1px solid var(--line-2);padding:2px 8px;color:var(--ink-3);">
-                  {tag}
-                </span>
-              ))}
-            </div>
-          )}
-        </a>
-      ))}
+  <main style="min-height:100vh;">
+    <!-- Header -->
+    <div class="blog-header">
+      <div class="blog-bg-word" aria-hidden="true">BLOG</div>
+      <div style="max-width:1200px;margin:0 auto;position:relative;z-index:1;">
+        <a href="/" class="blog-back">← AV/_</a>
+        <div class="blog-accent-bar"></div>
+        <div class="blog-eyebrow">// BLOG</div>
+        <h1 class="blog-h1">Notas<br/>sueltas.</h1>
+        <div class="blog-meta-strip">
+          <span>{posts.length} {posts.length === 1 ? 'entrada' : 'entradas'}</span>
+          <span class="dot-sep">·</span>
+          <span>programación</span>
+          <span class="dot-sep">·</span>
+          <span>música</span>
+          <span class="dot-sep">·</span>
+          <span>vida</span>
+          <span class="dot-sep">·</span>
+          <span>historia</span>
+        </div>
+      </div>
     </div>
 
-    {posts.length === 0 && (
-      <div style="font-family:var(--font-mono);color:var(--ink-3);text-align:center;padding:80px 0;">
-        // nada por aquí todavía
-      </div>
-    )}
+    <!-- Post list -->
+    <div class="posts-wrap">
+      {posts.length > 0 ? (
+        <div>
+          {posts.map((post, i) => (
+            <a href={`/blog/${post.slug}`} class="post-row">
+              <span class="post-num">{String(i + 1).padStart(2, '0')}</span>
+              <div class="post-body">
+                <h2 class="post-title">{post.data.title}</h2>
+                {post.data.description && (
+                  <p class="post-desc">{post.data.description}</p>
+                )}
+                <div class="post-tags">
+                  <span class="post-date">{fmtDate(post.data.date)}</span>
+                  <span style="color:var(--line-2);font-size:0.7rem;">·</span>
+                  <span class="post-rt">{readingTime(post.body)} lectura</span>
+                  {post.data.tags.length > 0 && (
+                    <>
+                      <span style="color:var(--line-2);font-size:0.7rem;">·</span>
+                      {post.data.tags.map(tag => (
+                        <span class="post-tag">{tag}</span>
+                      ))}
+                    </>
+                  )}
+                </div>
+              </div>
+              <span class="post-arrow">→</span>
+            </a>
+          ))}
+        </div>
+      ) : (
+        <div class="blog-empty">// nada por aquí todavía</div>
+      )}
+    </div>
   </main>
 </Layout>

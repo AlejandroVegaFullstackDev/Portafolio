@@ -244,6 +244,58 @@ img, pre, canvas, iframe { max-width: 100%; }
 .cy-term-line .warn { color: var(--warn); }
 .cy-term-line .com { color: var(--ink-3); }
 
+/* About stat cards */
+.about-stat {
+  border: 1px solid var(--line);
+  padding: 20px 18px 18px;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.25s;
+  background: linear-gradient(135deg, var(--panel), transparent);
+}
+.about-stat::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 2px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.35s cubic-bezier(0.22,1,0.36,1);
+}
+.about-stat:hover { border-color: var(--line-2); }
+.about-stat:hover::after { transform: scaleX(1); }
+.about-stat-num {
+  font-family: var(--font-display);
+  font-size: 2.6rem;
+  font-weight: 700;
+  color: var(--line-2);
+  line-height: 1;
+  margin-bottom: 10px;
+  letter-spacing: -0.04em;
+}
+.about-stat-key {
+  font-family: var(--font-mono);
+  font-size: 0.63rem;
+  letter-spacing: 0.18em;
+  color: var(--accent);
+  margin-bottom: 6px;
+}
+.about-stat-val {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.2;
+}
+.about-stat-sub {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--ink-3);
+  margin-top: 5px;
+  line-height: 1.4;
+}
+
 /* Mini terminal game */
 .tg-screen {
   background: #000;
@@ -549,8 +601,13 @@ img, pre, canvas, iframe { max-width: 100%; }
   #aboutTerm .cy-term-line:first-child  { display: none !important; }
   #aboutTerm .cy-term-line:nth-child(2) { display: none !important; }
   #aboutTerm .cy-term-line:last-child   { display: none !important; }
-  /* Ingecat: centrado y más pequeño en mobile */
-  #ingecatCard { display: block !important; max-width: 52% !important; margin: 1.25rem auto !important; }
+  /* Ingecat: centrado y más grande en mobile */
+  #ingecatCard { display: block !important; max-width: 68% !important; margin: 1.5rem auto !important; }
+  /* About stat cards: smaller num on mobile */
+  .about-stat-num { font-size: 1.8rem !important; }
+  .about-stat-key { font-size: 0.58rem !important; }
+  .about-stat-val { font-size: 0.9rem !important; }
+  .about-stat-sub { font-size: 0.65rem !important; }
 
   /* 4. Stack: 2-col */
   #stackGrid { grid-template-columns: repeat(2, 1fr) !important; }
