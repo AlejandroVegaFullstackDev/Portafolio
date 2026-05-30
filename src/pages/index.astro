@@ -889,11 +889,11 @@ function attachTerminalGame(container: HTMLElement, lang: 'es' | 'en') {
     if (snakeActive) return;
     snakeActive = true;
 
-    const CELL = 14;
-    const cols = Math.floor((screen.clientWidth - 16) / CELL) || 28;
-    const W = Math.min(cols, 32);
-    const H = 16;
     const isTouch = window.matchMedia('(hover: none)').matches;
+    const CELL = isTouch ? 12 : 14;
+    const cols = Math.floor((screen.clientWidth - 16) / CELL) || 28;
+    const W = Math.min(cols, isTouch ? 22 : 32);
+    const H = isTouch ? 11 : 16;
 
     let snake = [{x:Math.floor(W/2),y:Math.floor(H/2)},{x:Math.floor(W/2)-1,y:Math.floor(H/2)},{x:Math.floor(W/2)-2,y:Math.floor(H/2)}];
     let food  = {x:Math.floor(Math.random()*W), y:Math.floor(Math.random()*H)};
@@ -918,6 +918,11 @@ function attachTerminalGame(container: HTMLElement, lang: 'es' | 'en') {
     screen.insertBefore(scoreLine, prompt);
     screen.insertBefore(canvas, scoreLine);
     screen.insertBefore(hdr, canvas);
+
+    if (isTouch) {
+      (document.activeElement as HTMLElement)?.blur();
+      setTimeout(() => { screen.scrollTop = screen.scrollHeight; }, 80);
+    }
 
     const ctx = canvas.getContext('2d')!;
     const C_BG   = '#050507';
@@ -1098,7 +1103,7 @@ function attachTerminalGame(container: HTMLElement, lang: 'es' | 'en') {
   // ── Chips de comandos rápidos (solo touch) ────────────────────────────────
   if (window.matchMedia('(hover:none)').matches) {
     const chips = document.createElement('div');
-    chips.style.cssText = 'display:flex;gap:5px;padding:8px 10px;border-top:1px solid var(--line-2);flex-wrap:wrap;background:var(--bg-2);';
+    chips.style.cssText = 'display:flex;gap:5px;padding:8px 10px;border-top:1px solid var(--line-2);flex-wrap:wrap;background:var(--bg-2);width:100%;box-sizing:border-box;min-width:0;';
     const cmds = ['snake','hack','matrix','help','doom'];
     cmds.forEach(c => {
       const b = document.createElement('button');

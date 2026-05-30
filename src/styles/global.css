@@ -591,8 +591,8 @@ img, pre, canvas, iframe { max-width: 100%; }
   }
 
   /* 10. Terminal game */
-  #termGame { min-height: 240px !important; }
-  .tg-screen { min-height: 200px !important; max-height: 240px; font-size: 0.78rem; }
+  #termGame { min-height: 310px !important; }
+  .tg-screen { min-height: 180px !important; max-height: 200px; font-size: 0.78rem; overflow-y: auto; }
 
   /* 11. Now band: 2 items only */
   .now-item:nth-child(n+3) { display: none !important; }
