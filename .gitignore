@@ -13,3 +13,9 @@ dist/
 # OS
 .DS_Store
 Thumbs.db
+
+.vercel
+.env*
+
+# Claude Code (config local)
+.claude/
