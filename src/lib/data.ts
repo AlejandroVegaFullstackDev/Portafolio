@@ -15,12 +15,11 @@ export const portfolioData = {
       es: "Disponible para incorporación inmediata",
       en: "Available for immediate hire",
     },
-    projectCount: 4,
+    projectCount: 6,
     timezone: "GMT-5",
     contact: {
       linkedin: "https://www.linkedin.com/in/alejandrovega-stackblend/",
       github: "https://github.com/AlejandroVegaFullstackDev",
-      email: "alejandromatssuno18@gmail.com",
     },
   },
 
@@ -39,10 +38,13 @@ export const portfolioData = {
 
   stack: {
     languages: ["PHP", "Python", "JavaScript", "TypeScript", "SQL"],
-    frameworks: ["NestJS", "Node.js", "Laravel", "React", "Angular", "Express"],
-    databases: ["MySQL", "PostgreSQL", "BigQuery", "Redis"],
-    cloud: ["AWS", "Google Cloud", "GCP", "Docker"],
-    tools: ["GitHub", "GitLab", "Bitbucket", "Scrum", "Kanban"],
+    frameworks: ["NestJS", "Node.js", "Laravel", "React", "Angular", "Express", "Flask"],
+    databases: ["MySQL", "PostgreSQL", "BigQuery", "Redis", "SQLite", "SQLAlchemy", "Eloquent"],
+    cloud: ["AWS", "Google Cloud", "GCP", "Docker", "Docker Compose", "Vercel"],
+    architectures: ["Clean Architecture", "Hexagonal", "Layered", "Microservices", "MVC", "REST APIs"],
+    patterns: ["Factory Method", "Repository", "Dependency Injection", "DTO", "Service Layer", "SOLID"],
+    testing: ["PHPUnit", "pytest", "Jest", "GitHub Actions", "CI/CD"],
+    tools: ["Git", "GitHub", "GitLab", "Bitbucket", "Selenium", "Scrum", "Kanban"],
   },
 
   services: [

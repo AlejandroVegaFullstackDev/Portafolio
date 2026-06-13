@@ -308,7 +308,7 @@ const tickerItems = [
         <div class="flex items-center" id="stackMarquee"></div>
       </div>
     </div>
-    <div class="grid md:grid-cols-2 lg:grid-cols-5 gap-4" id="stackGrid" data-stagger></div>
+    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4" id="stackGrid" data-stagger></div>
   </div>
 </section>
 
@@ -442,9 +442,6 @@ const tickerItems = [
           </a>
           <a href={D.identity.contact.github} target="_blank" class="cy-link block">
             <span class="text-[var(--ink-3)]">github →</span> {githubHandle}
-          </a>
-          <a href={`mailto:${D.identity.contact.email}`} class="cy-link block">
-            <span class="text-[var(--ink-3)]">email →</span> {D.identity.contact.email}
           </a>
         </div>
       </div>
@@ -656,6 +653,60 @@ function initCounters() {
   });
 }
 
+// ─── Scroll progress bar ──────────────────────────────────────────────────────
+function initScrollProgress() {
+  if (document.getElementById('cyScrollProgress')) return;
+  const bar = document.createElement('div');
+  bar.id = 'cyScrollProgress';
+  bar.style.cssText = 'position:fixed;top:0;left:0;height:2px;width:0%;background:var(--accent);z-index:9999;box-shadow:0 0 12px var(--accent);pointer-events:none;transform-origin:left;will-change:width;';
+  document.body.appendChild(bar);
+  gsap.to(bar, { width: '100%', ease: 'none', scrollTrigger: { start: 0, end: 'max', scrub: 0.3 } });
+}
+
+// ─── Project cards — 3D tilt + cursor-tracked shine ───────────────────────────
+function initProjectTilt() {
+  if (document.documentElement.getAttribute('data-tweak-anim') === 'off') return;
+  if (window.matchMedia('(pointer: coarse)').matches) return;
+  document.querySelectorAll<HTMLElement>('.proj-card').forEach((card) => {
+    if ((card as any)._tilt) return;
+    (card as any)._tilt = true;
+    card.style.transformStyle = 'preserve-3d';
+    if (getComputedStyle(card).position === 'static') card.style.position = 'relative';
+    const shine = document.createElement('div');
+    shine.style.cssText = 'position:absolute;inset:0;pointer-events:none;opacity:0;mix-blend-mode:screen;transition:opacity 0.35s;will-change:opacity;';
+    card.appendChild(shine);
+    card.addEventListener('mousemove', (e) => {
+      const r = card.getBoundingClientRect();
+      const px = (e.clientX - r.left) / r.width;
+      const py = (e.clientY - r.top) / r.height;
+      gsap.to(card, { rotateY: (px - 0.5) * 9, rotateX: -(py - 0.5) * 9, transformPerspective: 900, duration: 0.4, ease: 'power3.out' });
+      shine.style.background = `radial-gradient(circle at ${px * 100}% ${py * 100}%, var(--accent), transparent 55%)`;
+      shine.style.opacity = '0.14';
+    });
+    card.addEventListener('mouseleave', () => {
+      gsap.to(card, { rotateY: 0, rotateX: 0, duration: 0.8, ease: 'elastic.out(1,0.4)' });
+      shine.style.opacity = '0';
+    });
+  });
+}
+
+// ─── Stack cells — lift + chip pop on hover ───────────────────────────────────
+function initStackHover() {
+  if (document.documentElement.getAttribute('data-tweak-anim') === 'off') return;
+  document.querySelectorAll<HTMLElement>('.stack-cell').forEach((cell) => {
+    if ((cell as any)._hov) return;
+    (cell as any)._hov = true;
+    const chips = cell.querySelectorAll('li');
+    cell.addEventListener('mouseenter', () => {
+      gsap.to(cell, { y: -6, borderColor: 'var(--accent)', duration: 0.3, ease: 'power3.out' });
+      gsap.fromTo(chips, { scale: 0.88 }, { scale: 1, stagger: 0.02, duration: 0.3, ease: 'back.out(2.2)' });
+    });
+    cell.addEventListener('mouseleave', () => {
+      gsap.to(cell, { y: 0, borderColor: 'var(--line)', duration: 0.45, ease: 'power2.out' });
+    });
+  });
+}
+
 
 // ─── Boot sequence ──────────────────────────────────────────────────────────
 function bootSequence(): Promise<void> {
@@ -768,7 +819,7 @@ function paintStack() {
   const lang = getLang();
   const mq = document.getElementById('stackMarquee');
   if (mq) {
-    const all = [...D.stack.languages, ...D.stack.frameworks, ...D.stack.databases, ...D.stack.cloud, ...D.stack.tools];
+    const all = [...D.stack.languages, ...D.stack.frameworks, ...D.stack.architectures, ...D.stack.patterns, ...D.stack.databases, ...D.stack.testing, ...D.stack.cloud, ...D.stack.tools];
     mq.innerHTML = all.map((s) => `<span style="padding:0 2rem;font-family:var(--font-display);font-size:clamp(1.5rem,4vw,3rem);letter-spacing:-0.02em;white-space:nowrap;color:var(--ink)">${s} <span style="color:var(--accent)">/</span></span>`).join('');
   }
   const grid = document.getElementById('stackGrid');
@@ -776,12 +827,15 @@ function paintStack() {
     const groups = [
       { key: lang === 'en' ? 'languages' : 'lenguajes', items: D.stack.languages },
       { key: 'frameworks', items: D.stack.frameworks },
-      { key: lang === 'en' ? 'databases' : 'bases de datos', items: D.stack.databases },
+      { key: lang === 'en' ? 'architecture' : 'arquitectura', items: D.stack.architectures },
+      { key: lang === 'en' ? 'design patterns' : 'patrones', items: D.stack.patterns },
+      { key: lang === 'en' ? 'databases / orm' : 'bases de datos / orm', items: D.stack.databases },
+      { key: lang === 'en' ? 'testing / ci' : 'testing / ci', items: D.stack.testing },
       { key: lang === 'en' ? 'cloud / devops' : 'nube / devops', items: D.stack.cloud },
       { key: lang === 'en' ? 'tools' : 'herramientas', items: D.stack.tools },
     ];
     grid.innerHTML = groups.map((g) => `
-      <div style="border:1px solid var(--line);padding:18px 16px;display:flex;flex-direction:column;gap:8px;background:linear-gradient(135deg,var(--panel),transparent);transition:transform 0.3s,border-color 0.3s;" class="stack-cell" data-stagger-item>
+      <div style="border:1px solid var(--line);padding:18px 16px;display:flex;flex-direction:column;gap:8px;background:linear-gradient(135deg,var(--panel),transparent);will-change:transform;" class="stack-cell" data-stagger-item>
         <div style="font-family:var(--font-mono);font-size:0.66rem;letter-spacing:0.18em;color:var(--ink-3);text-transform:uppercase;">// ${g.key}</div>
         <ul style="display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;">${g.items.map((i) => `<li style="font-family:var(--font-mono);font-size:0.78rem;color:var(--ink);border:1px solid var(--line-2);padding:3px 8px;">${i}</li>`).join('')}</ul>
       </div>
@@ -852,14 +906,16 @@ function attachTerminalGame(container: HTMLElement, lang: 'es' | 'en') {
     stack: () => [
       `Backend:  ${[...D.stack.languages, ...D.stack.frameworks.slice(0, 3)].join(' · ')}`,
       `Frontend: ${D.stack.frameworks.slice(3, 5).join(' · ')} · Tailwind`,
+      `Arch:     ${D.stack.architectures.join(' · ')}`,
+      `Patterns: ${D.stack.patterns.join(' · ')}`,
       `Data:     ${D.stack.databases.join(' · ')}`,
+      `Testing:  ${D.stack.testing.join(' · ')}`,
       `Cloud:    ${D.stack.cloud.join(' · ')}`,
     ],
     projects: (_, l) => D.projects.map((p: any) => `[${p.n}] ${p.name[l]} — ${p.stack.slice(0, 2).join(' · ')}`),
     contact: () => [
       `linkedin: ${D.identity.contact.linkedin.replace('https://www.linkedin.com', '').replace(/\/$/, '')}`,
       `github:   /${D.identity.contact.github.split('/').pop()}`,
-      `email:    ${D.identity.contact.email}`,
       'response: < 24h',
       'status:   ● available',
     ],
@@ -1546,6 +1602,9 @@ async function start() {
   initReveals();
   initMagnetic();
   initCounters();
+  initScrollProgress();
+  initProjectTilt();
+  initStackHover();
   initHeroPin();
   initExpAnimations();
   initEyebrows();
@@ -1573,6 +1632,8 @@ async function start() {
       setLang(getLang() === 'es' ? 'en' : 'es');
       paintAbout(); paintStack(); paintExp(); paintProjects();
       init3DTiles();
+      initProjectTilt();
+      initStackHover();
       // Rebuild hero term and game with new lang
       const heroTerm = document.getElementById('heroTerm');
       if (heroTerm) { heroTerm.innerHTML = ''; paintHero(); }
