@@ -369,17 +369,24 @@ const tickerItems = [
           <span class="lang-en">Hack the <span class="text-[var(--accent)]">terminal</span>.</span>
         </h2>
         <p class="mt-6 text-[var(--ink-2)] text-lg max-w-md leading-relaxed">
-          <span class="lang-es">Una mini-shell con comandos reales. Escribe <code class="font-mono text-[var(--accent)]">help</code> para empezar. Trae snake, matrix y un par de easter eggs.</span>
-          <span class="lang-en">A mini-shell with real commands. Type <code class="font-mono text-[var(--accent)]">help</code> to start. Includes snake, matrix and a few easter eggs.</span>
+          <span class="hidden lg:inline">
+            <span class="lang-es">Una mini-shell con comandos reales. Escribe <code class="font-mono text-[var(--accent)]">help</code> para empezar. Trae snake, matrix y un par de easter eggs.</span>
+            <span class="lang-en">A mini-shell with real commands. Type <code class="font-mono text-[var(--accent)]">help</code> to start. Includes snake, matrix and a few easter eggs.</span>
+          </span>
+          <span class="lg:hidden">
+            <span class="lang-es">Toca un comando para correrlo — sin teclado. Explora quién soy, mi stack y mis proyectos.</span>
+            <span class="lang-en">Tap a command to run it — no keyboard. Explore who I am, my stack and my projects.</span>
+          </span>
         </p>
-        <div class="mt-8 flex flex-wrap gap-2 font-mono text-xs">
+        <div class="mt-8 hidden lg:flex flex-wrap gap-2 font-mono text-xs">
           <span class="cy-tag">help</span><span class="cy-tag">about</span><span class="cy-tag">stack</span>
           <span class="cy-tag">projects</span><span class="cy-tag">contact</span><span class="cy-tag">snake</span>
           <span class="cy-tag">matrix</span><span class="cy-tag">hack</span><span class="cy-tag">doom</span><span class="cy-tag">whoami</span>
         </div>
       </div>
       <div class="lg:col-span-6">
-        <div class="border border-[var(--line)] relative overflow-hidden bg-black">
+        <!-- Desktop: shell interactiva con teclado -->
+        <div class="hidden lg:block border border-[var(--line)] relative overflow-hidden bg-black">
           <span style="position:absolute;top:-1px;left:-1px;width:18px;height:18px;border:1px solid var(--accent);border-right:0;border-bottom:0;"></span>
           <span style="position:absolute;top:-1px;right:-1px;width:18px;height:18px;border:1px solid var(--accent);border-left:0;border-bottom:0;"></span>
           <span style="position:absolute;bottom:-1px;left:-1px;width:18px;height:18px;border:1px solid var(--accent);border-right:0;border-top:0;"></span>
@@ -389,6 +396,18 @@ const tickerItems = [
             <span>stackblend.shell</span><span class="label">click → focus</span>
           </div>
           <div id="termGame" class="relative" style="min-height:340px"></div>
+        </div>
+        <!-- Móvil: command deck táctil (sin teclado) -->
+        <div class="lg:hidden border border-[var(--line)] relative overflow-hidden bg-black">
+          <span style="position:absolute;top:-1px;left:-1px;width:18px;height:18px;border:1px solid var(--accent);border-right:0;border-bottom:0;"></span>
+          <span style="position:absolute;top:-1px;right:-1px;width:18px;height:18px;border:1px solid var(--accent);border-left:0;border-bottom:0;"></span>
+          <span style="position:absolute;bottom:-1px;left:-1px;width:18px;height:18px;border:1px solid var(--accent);border-right:0;border-top:0;"></span>
+          <span style="position:absolute;bottom:-1px;right:-1px;width:18px;height:18px;border:1px solid var(--accent);border-left:0;border-top:0;"></span>
+          <div class="cy-term-bar">
+            <span class="dot r"></span><span class="dot"></span><span class="dot"></span>
+            <span>stackblend.touch</span><span class="label"><span class="lang-es">toca un comando</span><span class="lang-en">tap a command</span></span>
+          </div>
+          <div id="touchDeck" class="relative"></div>
         </div>
       </div>
     </div>
@@ -888,6 +907,88 @@ function paintProjects() {
       </div>
     </a>
   `).join('');
+}
+
+// ─── Touch command deck (móvil — sin teclado) ─────────────────────────────────
+function attachTouchDeck(container: HTMLElement, lang: 'es' | 'en') {
+  const t = (es: string, en: string) => (lang === 'en' ? en : es);
+  const accent = (s: string) => `<span style="color:var(--accent)">${s}</span>`;
+
+  const out = document.createElement('div');
+  out.style.cssText = 'padding:14px 16px;min-height:230px;font-family:var(--font-mono);font-size:0.8rem;color:var(--ink-2);line-height:1.75;word-break:break-word;';
+  const bar = document.createElement('div');
+  bar.style.cssText = 'display:flex;flex-wrap:wrap;gap:8px;padding:12px 16px;border-top:1px solid var(--line);background:var(--bg-2);';
+  container.innerHTML = '';
+  container.appendChild(out);
+  container.appendChild(bar);
+
+  const lineEl = (html: string) => { const d = document.createElement('div'); d.innerHTML = html; return d; };
+
+  const linkEl = (label: string, href: string, text: string) => {
+    const a = document.createElement('a');
+    a.href = href; a.target = '_blank'; a.rel = 'noopener';
+    a.style.cssText = 'display:block;color:var(--ink);text-decoration:none;padding:5px 0;';
+    a.innerHTML = `${accent(label + ':')} ${text} ${accent('↗')}`;
+    return a;
+  };
+
+  const cmds: Record<string, () => (string | HTMLElement)[]> = {
+    whoami: () => [
+      D.identity.name.toLowerCase().replace(' ', '_'),
+      `role:  ${D.identity.title[lang].toLowerCase()}`,
+      `loc:   ${D.identity.location[lang].toLowerCase()} · ${D.identity.timezone.toLowerCase()}`,
+      `avail: ${t('sí — remoto / híbrido', 'yes — remote / hybrid')}`,
+    ],
+    about: () => D.about[lang],
+    stack: () => [
+      `lang:    ${D.stack.languages.join(' · ')}`,
+      `arch:    ${D.stack.architectures.join(' · ')}`,
+      `pattern: ${D.stack.patterns.join(' · ')}`,
+      `testing: ${D.stack.testing.join(' · ')}`,
+      `cloud:   ${D.stack.cloud.join(' · ')}`,
+    ],
+    projects: () => D.projects.map((p: any) => {
+      const a = document.createElement('a');
+      a.href = `/proyecto/${p.slug}`;
+      a.style.cssText = 'display:block;color:var(--ink);text-decoration:none;padding:6px 0;border-bottom:1px solid var(--line);';
+      a.innerHTML = `${accent('[' + p.n + ']')} ${p.name[lang]} <span style="color:var(--ink-3)">— ${p.stack.slice(0, 2).join(' · ')}</span> ${accent('↗')}`;
+      return a;
+    }),
+    contact: () => [
+      linkEl('linkedin', D.identity.contact.linkedin, D.identity.contact.linkedin.replace('https://www.linkedin.com', '').replace(/\/$/, '')),
+      linkEl('github', D.identity.contact.github, '/' + (D.identity.contact.github.split('/').pop() || '')),
+      lineEl(`${accent('response:')} < 24h`),
+      lineEl(`${accent('status:')} ● ${t('disponible', 'available')}`),
+    ],
+  };
+
+  function run(cmd: string) {
+    const builder = cmds[cmd];
+    if (!builder) return;
+    out.innerHTML = '';
+    const echo = lineEl(`${accent('$')} ${cmd}`);
+    echo.style.marginBottom = '8px';
+    out.appendChild(echo);
+    const nodes = builder().map((l) => (typeof l === 'string' ? lineEl(l) : l));
+    nodes.forEach((n) => out.appendChild(n));
+    gsap.fromTo(nodes, { opacity: 0, x: -8 }, { opacity: 1, x: 0, duration: 0.3, stagger: 0.05, ease: 'power2.out' });
+  }
+
+  ['about', 'stack', 'projects', 'contact', 'whoami'].forEach((c) => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.textContent = c;
+    b.style.cssText = 'font-family:var(--font-mono);font-size:0.78rem;color:var(--ink);background:transparent;border:1px solid var(--line-2);padding:8px 14px;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:border-color .2s,color .2s;';
+    b.addEventListener('click', () => {
+      bar.querySelectorAll('button').forEach((x) => { (x as HTMLElement).style.borderColor = 'var(--line-2)'; (x as HTMLElement).style.color = 'var(--ink)'; });
+      b.style.borderColor = 'var(--accent)';
+      b.style.color = 'var(--accent)';
+      run(c);
+    });
+    bar.appendChild(b);
+  });
+
+  out.appendChild(lineEl(`<span style="color:var(--ink-3)">${t('// toca un comando abajo para empezar', '// tap a command below to start')}</span>`));
 }
 
 // ─── Terminal game ────────────────────────────────────────────────────────────
@@ -1639,6 +1740,8 @@ async function start() {
       if (heroTerm) { heroTerm.innerHTML = ''; paintHero(); }
       const tg = document.getElementById('termGame');
       if (tg) { tg.innerHTML = ''; attachTerminalGame(tg, getLang()); }
+      const td = document.getElementById('touchDeck');
+      if (td) attachTouchDeck(td, getLang());
     });
   }
 
@@ -1662,6 +1765,8 @@ async function start() {
   // Terminal game
   const tg = document.getElementById('termGame');
   if (tg) attachTerminalGame(tg, getLang());
+  const td = document.getElementById('touchDeck');
+  if (td) attachTouchDeck(td, getLang());
 
   setTimeout(() => ScrollTrigger.refresh(), 200);
 }
