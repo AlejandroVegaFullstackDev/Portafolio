@@ -21,14 +21,14 @@ const companies = D.experience.map(e => e.company.toUpperCase()).join(' · ');
 const linkedinHandle = D.identity.contact.linkedin.replace('https://www.linkedin.com', '').replace(/\/$/, '');
 const githubHandle = '/' + D.identity.contact.github.split('/').pop();
 const tickerItems = [
-  { icon: '▲', text: 'SYS_STATUS: ONLINE' },
-  { icon: '●', text: 'NODE_OPS: 99.9% UPTIME' },
-  { icon: '▼', text: `LOC: ${D.identity.location.en.split(',')[0].toUpperCase()} / ${D.identity.timezone}` },
+  { icon: '▲', text: `LOC: ${D.identity.location.en.split(',')[0].toUpperCase()} 04°38'N 74°05'W / ${D.identity.timezone}` },
+  { icon: '●', text: 'RODA / ACTIVO DESDE JUN 2025' },
+  { icon: '▼', text: 'KIKI LATAM: +10.000 GUÍAS EN SEGUNDOS · ×10' },
   { icon: '●', text: `STACK: ${topStack}` },
-  { icon: '▲', text: `EXP: ${D.identity.yearsExp} YRS / ${D.identity.projectCount} PROJECTS` },
+  { icon: '▲', text: 'VEGAREPARACIONES: SEO 100 · A11Y 96 · PERF 90' },
   { icon: '●', text: 'FOR HIRE: REMOTE / HYBRID' },
   { icon: '▼', text: companies },
-  { icon: '●', text: 'FULL STACK · AUTOMATION · DATA' },
+  { icon: '●', text: 'PULZO: +5 AÑOS DE DATOS CENTRALIZADOS' },
 ];
 ---
 
@@ -47,7 +47,7 @@ const tickerItems = [
     <!-- Left: logo -->
     <div class="flex items-center gap-4">
       <span class="font-mono text-[var(--accent)] font-semibold tracking-widest">AV/_</span>
-      <span class="font-mono text-[var(--ink-3)] tracking-widest text-[0.7rem] hidden sm:inline">stackblend.dev</span>
+      <span class="font-mono text-[var(--ink-3)] tracking-widest text-[0.7rem] hidden sm:inline">4ledmt.dev</span>
     </div>
     <!-- Center: nav — desktop only -->
     <nav class="hidden md:flex absolute left-1/2 -translate-x-1/2 items-center gap-5">
@@ -129,18 +129,14 @@ const tickerItems = [
         </a>
       </div>
       <div class="mt-12 lg:mt-16 grid grid-cols-3 gap-3 sm:gap-6 max-w-xl">
-        <div style="border-top:1px solid var(--line);padding-top:14px;">
-          <div class="font-display text-[2.4rem] font-bold leading-none" data-counter={D.identity.yearsExp}>0</div>
-          <div class="font-mono text-[0.7rem] text-[var(--ink-3)] tracking-[0.15em] uppercase mt-[6px]"><span class="lang-es">años de exp.</span><span class="lang-en">years exp.</span></div>
-        </div>
-        <div style="border-top:1px solid var(--line);padding-top:14px;">
-          <div class="font-display text-[2.4rem] font-bold leading-none" data-counter={D.identity.projectCount}>0</div>
-          <div class="font-mono text-[0.7rem] text-[var(--ink-3)] tracking-[0.15em] uppercase mt-[6px]"><span class="lang-es">proyectos</span><span class="lang-en">projects</span></div>
-        </div>
-        <div style="border-top:1px solid var(--line);padding-top:14px;">
-          <div class="font-display text-[2.4rem] font-bold leading-none"><span data-counter="99.9" data-counter-suffix="%" data-counter-decimals="1">0%</span></div>
-          <div class="font-mono text-[0.7rem] text-[var(--ink-3)] tracking-[0.15em] uppercase mt-[6px]">uptime</div>
-        </div>
+        {D.highlights.map(h => (
+          <div style="border-top:1px solid var(--line);padding-top:14px;">
+            <div class="font-display text-[2.4rem] font-bold leading-none" data-counter={h.value} data-counter-prefix={h.prefix} data-counter-suffix={h.suffix}>0</div>
+            <div class="font-mono text-[0.7rem] text-[var(--ink-3)] tracking-[0.15em] uppercase mt-[6px] leading-tight">
+              <span class="lang-es">{h.label.es}</span><span class="lang-en">{h.label.en}</span>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
 
@@ -152,7 +148,7 @@ const tickerItems = [
         <span style="position:absolute;bottom:-1px;right:-1px;width:18px;height:18px;border:1px solid var(--accent);border-left:0;border-top:0;"></span>
         <div class="cy-term-bar">
           <span class="dot r"></span><span class="dot"></span><span class="dot"></span>
-          <span>~/alejandro@stackblend</span>
+          <span>~/alejandro@4ledmt</span>
           <span class="label">tty/01</span>
         </div>
         <div class="cy-term-body min-h-[280px]" id="heroTerm"></div>
@@ -181,18 +177,16 @@ const tickerItems = [
       <span class="lang-en">AVAILABLE — REMOTE/HYBRID</span>
     </div>
     <div class="now-item" style="flex:1;" id="nowTrackItem">
-      <span style="color:var(--accent);" id="nowPlayIcon">▶</span>
-      <span id="nowTrackText" style="font-family:var(--font-mono);font-size:0.74rem;letter-spacing:0.08em;">
-        KAVINSKY — NIGHTCALL
-      </span>
+      <span style="color:var(--accent);" id="nowPlayIcon">♪</span>
+      <span id="nowTrackText" style="font-family:var(--font-mono);font-size:0.74rem;letter-spacing:0.08em;">···</span>
     </div>
     <div class="now-item">
       <span style="color:var(--ink-3);">BOGOTÁ</span>
       <span style="color:var(--accent);" id="nowClock">--:--:--</span>
     </div>
     <div class="now-item hidden lg:flex">
-      <span>BUILD</span>
-      <span style="color:var(--ok);">PASSING ✓</span>
+      <span style="color:var(--ink-3);">RODA</span>
+      <span style="color:var(--ok);"><span class="lang-es">ACTIVO DESDE JUN 2025</span><span class="lang-en">ACTIVE SINCE JUN 2025</span></span>
     </div>
   </div>
 </div>
@@ -273,8 +267,8 @@ const tickerItems = [
         <div class="about-stat" data-stagger-item>
           <div class="about-stat-num">03</div>
           <div class="about-stat-key">// ROOTS</div>
-          <div class="about-stat-val">SENA · UNIMINUTO</div>
-          <div class="about-stat-sub"><span class="lang-es">1.5 + 3 años</span><span class="lang-en">1.5 + 3 years</span></div>
+          <div class="about-stat-val">{D.identity.educationShort.es}</div>
+          <div class="about-stat-sub"><span class="lang-es">{D.identity.educationSub.es}</span><span class="lang-en">{D.identity.educationSub.en}</span></div>
         </div>
         <div class="about-stat" data-stagger-item>
           <div class="about-stat-num">04</div>
@@ -309,6 +303,21 @@ const tickerItems = [
       </div>
     </div>
     <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4" id="stackGrid" data-stagger></div>
+
+    <div class="mt-14 border border-[var(--line)] p-6 lg:p-8" style="background:linear-gradient(135deg,var(--panel),transparent);">
+      <div class="cy-num mb-4">// <span class="lang-es">{D.automation.title.es.toUpperCase()}</span><span class="lang-en">{D.automation.title.en.toUpperCase()}</span></div>
+      <ul class="grid md:grid-cols-3 gap-6" data-stagger>
+        {D.automation.items.es.map((_, i) => (
+          <li data-stagger-item style="display:flex;flex-direction:column;gap:8px;">
+            <span class="font-mono text-[0.7rem] tracking-[0.18em] text-[var(--accent)]">{String(i + 1).padStart(2, '0')} //</span>
+            <span class="text-[var(--ink-2)] leading-relaxed text-[0.95rem]">
+              <span class="lang-es">{D.automation.items.es[i]}</span>
+              <span class="lang-en">{D.automation.items.en[i]}</span>
+            </span>
+          </li>
+        ))}
+      </ul>
+    </div>
   </div>
 </section>
 
@@ -345,9 +354,10 @@ const tickerItems = [
             <span>git log --career</span>
           </div>
           <div class="cy-term-body text-xs space-y-2">
-            <div><span class="text-[var(--accent)]">commit</span> 7f3a · roda</div>
-            <div><span class="text-[var(--accent)]">commit</span> 4c2e · kiki latam</div>
-            <div><span class="text-[var(--accent)]">commit</span> a91d · pulzo</div>
+            <div><span class="text-[var(--accent)]">roda</span> · 2025 —</div>
+            <div><span class="text-[var(--accent)]">vegareparaciones</span> · 2025</div>
+            <div><span class="text-[var(--accent)]">kiki latam</span> · 2024 — 2025</div>
+            <div><span class="text-[var(--accent)]">pulzo</span> · 2023 — 2024</div>
             <div class="text-[var(--ink-3)]">— EOF —</div>
           </div>
         </div>
@@ -385,7 +395,7 @@ const tickerItems = [
           <span style="position:absolute;bottom:-1px;right:-1px;width:18px;height:18px;border:1px solid var(--accent);border-left:0;border-top:0;"></span>
           <div class="cy-term-bar">
             <span class="dot r"></span><span class="dot"></span><span class="dot"></span>
-            <span>stackblend.console</span><span class="label"><span class="lang-es">click / toca un comando</span><span class="lang-en">click / tap a command</span></span>
+            <span>4ledmt.console</span><span class="label"><span class="lang-es">click / toca un comando</span><span class="lang-en">click / tap a command</span></span>
           </div>
           <div id="touchDeck" class="relative" style="min-height:300px"></div>
         </div>
@@ -452,7 +462,7 @@ const tickerItems = [
             <div class="flex justify-between border-b border-[var(--line)] pb-2"><dt class="text-[var(--ink-3)]">timezone</dt><dd>GMT-5</dd></div>
             <div class="flex justify-between border-b border-[var(--line)] pb-2"><dt class="text-[var(--ink-3)]">status</dt><dd class="text-[var(--accent)]"><span class="lang-es">disponible</span><span class="lang-en">available</span></dd></div>
             <div class="flex justify-between border-b border-[var(--line)] pb-2"><dt class="text-[var(--ink-3)]">mode</dt><dd><span class="lang-es">remoto / híbrido</span><span class="lang-en">remote / hybrid</span></dd></div>
-            <div class="flex justify-between"><dt class="text-[var(--ink-3)]">response</dt><dd>&lt; 24h</dd></div>
+            <div class="flex justify-between"><dt class="text-[var(--ink-3)]">since</dt><dd>{D.identity.since}</dd></div>
           </dl>
         </div>
       </div>
@@ -470,7 +480,7 @@ const tickerItems = [
     </div>
 
     <div class="mt-24 border-t border-[var(--line)] pt-6 flex justify-between flex-wrap gap-4 font-mono text-xs text-[var(--ink-3)]">
-      <span>© {new Date().getFullYear()} {D.identity.name.toUpperCase()} · STACKBLEND.DEV</span>
+      <span>© {new Date().getFullYear()} {D.identity.name.toUpperCase()} · 4LEDMT.DEV</span>
       <span><span class="lang-es">DISEÑADO Y CONSTRUIDO EN BOGOTÁ</span><span class="lang-en">DESIGNED & BUILT IN BOGOTÁ</span></span>
       <a href={D.identity.contact.github} target="_blank" class="hover:text-[var(--accent)]">→ GITHUB ↗</a>
     </div>
@@ -643,12 +653,14 @@ function initMagnetic() {
 function initCounters() {
   document.querySelectorAll<HTMLElement>('[data-counter]').forEach((el) => {
     const target = parseFloat(el.dataset.counter || '0');
+    const prefix = el.dataset.counterPrefix || '';
     const suffix = el.dataset.counterSuffix || '';
     const decimals = parseInt(el.dataset.counterDecimals || '0');
+    const fmt = (v: number) => (decimals > 0 ? v.toFixed(decimals) : Math.round(v).toLocaleString('es-CO'));
     const obj = { v: 0 };
     // Counters live in the hero viewport — skip ScrollTrigger, animate with delay
     gsap.to(obj, { v: target, duration: 1.6, ease: 'expo.out', delay: 1.2,
-      onUpdate: () => { el.textContent = obj.v.toFixed(decimals) + suffix; } });
+      onUpdate: () => { el.textContent = prefix + fmt(obj.v) + suffix; } });
   });
 }
 
@@ -716,10 +728,10 @@ function bootSequence(): Promise<void> {
     '[ OK ]  loading kernel modules ...',
     '[ OK ]  init: spawning init.d',
     '[ OK ]  mount /home/alejandro',
-    '[ OK ]  starting stackblend-os',
+    '[ OK ]  starting 4ledmt-os',
     '[ OK ]  loading runtime: php · python · node · ts',
     '[ OK ]  loading drivers: postgresql · mysql · bigquery',
-    '[ OK ]  authenticating: stackblend.dev .....',
+    '[ OK ]  authenticating: 4ledmt.dev .....',
     '[ OK ]  ACCESS GRANTED.',
     '',
     '> launching portfolio.exe',
@@ -758,7 +770,7 @@ function paintHero() {
   if (heroTerm) {
     const lang = getLang();
     const name = D.identity.name.toLowerCase().replace(' ', '_');
-    const stackLine1 = `frontend: ${[D.stack.frameworks[3], D.stack.frameworks[4], 'tailwind'].join(' · ').toLowerCase()}`;
+    const stackLine1 = `frontend: ${[D.stack.frameworks[2], D.stack.frameworks[4], 'tailwind'].join(' · ').toLowerCase()}`;
     const stackLine2 = `backend: ${[D.stack.languages[0], D.stack.languages[1], D.stack.frameworks[0], D.stack.frameworks[1]].join(' · ').toLowerCase()}`;
     const stackLine3 = `data: ${[D.stack.databases[0], D.stack.databases[2], D.stack.languages[4]].join(' · ').toLowerCase()}`;
     const lines = [
@@ -828,7 +840,7 @@ function paintStack() {
       { key: 'frameworks', items: D.stack.frameworks },
       { key: lang === 'en' ? 'architecture' : 'arquitectura', items: D.stack.architectures },
       { key: lang === 'en' ? 'design patterns' : 'patrones', items: D.stack.patterns },
-      { key: lang === 'en' ? 'databases / orm' : 'bases de datos / orm', items: D.stack.databases },
+      { key: lang === 'en' ? 'databases' : 'bases de datos', items: D.stack.databases },
       { key: lang === 'en' ? 'testing / ci' : 'testing / ci', items: D.stack.testing },
       { key: lang === 'en' ? 'cloud / devops' : 'nube / devops', items: D.stack.cloud },
       { key: lang === 'en' ? 'tools' : 'herramientas', items: D.stack.tools },
@@ -850,13 +862,16 @@ function paintExp() {
   if (!el) return;
   el.innerHTML = D.experience.map((x: any, i: number) => `
     <div class="exp-row">
-      <div style="font-family:var(--font-mono);color:var(--accent);font-size:0.78rem;letter-spacing:0.1em;">$ commit_${String(D.experience.length - i).padStart(2,'0')}<br/><span style="color:var(--ink-3);">${x.period[lang]}</span></div>
+      <div style="font-family:var(--font-mono);color:var(--accent);font-size:0.78rem;letter-spacing:0.1em;">$ role_${String(D.experience.length - i).padStart(2,'0')}<br/><span style="color:var(--ink-3);">${x.period[lang]}</span></div>
       <div>
         <div style="font-family:var(--font-display);font-size:1.6rem;font-weight:600;">${x.company}</div>
         <div style="font-family:var(--font-mono);font-size:0.84rem;color:var(--ink-2);margin-top:4px;">${x.role[lang]}</div>
+        ${x.note ? `<div style="font-family:var(--font-mono);font-size:0.72rem;color:var(--ink-3);margin-top:4px;">${x.note[lang]}</div>` : ''}
       </div>
       <div>
-        <div style="color:var(--ink-2);line-height:1.55;">${x.body[lang]}</div>
+        <ul style="display:flex;flex-direction:column;gap:8px;color:var(--ink-2);line-height:1.55;">
+          ${x.bullets[lang].map((b: string) => `<li style="display:flex;gap:10px;"><span style="color:var(--accent);flex-shrink:0;">▸</span><span>${b}</span></li>`).join('')}
+        </ul>
         <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:14px;">${x.stack.map((s: string) => `<span class="cy-tag">${s}</span>`).join('')}</div>
       </div>
     </div>
@@ -937,7 +952,7 @@ function attachTouchDeck(container: HTMLElement, lang: 'es' | 'en') {
     contact: () => [
       linkEl('linkedin', D.identity.contact.linkedin, D.identity.contact.linkedin.replace('https://www.linkedin.com', '').replace(/\/$/, '')),
       linkEl('github', D.identity.contact.github, '/' + (D.identity.contact.github.split('/').pop() || '')),
-      lineEl(`${accent('response:')} < 24h`),
+      lineEl(`${accent('since:')} ${D.identity.since}`),
       lineEl(`${accent('status:')} ● ${t('disponible', 'available')}`),
     ],
   };
@@ -1300,31 +1315,36 @@ function initImageAnimations() {
 
 // ─── Spotify now playing ──────────────────────────────────────────────────────
 function initNowPlaying() {
+  const item = document.getElementById('nowTrackItem');
   const icon = document.getElementById('nowPlayIcon');
   const text = document.getElementById('nowTrackText');
+
+  // Sin dato real no se inventa una canción: la celda se oculta.
+  const hide = () => { if (item) item.style.display = 'none'; };
+  const show = () => { if (item) item.style.display = ''; };
 
   async function fetchNow() {
     try {
       const res = await fetch('/api/now-playing');
-      if (!res.ok) return;
+      if (!res.ok) return hide();
       const data = await res.json();
 
       // Update now-band
       if (icon && text) {
         if (data.title && data.artist) {
+          show();
           const prefix = data.isPlaying ? '' : 'LAST: ';
           text.textContent = `${prefix}${data.artist.toUpperCase()} — ${data.title.toUpperCase()}`;
           icon.textContent = data.isPlaying ? '♫' : '↺';
         } else {
-          text.textContent = 'KAVINSKY — NIGHTCALL';
-          icon.textContent = '▶';
+          hide();
         }
       }
 
       // Drive the SpotifyNow widget
       window.dispatchEvent(new CustomEvent('spotify:update', { detail: data }));
     } catch {
-      // keep defaults
+      hide();
     }
   }
 

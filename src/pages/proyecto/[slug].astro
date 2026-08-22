@@ -82,7 +82,7 @@ const project = D.projects.find((p) => p.slug === slug)!;
       <div class="ed-display text-2xl" id="phYear2"></div>
     </div>
     <div>
-      <div class="ed-marker mb-2">// GITHUB</div>
+      <div class="ed-marker mb-2">// <span id="phGithubLabel">GITHUB</span></div>
       <div class="ed-display text-2xl" id="phGithub"></div>
     </div>
     <div>
@@ -141,7 +141,7 @@ const project = D.projects.find((p) => p.slug === slug)!;
         <div class="ed-num mb-3">// STACK</div>
         <div class="flex flex-wrap gap-2" id="phStack"></div>
       </div>
-      <div>
+      <div id="phCodeBlock">
         <div class="ed-num mb-3">// SAMPLE</div>
         <pre class="codeblock"><code id="phCode"></code></pre>
       </div>
@@ -150,7 +150,7 @@ const project = D.projects.find((p) => p.slug === slug)!;
 </section>
 
 <!-- TIMELINE -->
-<section class="px-6 lg:px-16 py-20 bg-[var(--bg-2)] border-y border-[var(--line)]">
+<section id="phTimelineSection" class="px-6 lg:px-16 py-20 bg-[var(--bg-2)] border-y border-[var(--line)]">
   <div class="max-w-[1400px] mx-auto grid lg:grid-cols-12 gap-10">
     <div class="lg:col-span-4">
       <div class="ed-num mb-3">// 05 / <span class="lang-es">PROCESO</span><span class="lang-en">PROCESS</span></div>
@@ -252,12 +252,23 @@ function paint() {
   set('phChallenge', (deep.challenge && deep.challenge[lang]) || '—');
 
   const ghEl = document.getElementById('phGithub');
+  const ghLabel = document.getElementById('phGithubLabel');
   if (ghEl) {
     const gh = (p as any).github;
-    if (gh) {
-      ghEl.innerHTML = `<a href="${gh}" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none;font-size:1rem;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">ver repo ↗</a>`;
+    const live = (p as any).url;
+    const link = (href: string, text: string) =>
+      `<a href="${href}" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none;font-size:1rem;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">${text} ↗</a>`;
+    if (live) {
+      if (ghLabel) ghLabel.textContent = lang === 'en' ? 'LIVE' : 'EN VIVO';
+      ghEl.innerHTML = link(live, lang === 'en' ? 'visit site' : 'ver sitio');
+    } else if (gh) {
+      if (ghLabel) ghLabel.textContent = 'GITHUB';
+      ghEl.innerHTML = link(gh, lang === 'en' ? 'view repo' : 'ver repo');
     } else {
-      ghEl.textContent = 'privado';
+      if (ghLabel) ghLabel.textContent = lang === 'en' ? 'SOURCE' : 'CÓDIGO';
+      ghEl.innerHTML = `<span style="font-size:1rem;color:var(--ink-3);">${
+        lang === 'en' ? 'private — client work' : 'privado — trabajo de cliente'
+      }</span>`;
     }
   }
   const stackMeta = document.getElementById('phStackMeta');
@@ -265,7 +276,10 @@ function paint() {
   set('phSolution', (deep.solution && deep.solution[lang]) || '—');
 
   const metrics = document.getElementById('phMetrics');
-  if (metrics) metrics.innerHTML = p.metrics.map((m: any) => `<div class="metric-card"><div class="v">${m.v}</div><div class="k">${m.k[lang]}</div></div>`).join('');
+  if (metrics) metrics.innerHTML = p.metrics.map((m: any) => {
+    const v = typeof m.v === 'string' ? m.v : m.v[lang];
+    return `<div class="metric-card"><div class="v">${v}</div><div class="k">${m.k[lang]}</div></div>`;
+  }).join('');
 
   const arch = document.getElementById('phArch');
   if (arch && deep.arch) {
@@ -278,10 +292,16 @@ function paint() {
   const stack = document.getElementById('phStack');
   if (stack) stack.innerHTML = p.stack.map((s: string) => `<span class="pill">${s}</span>`).join('');
 
+  // Sin muestra de código en el trabajo de cliente: no hay nada publicable.
+  const codeBlock = document.getElementById('phCodeBlock');
   const code = document.getElementById('phCode');
-  if (code) code.innerHTML = deep.code || '// no sample available';
+  if (codeBlock) codeBlock.style.display = deep.code ? '' : 'none';
+  if (code && deep.code) code.innerHTML = deep.code;
 
+  // El panel de proceso solo aparece cuando hay una cronología real que contar.
+  const timelineSection = document.getElementById('phTimelineSection');
   const timeline = document.getElementById('phTimeline');
+  if (timelineSection) timelineSection.style.display = deep.timeline ? '' : 'none';
   if (timeline && deep.timeline) {
     timeline.innerHTML = deep.timeline[lang].map(([k, v]: string[]) => `<div class="t"><div class="ed-num">${k}</div><div class="text-lg lg:text-xl mt-1">${v}</div></div>`).join('');
   }
