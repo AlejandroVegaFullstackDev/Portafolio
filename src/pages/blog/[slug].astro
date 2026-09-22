@@ -274,13 +274,6 @@ const toc = getToc(post.body);
       content: '// ';
       color: var(--accent);
     }
-    @media (max-width: 768px) {
-      .post-pull-right {
-        float: none;
-        max-width: 100%;
-        margin: 1.5em 0;
-      }
-    }
 
     .post-sticky-side {
       display: none;
@@ -294,11 +287,11 @@ const toc = getToc(post.body);
         margin-bottom: 2rem;
       }
       .post-sticky-side img {
-        width: 100%;
+        width: 50%;
         aspect-ratio: 9 / 16;
         object-fit: cover;
-        border: 1px solid var(--line);
-        background: var(--panel);
+        border: 0;
+        background: transparent;
       }
     }
 
@@ -308,11 +301,9 @@ const toc = getToc(post.body);
     }
     .post-ending img {
       display: block;
-      width: 100%;
-      max-width: 260px;
+      width: 260px;
       margin: 0 auto;
       border: 1px solid var(--line);
-      background: var(--panel);
       aspect-ratio: 9 / 16;
       object-fit: cover;
     }
