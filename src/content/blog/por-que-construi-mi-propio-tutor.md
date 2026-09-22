@@ -17,7 +17,7 @@ Este post no es sobre cómo funciona. Es sobre por qué lo hice.
 **Y sí: la imagen de arriba es una miniatura de mierda generada con IA, llena de flechas, texto gritón, gatos horrorizados y promesas de “stonks”. No está ahí porque explique mejor el tema, sino porque resume exactamente el problema: Internet premia el espectáculo antes que la idea. Si hace falta vestir un texto sobre aprendizaje con una portada absurda para que alguien entre, al menos que el clickbait se vea culpable de sus propios delitos.**
 
 <figure class="post-pull-right">
-  <img src="/blog/pull-right.jpg" alt="Ilustraci�n destacada" loading="lazy" decoding="async" />
+  <img src="/blog/pull-right.webp" alt="Ilustraci�n destacada" loading="lazy" decoding="async" />
   <figcaption>Detalle visual del tema.</figcaption>
 </figure>
 
