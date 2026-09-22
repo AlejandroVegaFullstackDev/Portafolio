@@ -8,6 +8,8 @@ const blog = defineCollection({
     description: z.string().optional(),
     tags: z.array(z.string()).default([]),
     cover: z.string().optional(),
+    coverAlt: z.string().optional(),
+    coverCaption: z.string().optional(),
   }),
 });
 

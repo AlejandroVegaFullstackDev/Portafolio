@@ -864,8 +864,26 @@ section h2.cy-headline { overflow: visible; }
   max-width: 100%;
   height: auto;
   display: block;
-  margin: 2.5em auto;
+  margin: 2.5em auto 0.75em;
   border: 1px solid var(--line);
+}
+.prose figure {
+  margin: 2.75em 0;
+}
+.prose figure img {
+  margin: 0;
+  width: 100%;
+}
+.prose figcaption {
+  margin-top: 0.65rem;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  line-height: 1.45;
+  color: var(--ink-3);
+}
+.prose figcaption::before {
+  content: '// ';
+  color: var(--accent);
 }
 .prose hr {
   border: 0;
