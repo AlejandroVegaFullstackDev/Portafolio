@@ -24,6 +24,41 @@ function readingTime(body: string | undefined) {
 }
 
 const rt = readingTime(post.body);
+
+function stripInlineMarkdown(text: string) {
+  return text
+    .replace(/`([^`]+)`/g, '$1')
+    .replace(/\[([^\]]+)\]\([^\)]+\)/g, '$1')
+    .replace(/[\*_~]/g, '')
+    .trim();
+}
+
+function slugifyHeading(text: string) {
+  return text
+    .toLowerCase()
+    .replace(/[^\p{L}\p{N}\s-]/gu, '')
+    .trim()
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-');
+}
+
+function getToc(body: string | undefined) {
+  if (!body) return [];
+  const seen = new Map<string, number>();
+  return body
+    .split('\n')
+    .map(line => line.match(/^##\s+(.+)$/)?.[1])
+    .filter((text): text is string => Boolean(text))
+    .map(stripInlineMarkdown)
+    .map(text => {
+      const baseId = slugifyHeading(text);
+      const count = seen.get(baseId) ?? 0;
+      seen.set(baseId, count + 1);
+      return { text, id: count ? `${baseId}-${count}` : baseId };
+    });
+}
+
+const toc = getToc(post.body);
 ---
 
 <Layout title={`${post.data.title} — Alejandro Vega`}>
@@ -84,13 +119,13 @@ const rt = readingTime(post.body);
 
     /* ── Header ── */
     .post-header {
-      padding: 7rem 1.5rem 4rem;
+      padding: 6rem 1.5rem 2.5rem;
       max-width: 860px;
       margin: 0 auto;
       position: relative;
     }
     @media (min-width: 1024px) {
-      .post-header { padding: 8rem 2rem 5rem; }
+      .post-header { padding: 7rem 2rem 3rem; }
     }
     .post-tags-row {
       display: flex;
@@ -136,7 +171,7 @@ const rt = readingTime(post.body);
       display: flex;
       align-items: center;
       gap: 0.75rem;
-      margin-top: 2.5rem;
+      margin-top: 1.5rem;
     }
     .post-divider-line { flex: 1; height: 1px; background: var(--line); }
     .post-divider-dot { width: 6px; height: 6px; background: var(--accent); flex-shrink: 0; }
@@ -148,13 +183,13 @@ const rt = readingTime(post.body);
       gap: 3rem;
       max-width: 860px;
       margin: 0 auto;
-      padding: 3rem 1.5rem 5rem;
+      padding: 1.5rem 1.5rem 5rem;
     }
     @media (min-width: 1024px) {
       .post-layout {
         grid-template-columns: 1fr 220px;
         gap: 4rem;
-        padding: 3rem 2rem 6rem;
+        padding: 1.5rem 2rem 6rem;
         max-width: 1100px;
         align-items: start;
       }
@@ -193,136 +228,26 @@ const rt = readingTime(post.body);
       border-top: 1px solid var(--accent);
       border-left: 1px solid var(--accent);
     }
-    .sidebar-row {
+    .sidebar-toc {
       display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      font-family: var(--font-mono);
-      font-size: 0.68rem;
-      padding: 5px 0;
-      border-bottom: 1px solid var(--line);
-      gap: 8px;
+      flex-direction: column;
+      gap: 0.55rem;
     }
-    .sidebar-row:last-child { border-bottom: none; }
-    .sidebar-row-key { color: var(--ink-3); }
-    .sidebar-row-val { color: var(--ink); text-align: right; }
-
-    /* ── Prose ── */
-    .prose {
-      color: var(--ink-2);
-      line-height: 1.82;
-      font-size: 1.05rem;
-    }
-    .prose h2 {
-      font-family: var(--font-display);
-      font-size: clamp(1.4rem, 3vw, 1.9rem);
-      font-weight: 700;
-      color: var(--ink);
-      margin: 2.8em 0 0.9em;
-      letter-spacing: -0.03em;
-      line-height: 1.1;
-      position: relative;
-      padding-left: 1rem;
-    }
-    .prose h2::before {
-      content: '';
-      position: absolute;
-      left: 0; top: 0.15em; bottom: 0.1em;
-      width: 3px;
-      background: var(--accent);
-    }
-    .prose h3 {
-      font-family: var(--font-display);
-      font-size: 1.2rem;
-      font-weight: 600;
-      color: var(--ink);
-      margin: 2.2em 0 0.7em;
-      letter-spacing: -0.02em;
-    }
-    .prose p { margin: 0 0 1.5em; }
-    .prose a { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
-    .prose a:hover { color: var(--accent-2); }
-    .prose ul, .prose ol { margin: 0 0 1.5em; padding-left: 1.5rem; }
-    .prose li { margin-bottom: 0.5em; }
-    .prose strong { color: var(--ink); font-weight: 600; }
-    .prose em { color: var(--ink); }
-    .prose blockquote {
-      margin: 2em 0;
-      padding: 1rem 1.25rem;
-      border-left: 0;
-      background: var(--panel);
-      border: 1px solid var(--line);
-      border-left: 3px solid var(--accent);
-      color: var(--ink-2);
-      font-style: normal;
-      position: relative;
-    }
-    .prose blockquote::before {
-      content: '//';
-      font-family: var(--font-mono);
-      font-size: 0.7rem;
-      color: var(--accent);
-      display: block;
-      margin-bottom: 0.5rem;
-      font-style: normal;
-    }
-    .prose pre {
-      margin: 2em 0;
-      padding: 0;
-      overflow: hidden;
-      border: 1px solid var(--line);
-      border-radius: 0;
-    }
-    .prose pre::before {
-      content: '$ ';
+    .sidebar-toc-link {
       display: block;
       font-family: var(--font-mono);
       font-size: 0.68rem;
+      line-height: 1.35;
       color: var(--ink-3);
-      background: var(--bg-2);
-      padding: 8px 16px;
-      border-bottom: 1px solid var(--line);
-      letter-spacing: 0.06em;
+      text-decoration: none;
+      transition: color 0.2s, transform 0.2s;
     }
-    .prose pre code {
-      display: block;
-      background: var(--panel);
-      padding: 18px 16px;
-      overflow-x: auto;
-      font-family: var(--font-mono);
-      font-size: 0.84rem;
-      color: var(--ink);
-      line-height: 1.7;
-    }
-    .prose :not(pre) > code {
-      font-family: var(--font-mono);
-      font-size: 0.85em;
+    .sidebar-toc-link:hover,
+    .sidebar-toc-link.is-active {
       color: var(--accent);
-      background: var(--panel);
-      padding: 2px 6px;
-      border: 1px solid var(--line);
+      transform: translateX(3px);
     }
-    .prose img {
-      max-width: 100%;
-      height: auto;
-      display: block;
-      margin: 2.5em auto;
-      border: 1px solid var(--line);
-    }
-    .prose hr {
-      border: none;
-      margin: 3em 0;
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-    }
-    .prose hr::before, .prose hr::after {
-      content: '';
-      flex: 1;
-      height: 1px;
-      background: var(--line);
-    }
-    .prose hr::after { content: '·'; flex: 0; color: var(--accent); font-size: 1.2rem; }
+
 
     /* ── Footer ── */
     .post-footer {
@@ -400,31 +325,16 @@ const rt = readingTime(post.body);
 
       <!-- Sidebar -->
       <aside class="post-sidebar">
-        <div class="sidebar-label">// INFO</div>
-        <div class="sidebar-block">
-          <div class="sidebar-row">
-            <span class="sidebar-row-key">fecha</span>
-            <span class="sidebar-row-val">{post.data.date.toLocaleDateString('es-CO', { day: '2-digit', month: '2-digit', year: '2-digit' })}</span>
-          </div>
-          <div class="sidebar-row">
-            <span class="sidebar-row-key">lectura</span>
-            <span class="sidebar-row-val">{rt}</span>
-          </div>
-          <div class="sidebar-row">
-            <span class="sidebar-row-key">autor</span>
-            <span class="sidebar-row-val">AV</span>
-          </div>
-          {post.data.tags.length > 0 && (
-            <div class="sidebar-row">
-              <span class="sidebar-row-key">tags</span>
-              <span class="sidebar-row-val" style="display:flex;flex-wrap:wrap;justify-content:flex-end;gap:4px;">
-                {post.data.tags.map(t => (
-                  <span style="font-size:0.6rem;border:1px solid var(--line-2);padding:1px 5px;color:var(--ink-3);">{t}</span>
-                ))}
-              </span>
+        {toc.length > 0 && (
+          <>
+            <div class="sidebar-label">{'// CONTENIDO'}</div>
+            <div class="sidebar-block sidebar-toc">
+              {toc.map(item => (
+                <a class="sidebar-toc-link" href={`#${item.id}`} data-toc-link={item.id}>{item.text}</a>
+              ))}
             </div>
-          )}
-        </div>
+          </>
+        )}
 
         <div style="margin-top:1.5rem;">
           <div class="sidebar-label">// LINKS</div>
@@ -454,6 +364,39 @@ const rt = readingTime(post.body);
       }
       window.addEventListener('scroll', updateBar, { passive: true });
       updateBar();
+    }
+
+    // Code block language labels
+    document.querySelectorAll('.prose pre > code[class*="language-"]').forEach((code) => {
+      const langClass = Array.from(code.classList).find((className) => className.startsWith('language-'));
+      const lang = langClass?.replace('language-', '').trim();
+      const pre = code.parentElement;
+      if (lang && pre instanceof HTMLPreElement) pre.dataset.lang = lang;
+    });
+
+    // Sidebar table of contents active state
+    const tocLinks = Array.from(document.querySelectorAll<HTMLAnchorElement>('[data-toc-link]'));
+    const headings = tocLinks
+      .map((link) => document.getElementById(link.dataset.tocLink ?? ''))
+      .filter((heading): heading is HTMLElement => Boolean(heading));
+
+    if (tocLinks.length && headings.length) {
+      const setActive = (id: string) => {
+        tocLinks.forEach((link) => {
+          link.classList.toggle('is-active', link.dataset.tocLink === id);
+        });
+      };
+      const observer = new IntersectionObserver(
+        (entries) => {
+          const visible = entries
+            .filter((entry) => entry.isIntersecting)
+            .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+          if (visible?.target.id) setActive(visible.target.id);
+        },
+        { rootMargin: '-18% 0px -65% 0px', threshold: [0, 0.25, 0.5, 1] }
+      );
+      headings.forEach((heading) => observer.observe(heading));
+      setActive(headings[0].id);
     }
   </script>
 </Layout>
