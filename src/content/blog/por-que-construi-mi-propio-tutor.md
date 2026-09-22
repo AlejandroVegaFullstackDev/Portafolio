@@ -17,7 +17,7 @@ Este post no es sobre cómo funciona. Es sobre por qué lo hice.
 **_Y sí:_** la imagen de arriba es **una miniatura de mierda generada con IA**, llena de flechas, texto gritón, gatos horrorizados y promesas de "stonks". **_No está ahí porque explique mejor el tema_**, sino porque resume exactamente el problema: **Internet premia el espectáculo antes que la idea**. Si hace falta vestir un texto sobre aprendizaje con una portada absurda para que alguien entre, **al menos que el clickbait se vea culpable de sus propios delitos.**
 
 <figure class="post-pull-right">
-  <img src="/blog/pull-right.webp" alt="Ilustraci�n destacada" loading="lazy" decoding="async" />
+  <img src="/blog/pull-right.webp" alt="Ilustraci?n destacada" loading="lazy" decoding="async" />
   <figcaption>Detalle visual del tema.</figcaption>
 </figure>
 
@@ -107,8 +107,8 @@ Esa es la parte que se puede replicar. Y cada vez más barato.
 Así que sí: esto es gratis, es MIT, y si lo mejoras no me debes nada.
 
 <figure class="post-ending-political">
-  <img src="/blog/politica-ending.jpg" alt="Cierre de la secci�n pol�tica" loading="lazy" decoding="async" />
-  <figcaption>Reflexi�n pol�tica final.</figcaption>
+  <img src="/blog/politica-ending.jpg" alt="Cierre de la secci?n pol?tica" loading="lazy" decoding="async" />
+  <figcaption>Reflexi?n pol?tica final.</figcaption>
 </figure> Cógelo, úsalo, cámbialo, móntate el tuyo. Si algún día enseñas algo que aprendiste con esto, y lo enseñas gratis, ya está pagado.
 
 ---
@@ -118,6 +118,6 @@ El repo está en [github.com/AlejandroVegaFullstackDev/ai-skill-coach](https://g
 Se agradecen issues, incluso los mal escritos.
 
 <figure class="post-ending">
-  <img src="/blog/ending-center.jpg" alt="Cierre del art�culo" loading="lazy" decoding="async" />
-  <figcaption>Reflexi�n final.</figcaption>
+  <img src="/blog/ending-center.jpg" alt="Cierre del art?culo" loading="lazy" decoding="async" />
+  <figcaption>Reflexi?n final.</figcaption>
 </figure>
