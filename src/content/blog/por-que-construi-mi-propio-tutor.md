@@ -3,6 +3,9 @@ title: "Por qué construí mi propio tutor"
 date: 2026-09-22
 description: "Sobre el exceso de información, los cursos que ya no hacen falta, y por qué el conocimiento no debería tener precio."
 tags: ["programación", "IA", "open source", "aprendizaje"]
+cover: "/blog/ai-clickbait-tutor.jpg"
+coverAlt: "Miniatura exagerada generada con IA sobre cursos, modelos de IA y clickbait"
+coverCaption: "Imagen generada con IA para burlarse del clickbait que rodea el aprendizaje con IA."
 ---
 
 Llevo semanas construyendo una cosa rara: un tutor que vive dentro de un repositorio. No es una app ni un curso. Son unos cuantos ficheros de texto que le dicen a un modelo de IA cómo enseñarte algo, y un fichero más donde se guarda qué ya sabes.
@@ -10,6 +13,8 @@ Llevo semanas construyendo una cosa rara: un tutor que vive dentro de un reposit
 Está en [GitHub](https://github.com/AlejandroVegaFullstackDev/ai-skill-coach), es MIT, y funciona para cualquier habilidad. Lo estoy usando para inglés y para guitarra.
 
 Este post no es sobre cómo funciona. Es sobre por qué lo hice.
+
+Y sí: la imagen de arriba es una miniatura de mierda generada con IA, llena de flechas, texto gritón, gatos horrorizados y promesas de “stonks”. No está ahí porque explique mejor el tema, sino porque resume exactamente el problema: Internet premia el espectáculo antes que la idea. Si hace falta vestir un texto sobre aprendizaje con una portada absurda para que alguien entre, al menos que el clickbait se vea culpable de sus propios delitos.
 
 ## El problema no es la falta de información
 
