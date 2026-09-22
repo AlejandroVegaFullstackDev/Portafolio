@@ -247,6 +247,76 @@ const toc = getToc(post.body);
       }
     }
 
+    /* ── Inline images inside prose ── */
+    .prose .pull-right {
+      float: right;
+      margin: 0.5em 0 1em 1.5em;
+      max-width: 45%;
+      border: 1px solid var(--line);
+      background: var(--panel);
+      overflow: hidden;
+    }
+    .prose .pull-right img {
+      display: block;
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      object-fit: cover;
+    }
+    .prose .pull-right figcaption {
+      padding: 6px 10px;
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      line-height: 1.4;
+      color: var(--ink-3);
+      border-top: 1px solid var(--line);
+    }
+    .prose .pull-right figcaption::before {
+      content: '// ';
+      color: var(--accent);
+    }
+    @media (max-width: 768px) {
+      .prose .pull-right {
+        float: none;
+        max-width: 100%;
+        margin: 1.5em 0;
+      }
+    }
+
+    .prose .sticky-side {
+      display: none;
+    }
+    @media (min-width: 1024px) {
+      .prose .sticky-side {
+        display: block;
+        position: sticky;
+        top: 100px;
+        align-self: start;
+        margin-bottom: 2rem;
+      }
+      .prose .sticky-side img {
+        width: 100%;
+        aspect-ratio: 3 / 4;
+        object-fit: cover;
+        border: 1px solid var(--line);
+        background: var(--panel);
+      }
+    }
+
+    .prose-ending {
+      margin: 4rem auto 2rem;
+      text-align: center;
+    }
+    .prose-ending img {
+      display: block;
+      width: 100%;
+      max-width: 520px;
+      margin: 0 auto;
+      border: 1px solid var(--line);
+      background: var(--panel);
+      aspect-ratio: 16 / 9;
+      object-fit: cover;
+    }
+
     /* ── Content layout ── */
     .post-layout {
       display: grid;
@@ -406,6 +476,9 @@ const toc = getToc(post.body);
     <div class="post-layout">
       <!-- Article -->
       <article class="prose">
+        <div class="sticky-side" data-sticky-side>
+          <img src="/blog/sidebar-sticky.jpg" alt="Ilustración lateral" loading="lazy" decoding="async" />
+        </div>
         <Content />
       </article>
 
