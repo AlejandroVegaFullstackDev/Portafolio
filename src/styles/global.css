@@ -871,8 +871,12 @@ section h2.cy-headline { overflow: visible; }
   margin: 2.75em 0;
 }
 .prose figure img {
-  margin: 0;
-  width: 100%;
+        width: 50%;
+        max-width: none;
+        -o-object-fit: cover;
+        object-fit: cover;
+        border: 0;
+        background: transparent;
 }
 .prose figcaption {
   margin-top: 0.65rem;
