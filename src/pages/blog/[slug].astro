@@ -135,6 +135,15 @@ const toc = getToc(post.body);
       gap: 2rem;
       align-items: end;
     }
+    @media (max-width: 1023px) {
+      .post-hero {
+        grid-template-columns: 1fr;
+        align-items: start;
+      }
+      .post-hero.has-cover {
+        grid-template-columns: 1fr;
+      }
+    }
     @media (min-width: 1024px) {
       .post-hero.has-cover {
         grid-template-columns: minmax(0, 0.92fr) minmax(420px, 1.08fr);
@@ -228,6 +237,14 @@ const toc = getToc(post.body);
       content: '▣';
       color: var(--accent);
       font-size: 0.7rem;
+    }
+    @media (max-width: 600px) {
+      .post-cover img {
+        aspect-ratio: 16 / 9;
+      }
+      .post-cover figcaption {
+        font-size: 0.6rem;
+      }
     }
 
     /* ── Content layout ── */
