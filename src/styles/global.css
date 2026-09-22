@@ -892,9 +892,5 @@ section h2.cy-headline { overflow: visible; }
   text-align: center;
 }
 .prose hr::before {
-  content: '\2022\2022\2022';
-  color: var(--ink-3);
-  font-family: var(--font-mono);
-  font-size: 0.9rem;
-  letter-spacing: 0.6em;
+  content: '';
 }
