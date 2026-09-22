@@ -251,15 +251,13 @@ const toc = getToc(post.body);
     .post-pull-right {
       float: right;
       margin: 0.5em 0 1em 1.5em;
-      max-width: 26%;
-      border: 1px solid var(--line);
-      background: var(--panel);
+      width: 50%;
       overflow: hidden;
     }
     .post-pull-right img {
       display: block;
       width: 100%;
-      aspect-ratio: 9 / 16;
+      max-width: none;
       object-fit: cover;
     }
     .post-pull-right figcaption {
@@ -288,7 +286,7 @@ const toc = getToc(post.body);
       }
       .post-sticky-side img {
         width: 50%;
-        aspect-ratio: 9 / 16;
+        max-width: none;
         object-fit: cover;
         border: 0;
         background: transparent;
@@ -301,11 +299,56 @@ const toc = getToc(post.body);
     }
     .post-ending img {
       display: block;
-      width: 260px;
+      width: 50%;
+      max-width: none;
       margin: 0 auto;
-      border: 1px solid var(--line);
-      aspect-ratio: 9 / 16;
       object-fit: cover;
+      border: 0;
+      background: transparent;
+    }
+
+    .post-ending-political {
+      margin: 3rem auto 2rem;
+      text-align: center;
+    }
+    .post-ending-political img {
+      display: block;
+      width: 50%;
+      max-width: none;
+      margin: 0 auto;
+      object-fit: cover;
+      border: 0;
+      background: transparent;
+    }
+
+    .post-trial {
+      margin: 3rem auto 2rem;
+      text-align: center;
+    }
+    .post-trial img {
+      display: block;
+      width: 50%;
+      max-width: none;
+      margin: 0 auto;
+      object-fit: cover;
+      border: 0;
+      background: transparent;
+    }
+
+    .post-trial figcaption,
+    .post-ending-political figcaption,
+    .post-ending figcaption {
+      padding: 8px 0;
+      font-family: var(--font-mono);
+      font-size: 0.62rem;
+      line-height: 1.4;
+      color: var(--ink-3);
+    }
+    .post-trial figcaption::before,
+    .post-ending-political figcaption::before,
+    .post-ending figcaption::before {
+      content: '// ';
+      color: var(--accent);
     }
 
     /* ── Content layout ── */
