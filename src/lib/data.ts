@@ -11,7 +11,7 @@ export const portfolioData = {
     },
     educationShort: { es: "SENA · UNIMINUTO", en: "SENA · UNIMINUTO" },
     educationSub: { es: "2021–22 · 2025 – en curso", en: "2021–22 · 2025 – ongoing" },
-    title: { es: "Desarrollador Full Stack Semi Senior", en: "Semi Senior Full Stack Developer" },
+    title: { es: "Desarrollador Full Stack Senior", en: "Senior Full Stack Developer" },
     tagline: {
       es: "Desarrollo productos web de punta a punta: frontend, backend, automatización, datos y plataformas internas que sí aguantan operación real.",
       en: "I build end-to-end web products: frontend, backend, automation, data and internal platforms for real operations.",
@@ -20,7 +20,7 @@ export const portfolioData = {
       es: "Disponible para incorporación inmediata",
       en: "Available for immediate hire",
     },
-    projectCount: 12,
+    projectCount: 13,
     timezone: "GMT-5",
     domain: "4ledmt.dev",
     contact: {
@@ -47,12 +47,12 @@ export const portfolioData = {
 
   about: {
     es: [
-      "Soy Desarrollador Full Stack Semi Senior. Desde 2023 construyo soluciones web, APIs, automatizaciones y plataformas internas para equipos reales.",
+      "Soy Desarrollador Full Stack Senior. Desde 2023 construyo soluciones web, APIs, automatizaciones y plataformas internas para equipos reales.",
       "Trabajo cómodo en todo el ciclo: frontend, backend, bases de datos, integraciones, despliegue y mejora continua. También disfruto mucho construir interfaces claras y usables.",
       "Me gusta resolver fricción operativa: procesos manuales, integraciones rotas, reportes lentos o sistemas que necesitan escalar sin perder claridad.",
     ],
     en: [
-      "Semi Senior Full Stack Developer. Since 2023 I've been building web solutions, APIs, automations and internal platforms for real teams.",
+      "Senior Full Stack Developer. Since 2023 I've been building web solutions, APIs, automations and internal platforms for real teams.",
       "I work comfortably across the full cycle: frontend, backend, databases, integrations, deployment and continuous improvement. I also really enjoy building clear, usable interfaces.",
       "I like solving operational friction: manual processes, brittle integrations, slow reports or systems that need to scale without losing clarity.",
     ],
@@ -209,10 +209,31 @@ export const portfolioData = {
   ],
 
   projects: [
+    // ── Open source ───────────────────────────────────────────────────────────
+    {
+      slug: "support-triage",
+      n: "001",
+      name: { es: "Support Triage", en: "Support Triage" },
+      kicker: { es: "Microservicios + LLMs · Open source", en: "Microservices + LLMs · Open source" },
+      summary: {
+        es: "Sistema de soporte orientado a eventos: una API en NestJS guarda los tickets en PostgreSQL y los publica en RabbitMQ; un agente en FastAPI los clasifica (categoría, prioridad y respuesta sugerida) con Claude u OpenAI usando salida estructurada, y cae a un clasificador local si el LLM falla. Panel en React, colas de dead-letter, CI con prueba end-to-end del stack completo y decisiones documentadas en ADRs.",
+        en: "Event-driven support system: a NestJS API stores tickets in PostgreSQL and publishes them to RabbitMQ; a FastAPI agent classifies them (category, priority and suggested reply) with Claude or OpenAI using structured output, falling back to a local classifier when the LLM fails. React panel, dead-letter queues, CI with an end-to-end run of the full stack, and decisions documented as ADRs.",
+      },
+      role: { es: "Autor", en: "Author" },
+      year: "2026",
+      company: "Open source",
+      github: "https://github.com/AlejandroVegaFullstackDev/support-triage",
+      stack: ["NestJS", "FastAPI", "RabbitMQ", "React", "PostgreSQL", "Claude API", "Docker"],
+      metrics: [
+        { k: { es: "servicios", en: "services" }, v: "3" },
+        { k: { es: "proveedor LLM", en: "LLM provider" }, v: "Claude | OpenAI | local" },
+        { k: { es: "CI", en: "CI" }, v: "End-to-end" },
+      ],
+    },
     // ── Trabajo de producción ─────────────────────────────────────────────────
     {
       slug: "worker-gps",
-      n: "001",
+      n: "002",
       name: { es: "Worker de sincronización GPS", en: "GPS sync worker" },
       kicker: { es: "Concurrencia y locks · Python", en: "Concurrency & locks · Python" },
       summary: {
@@ -232,7 +253,7 @@ export const portfolioData = {
     },
     {
       slug: "plataforma-interna",
-      n: "002",
+      n: "003",
       name: { es: "Plataforma administrativa interna", en: "Internal admin platform" },
       kicker: { es: "Plataforma interna · NestJS", en: "Internal platform · NestJS" },
       summary: {
@@ -252,7 +273,7 @@ export const portfolioData = {
     },
     {
       slug: "recuperacion-cartera",
-      n: "003",
+      n: "004",
       name: { es: "Recuperación de cartera y activos", en: "Portfolio & asset recovery" },
       kicker: { es: "Operación de campo · NestJS", en: "Field operations · NestJS" },
       summary: {
@@ -272,7 +293,7 @@ export const portfolioData = {
     },
     {
       slug: "vegareparaciones",
-      n: "004",
+      n: "005",
       name: { es: "vegareparaciones.com", en: "vegareparaciones.com" },
       kicker: { es: "Sitio y SEO · Next.js", en: "Site & SEO · Next.js" },
       summary: {
@@ -293,7 +314,7 @@ export const portfolioData = {
     },
     {
       slug: "escaneo-masivo",
-      n: "005",
+      n: "006",
       name: { es: "Escaneo masivo de guías", en: "Bulk waybill scanning" },
       kicker: { es: "Rendimiento · PostgreSQL", en: "Performance · PostgreSQL" },
       summary: {
@@ -313,7 +334,7 @@ export const portfolioData = {
     },
     {
       slug: "etl-bigquery",
-      n: "006",
+      n: "007",
       name: { es: "ETL de audiencia a BigQuery", en: "Audience ETL into BigQuery" },
       kicker: { es: "Datos · Python", en: "Data · Python" },
       summary: {
@@ -335,7 +356,7 @@ export const portfolioData = {
     // ── Código abierto ────────────────────────────────────────────────────────
     {
       slug: "cufe-dian",
-      n: "007",
+      n: "008",
       name: { es: "CUFE Scraper DIAN", en: "CUFE DIAN Scraper" },
       kicker: { es: "Automatización fiscal · Python", en: "Tax automation · Python" },
       summary: {
@@ -354,7 +375,7 @@ export const portfolioData = {
     },
     {
       slug: "shipping-nestjs",
-      n: "008",
+      n: "009",
       name: { es: "API de envíos NestJS", en: "NestJS Shipment API" },
       kicker: { es: "Backend · NestJS", en: "Backend · NestJS" },
       summary: {
@@ -373,7 +394,7 @@ export const portfolioData = {
     },
     {
       slug: "task-laravel",
-      n: "009",
+      n: "010",
       name: { es: "Task Manager Laravel", en: "Laravel Task Manager" },
       kicker: { es: "Full stack · Laravel", en: "Full stack · Laravel" },
       summary: {
@@ -392,7 +413,7 @@ export const portfolioData = {
     },
     {
       slug: "roda-technical",
-      n: "010",
+      n: "011",
       name: { es: "Microservicio e-Bike Autolock", en: "e-Bike Autolock Microservice" },
       kicker: { es: "Clean Architecture · Python", en: "Clean Architecture · Python" },
       summary: {
@@ -411,7 +432,7 @@ export const portfolioData = {
     },
     {
       slug: "universal-analytics",
-      n: "011",
+      n: "012",
       name: { es: "Extractor Universal Analytics", en: "Universal Analytics Extractor" },
       kicker: { es: "Data · Python", en: "Data · Python" },
       summary: {
@@ -430,7 +451,7 @@ export const portfolioData = {
     },
     {
       slug: "ga4-factory",
-      n: "012",
+      n: "013",
       name: { es: "Reportes GA4 · Factory Method", en: "GA4 Reports · Factory Method" },
       kicker: { es: "Patrón de diseño · Python", en: "Design pattern · Python" },
       summary: {
