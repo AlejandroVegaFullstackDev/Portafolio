@@ -147,7 +147,7 @@ export const portfolioData = {
           "Cloud Run Job for continuous GPS device monitoring, backlog automation with Python and the Trello API, and service documentation in Notion split by audience.",
         ],
       },
-      stack: ["NestJS", "Python", "React", "PostgreSQL", "GCP", "Redis", "Docker"],
+      stack: ["Python", "Flask", "FastAPI", "React", "PostgreSQL", "GCP", "Redis", "Docker"],
     },
     {
       company: "VegaReparaciones",
@@ -255,18 +255,18 @@ export const portfolioData = {
       slug: "plataforma-interna",
       n: "003",
       name: { es: "Plataforma administrativa interna", en: "Internal admin platform" },
-      kicker: { es: "Plataforma interna · NestJS", en: "Internal platform · NestJS" },
+      kicker: { es: "Plataforma interna · Python", en: "Internal platform · Python" },
       summary: {
-        es: "El componente de mayor volumen funcional de la plataforma administrativa interna de Roda: gestión de clientes, seguimiento de cartera y los flujos que el equipo de operación usa todos los días. Backend en NestJS, interfaz en React y PostgreSQL sobre GCP.",
-        en: "The largest functional component of Roda's internal admin platform: customer management, portfolio follow-up and the flows the operations team uses every day. NestJS backend, React interface and PostgreSQL on GCP.",
+        es: "El componente de mayor volumen funcional de la plataforma administrativa interna de Roda: gestión de clientes, seguimiento de cartera y los flujos que el equipo de operación usa todos los días. Backend en Python (Flask / FastAPI), interfaz en React y PostgreSQL sobre GCP.",
+        en: "The largest functional component of Roda's internal admin platform: customer management, portfolio follow-up and the flows the operations team uses every day. Python (Flask / FastAPI) backend, React interface and PostgreSQL on GCP.",
       },
       role: { es: "Desarrollador principal", en: "Lead developer" },
       year: "2025",
       company: "Roda",
       github: null,
-      stack: ["NestJS", "React", "PostgreSQL", "GCP", "TypeScript"],
+      stack: ["Python", "Flask", "FastAPI", "React", "PostgreSQL", "GCP", "TypeScript"],
       metrics: [
-        { k: { es: "backend", en: "backend" }, v: "NestJS" },
+        { k: { es: "backend", en: "backend" }, v: "Python" },
         { k: { es: "datos", en: "data" }, v: "PostgreSQL" },
         { k: { es: "nube", en: "cloud" }, v: "GCP" },
       ],
@@ -275,7 +275,7 @@ export const portfolioData = {
       slug: "recuperacion-cartera",
       n: "004",
       name: { es: "Recuperación de cartera y activos", en: "Portfolio & asset recovery" },
-      kicker: { es: "Operación de campo · NestJS", en: "Field operations · NestJS" },
+      kicker: { es: "Operación de campo · Python", en: "Field operations · Python" },
       summary: {
         es: "Recuperación de vehículos y créditos, de punta a punta. Dos interfaces administrativas que sustituyeron un proceso que se llevaba entre hojas de cálculo y coordinación por chat con los equipos de campo.",
         en: "Vehicle and credit recovery, end to end. Two admin interfaces that replaced a process previously run across spreadsheets and chat coordination with the field teams.",
@@ -284,7 +284,7 @@ export const portfolioData = {
       year: "2025",
       company: "Roda",
       github: null,
-      stack: ["NestJS", "React", "PostgreSQL", "GCP"],
+      stack: ["Python", "Flask", "React", "PostgreSQL", "GCP"],
       metrics: [
         { k: { es: "interfaces", en: "interfaces" }, v: "2" },
         { k: { es: "alcance", en: "scope" }, v: { es: "Punta a punta", en: "End to end" } },
@@ -500,10 +500,10 @@ export const portfolioData = {
         en: "Internal operations lived scattered across separate tools: customer data in one place, portfolio status in another, field coordination in a third. There was no single place where the team could see and move the whole customer cycle.",
       },
       solution: {
-        es: "Construí el módulo central de la plataforma administrativa: API en NestJS con casos de uso separados de los controladores, interfaz en React para el equipo de operación y PostgreSQL como fuente de verdad, todo desplegado en GCP.",
-        en: "I built the platform's central module: a NestJS API with use cases separated from controllers, a React interface for the operations team and PostgreSQL as the source of truth, all deployed on GCP.",
+        es: "Construí el módulo central de la plataforma administrativa: API en Python (Flask / FastAPI) con casos de uso separados de los controladores, interfaz en React para el equipo de operación y PostgreSQL como fuente de verdad, todo desplegado en GCP.",
+        en: "I built the platform's central module: a Python (Flask / FastAPI) API with use cases separated from controllers, a React interface for the operations team and PostgreSQL as the source of truth, all deployed on GCP.",
       },
-      arch: ["React", "API NestJS", "Casos de uso", "PostgreSQL", "GCP"],
+      arch: ["React", "API Python", "Casos de uso", "PostgreSQL", "GCP"],
       learnings: {
         es: [
           ["Volumen funcional", "El módulo más grande no es el más difícil de escribir, sino el más difícil de mantener legible mientras crece."],
@@ -526,7 +526,7 @@ export const portfolioData = {
         es: "Desarrollé el módulo de punta a punta con dos interfaces administrativas: una para el seguimiento de casos y otra para la coordinación con campo. Cada caso tiene estado, responsable e historial, y el proceso manual dejó de existir.",
         en: "I built the module end to end with two admin interfaces: one for case tracking and one for field coordination. Every case has a state, an owner and a history, and the manual process went away.",
       },
-      arch: ["React", "API NestJS", "Casos de uso", "PostgreSQL", "Equipos de campo"],
+      arch: ["React", "API Python", "Casos de uso", "PostgreSQL", "Equipos de campo"],
       learnings: {
         es: [
           ["Dos interfaces, un dominio", "Oficina y campo necesitan vistas distintas del mismo caso; el dominio compartido evita que se desincronicen."],
