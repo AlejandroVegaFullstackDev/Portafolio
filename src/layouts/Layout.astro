@@ -1,10 +1,9 @@
 ---
 // Documento base de todas las páginas: metadatos (SEO + vista previa al compartir),
-// fuentes self-hosted, estilos globales, analítica y restauración de preferencias.
+// fuentes self-hosted, estilos globales y restauración de preferencias.
 import '@fontsource-variable/space-grotesk';
 import '@fontsource-variable/jetbrains-mono';
 import '../styles/global.css';
-import Analytics from '@vercel/analytics/astro';
 import { portfolioData as D } from '../data';
 
 interface Props {
@@ -97,10 +96,5 @@ const person = {
 </head>
 <body>
   <slot />
-  <Analytics />
-  <script>
-    import { initTracking } from '../scripts/core/track';
-    initTracking();
-  </script>
 </body>
 </html>
