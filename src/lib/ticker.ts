@@ -10,7 +10,7 @@ export function buildTicker(latestPostTitle?: string) {
     { icon: '▼', text: 'KIKI LATAM: +10.000 GUÍAS EN SEGUNDOS, ANTES HORAS' },
     { icon: '●', text: `STACK: ${topStack}` },
     { icon: '▲', text: 'VEGAREPARACIONES: SEO 100 · A11Y 96 · PERF 90' },
-    { icon: '●', text: 'FOR HIRE: REMOTE / HYBRID' },
+    { icon: '●', text: 'ABIERTO A OPORTUNIDADES: REMOTO / HÍBRIDO' },
     { icon: '▼', text: companies },
     { icon: '●', text: 'PULZO: +5 AÑOS DE DATOS CENTRALIZADOS' },
   ];

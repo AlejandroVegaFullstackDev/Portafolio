@@ -18,8 +18,8 @@ export const identity = {
     en: "I see patterns in everything: in a song, in a match, in a problem. Programming is how I put them to work.",
   },
   status: {
-    es: "Disponible para incorporación inmediata",
-    en: "Available for immediate hire",
+    es: "Abierto a nuevas oportunidades",
+    en: "Open to new opportunities",
   },
   projectCount: 13,
   timezone: "GMT-5",
