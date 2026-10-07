@@ -14,8 +14,8 @@ export const identity = {
   educationSub: { es: "2021–22 · 2025 – en curso", en: "2021–22 · 2025 – ongoing" },
   title: { es: "Desarrollador Full Stack", en: "Full Stack Developer" },
   tagline: {
-    es: "Me gusta programar, resolver problemas y encontrar patrones, en el código y fuera de él. Full stack: frontend, backend, datos e IA.",
-    en: "I like programming, solving problems and finding patterns, in code and outside of it. Full stack: frontend, backend, data and AI.",
+    es: "Veo patrones en todo: en una canción, en un partido, en un problema. Programar es mi forma de ponerlos a trabajar.",
+    en: "I see patterns in everything: in a song, in a match, in a problem. Programming is how I put them to work.",
   },
   status: {
     es: "Disponible para incorporación inmediata",
