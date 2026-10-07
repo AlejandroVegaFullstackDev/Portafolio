@@ -7,12 +7,14 @@ Regla de oro: **un archivo, una responsabilidad, menos de ~300 líneas.**
 src/
 ├─ pages/                 Rutas. Solo arman la página con componentes.
 │  ├─ index.astro         Home (~50 líneas): orden de las secciones.
+│  ├─ alejandro-vega-cv-[lang].pdf.ts   CV en PDF generado en el build.
 │  ├─ about.astro, blog/, proyecto/, api/now-playing.ts
 ├─ layouts/Layout.astro   <html>, fuentes, meta e importa styles/global.css (una sola vez).
 ├─ components/
 │  ├─ layout/             Header, MobileMenu, BootScreen, NowBand.
 │  ├─ sections/           Una por sección del home: Hero, About, Stack, Projects, Blog, Experience, Contact.
 │  ├─ ui/                 Piezas reutilizables: SectionHeading, Coverflow, PaperStack, SecretTerminal.
+│  ├─ blog/, project/     Partes de las páginas de post y de caso de proyecto.
 │  └─ SpotifyNow.astro, TweaksPanel.tsx
 ├─ scripts/
 │  ├─ home.ts             Orquestador: qué se inicia y en qué orden. Empieza a leer por aquí.
@@ -20,9 +22,11 @@ src/
 │  ├─ sections/           Interacción propia de una sección (hero, blog, experience, contact, nowBand).
 │  └─ fx/                 Efectos reutilizables, uno por archivo (ver tabla).
 ├─ data/                  Contenido del portafolio. index.ts los junta en `portfolioData`.
-├─ lib/                   Utilidades: blog.ts (posts, fechas, lectura), ticker.ts.
+├─ lib/                   Utilidades: blog.ts (posts), text.ts (fechas, lectura, índice), cv.ts (render del PDF), ticker.ts.
 ├─ content/blog/          Posts en Markdown.
-└─ styles/                global.css (entrada) → tokens, base, components, effects, prose.
+├─ styles/                global.css (entrada) → tokens, base, components, effects, coverflow, prose.
+tests/                    Vitest: datos, helpers, CV y smoke del home.
+tools/og-image.py         Genera public/og.png.
 ```
 
 ## Dónde cambio…
@@ -30,6 +34,7 @@ src/
 | Quiero…                              | Archivo                                   |
 |--------------------------------------|-------------------------------------------|
 | Un texto, cifra, proyecto o empleo   | `src/data/*.ts`                           |
+| El CV en PDF                         | `src/data/cv.ts` (contenido), `src/lib/cv.ts` (diseño) |
 | Un post                              | `src/content/blog/*.md`                   |
 | El orden de las secciones del home   | `src/pages/index.astro`                   |
 | El diseño de una sección             | `src/components/sections/<Sección>.astro` (su CSS va dentro) |
@@ -68,3 +73,12 @@ ponla en `pages/index.astro`. Si necesita JS, crea `scripts/sections/nueva.ts` c
 
 **ScrollTrigger y secciones pinneadas:** crea los triggers en el orden de la página;
 `home.ts` llama a `ScrollTrigger.sort()` al final para recalcular posiciones.
+
+## Estilos: ¿`<style>` en el componente o en `styles/`?
+
+- **En el componente** (scoped, por defecto): lo que solo usa esa sección o página.
+- **En `src/styles/`** (global): tokens, base, piezas compartidas entre componentes
+  (`components.css`, `coverflow.css`), efectos que crea el JS (`effects.css`) y todo lo que
+  estiliza contenido de Markdown (`prose.css`), porque el HTML de un post no recibe el scope.
+- Si un `<style>` scoped no aplica a algo que inyecta JS o Markdown, es porque ese HTML no lleva
+  el atributo de scope: muévelo a `styles/` o usa `:global()`.

@@ -1,259 +1,13 @@
 ---
+// /blog: encabezado + lista (components/blog/PostList.astro). Efectos en scripts/blogIndex.ts.
 import Layout from '../../layouts/Layout.astro';
-import { getCollection } from 'astro:content';
+import PostList from '../../components/blog/PostList.astro';
+import { getSortedPosts } from '../../lib/blog';
 
-const posts = (await getCollection('blog')).sort(
-  (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
-);
-
-function fmtDate(d: Date) {
-  return d.toLocaleDateString('es-CO', { year: 'numeric', month: '2-digit', day: '2-digit' });
-}
-
-function readingTime(body: string | undefined) {
-  if (!body) return '1 min';
-  const words = body.trim().split(/\s+/).length;
-  return Math.max(1, Math.round(words / 200)) + ' min';
-}
+const posts = await getSortedPosts();
 ---
 
-<Layout title="Blog — Alejandro Vega">
-  <style>
-    body { background: var(--bg); }
-
-    /* Header */
-    .blog-header {
-      border-bottom: 1px solid var(--line);
-      padding: 5rem 1.5rem 3.5rem;
-      position: relative;
-      overflow: hidden;
-    }
-    @media (min-width: 1024px) {
-      .blog-header { padding: 6rem 5rem 4rem; }
-    }
-    .blog-bg-word {
-      position: absolute;
-      right: -0.04em;
-      top: 50%;
-      transform: translateY(-50%);
-      font-family: var(--font-display);
-      font-weight: 700;
-      font-size: clamp(10rem, 22vw, 20rem);
-      line-height: 1;
-      color: var(--line);
-      letter-spacing: -0.04em;
-      select: none;
-      pointer-events: none;
-      user-select: none;
-    }
-    .blog-back {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      font-family: var(--font-mono);
-      font-size: 0.72rem;
-      letter-spacing: 0.12em;
-      color: var(--ink-3);
-      text-decoration: none;
-      margin-bottom: 2.5rem;
-      transition: color 0.2s;
-    }
-    .blog-back:hover { color: var(--accent); }
-    .blog-eyebrow {
-      font-family: var(--font-mono);
-      font-size: 0.7rem;
-      letter-spacing: 0.2em;
-      color: var(--accent);
-      margin-bottom: 0.75rem;
-    }
-    .blog-h1 {
-      font-family: var(--font-display);
-      font-size: clamp(3rem, 8vw, 6.5rem);
-      font-weight: 700;
-      letter-spacing: -0.04em;
-      line-height: 0.95;
-      color: var(--ink);
-    }
-    .blog-meta-strip {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      font-family: var(--font-mono);
-      font-size: 0.72rem;
-      color: var(--ink-3);
-      margin-top: 1.25rem;
-      flex-wrap: wrap;
-    }
-    .blog-meta-strip .dot-sep { color: var(--line-2); }
-
-
-    /* ─── 3D ─── */
-    .blog-header { perspective: 1200px; }
-    .blog-bg-word {
-      transform-style: preserve-3d;
-      will-change: transform;
-      text-shadow:
-        1px 1px 0 var(--line-2), 2px 2px 0 var(--line-2), 3px 3px 0 var(--line-2),
-        4px 4px 0 var(--line-2), 5px 5px 0 var(--line-2), 6px 6px 0 var(--line-2),
-        7px 7px 0 var(--line-2), 8px 8px 0 var(--bg-2),
-        14px 18px 28px rgba(255, 0, 60, 0.18);
-    }
-    .posts-wrap > div { perspective: 1400px; }
-    .post-row { transform-style: preserve-3d; will-change: transform; }
-    .post-cover-thumb { will-change: transform; }
-
-    /* Post list */
-    .posts-wrap {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 1.5rem 6rem;
-    }
-    @media (min-width: 1024px) {
-      .posts-wrap { padding: 0 5rem 6rem; }
-    }
-
-    .post-row {
-      display: grid;
-      grid-template-columns: 56px 1fr auto;
-      gap: 1.25rem;
-      align-items: start;
-      padding: 2.25rem 0;
-      border-bottom: 1px solid var(--line);
-      text-decoration: none;
-      color: inherit;
-      position: relative;
-      transition: background 0.2s;
-    }
-    .post-row::after {
-      content: '';
-      position: absolute;
-      left: 0; bottom: -1px;
-      height: 1px; width: 0;
-      background: var(--accent);
-      transition: width 0.45s cubic-bezier(0.22,1,0.36,1);
-    }
-    .post-row:hover::after { width: 100%; }
-    .post-row.has-cover {
-      grid-template-columns: 56px minmax(0, 1fr) minmax(150px, 220px) auto;
-    }
-
-    .post-num {
-      font-family: var(--font-display);
-      font-size: clamp(2.8rem, 5vw, 4rem);
-      font-weight: 700;
-      color: var(--line-2);
-      line-height: 1;
-      padding-top: 0.1em;
-      letter-spacing: -0.04em;
-      transition: color 0.25s;
-    }
-    .post-row:hover .post-num { color: var(--line); }
-
-    .post-body { min-width: 0; }
-    .post-title {
-      font-family: var(--font-display);
-      font-size: clamp(1.4rem, 3.5vw, 2.2rem);
-      font-weight: 600;
-      letter-spacing: -0.025em;
-      line-height: 1.1;
-      color: var(--ink);
-      margin-bottom: 0.5rem;
-      transition: color 0.2s;
-    }
-    .post-row:hover .post-title { color: var(--ink); }
-    .post-cover-thumb {
-      width: 100%;
-      aspect-ratio: 16 / 10;
-      border: 1px solid var(--line);
-      background: var(--panel);
-      overflow: hidden;
-      align-self: center;
-    }
-    .post-cover-thumb img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      transition: transform 0.35s cubic-bezier(0.22,1,0.36,1), filter 0.35s;
-      filter: saturate(0.78) contrast(1.06);
-    }
-    .post-row:hover .post-cover-thumb img {
-      transform: scale(1.04);
-      filter: saturate(1) contrast(1.08);
-    }
-
-    .post-desc {
-      font-size: 0.88rem;
-      color: var(--ink-2);
-      line-height: 1.6;
-      margin-bottom: 0.85rem;
-      max-width: 65ch;
-    }
-    .post-tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      align-items: center;
-    }
-    .post-date {
-      font-family: var(--font-mono);
-      font-size: 0.68rem;
-      color: var(--accent);
-      letter-spacing: 0.08em;
-    }
-    .post-rt {
-      font-family: var(--font-mono);
-      font-size: 0.68rem;
-      color: var(--ink-3);
-    }
-    .post-tag {
-      font-family: var(--font-mono);
-      font-size: 0.65rem;
-      letter-spacing: 0.08em;
-      border: 1px solid var(--line-2);
-      padding: 2px 7px;
-      color: var(--ink-3);
-    }
-
-    .post-arrow {
-      font-family: var(--font-mono);
-      font-size: 1.1rem;
-      color: var(--line-2);
-      align-self: center;
-      transition: color 0.2s, transform 0.25s;
-    }
-    .post-row:hover .post-arrow {
-      color: var(--accent);
-      transform: translateX(5px);
-    }
-
-    /* Mobile */
-    @media (max-width: 600px) {
-      .post-row,
-      .post-row.has-cover { grid-template-columns: 40px 1fr auto; gap: 0.75rem; padding: 1.75rem 0; }
-      .post-num { font-size: 2.2rem; }
-      .post-title { font-size: 1.25rem; }
-      .post-arrow { display: none; }
-      .post-cover-thumb { display: none; }
-    }
-
-    /* Empty state */
-    .blog-empty {
-      font-family: var(--font-mono);
-      color: var(--ink-3);
-      text-align: center;
-      padding: 6rem 0;
-      font-size: 0.85rem;
-    }
-
-    /* Theme accent line at top */
-    .blog-accent-bar {
-      height: 2px;
-      background: var(--accent);
-      width: 56px;
-      margin-bottom: 1.5rem;
-    }
-  </style>
-
+<Layout title="Blog — Alejandro Vega" description="Notas de Alejandro Vega sobre código, IA y lo que va aprendiendo.">
   <main style="min-height:100vh;">
     <!-- Header -->
     <div class="blog-header">
@@ -277,105 +31,101 @@ function readingTime(body: string | undefined) {
       </div>
     </div>
 
-    <!-- Post list -->
-    <div class="posts-wrap">
-      {posts.length > 0 ? (
-        <div>
-          {posts.map((post, i) => (
-            <a href={`/blog/${post.slug}`} class:list={["post-row", { "has-cover": post.data.cover }]}>
-              <span class="post-num">{String(i + 1).padStart(2, '0')}</span>
-              <div class="post-body">
-                <h2 class="post-title">{post.data.title}</h2>
-                {post.data.description && (
-                  <p class="post-desc">{post.data.description}</p>
-                )}
-                <div class="post-tags">
-                  <span class="post-date">{fmtDate(post.data.date)}</span>
-                  <span style="color:var(--line-2);font-size:0.7rem;">·</span>
-                  <span class="post-rt">{readingTime(post.body)} lectura</span>
-                  {post.data.tags.length > 0 && (
-                    <>
-                      <span style="color:var(--line-2);font-size:0.7rem;">·</span>
-                      {post.data.tags.map(tag => (
-                        <span class="post-tag">{tag}</span>
-                      ))}
-                    </>
-                  )}
-                </div>
-              </div>
-              {post.data.cover && (
-                <div class="post-cover-thumb" aria-hidden="true">
-                  <img src={post.data.cover} alt="" loading="lazy" decoding="async" />
-                </div>
-              )}
-              <span class="post-arrow">→</span>
-            </a>
-          ))}
-        </div>
-      ) : (
-        <div class="blog-empty">// nada por aquí todavía</div>
-      )}
-    </div>
+    <PostList posts={posts} />
   </main>
-  <script>
-    import gsap from 'gsap';
-    import { ScrollTrigger } from 'gsap/ScrollTrigger';
-    gsap.registerPlugin(ScrollTrigger);
-
-    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-      || document.documentElement.getAttribute('data-tweak-anim') === 'off';
-    const finePointer = window.matchMedia('(pointer: fine)').matches;
-
-    if (!reduced) {
-      // Palabra BLOG con profundidad: gira con el scroll y con el cursor.
-      const word = document.querySelector<HTMLElement>('.blog-bg-word');
-      if (word) {
-        gsap.set(word, { yPercent: -50, y: 0, rotationY: -28, rotationX: 10, transformOrigin: '100% 50%' });
-        gsap.to(word, {
-          rotationY: 18, rotationX: -6, ease: 'none',
-          scrollTrigger: { trigger: '.blog-header', start: 'top top', end: 'bottom top', scrub: 0.8 },
-        });
-        if (finePointer) {
-          const rz = gsap.quickTo(word, 'rotationZ', { duration: 1, ease: 'power3.out' });
-          const zz = gsap.quickTo(word, 'z', { duration: 1, ease: 'power3.out' });
-          window.addEventListener('pointermove', (e) => {
-            const nx = e.clientX / window.innerWidth - 0.5;
-            const ny = e.clientY / window.innerHeight - 0.5;
-            rz(nx * -4);
-            zz(ny * 60);
-          });
-        }
-      }
-
-      // Filas: entran volteándose como hojas.
-      const rows = gsap.utils.toArray<HTMLElement>('.post-row');
-      gsap.set(rows, { rotationX: -78, y: 40, opacity: 0, transformOrigin: '50% 0%' });
-      ScrollTrigger.batch(rows, {
-        start: 'top 94%',
-        once: true,
-        onEnter: (batch) => gsap.to(batch, { rotationX: 0, y: 0, opacity: 1, duration: 1.1, stagger: 0.12, ease: 'expo.out' }),
-      });
-
-      // Tilt 3D: título y portada se despegan en distintas profundidades.
-      if (finePointer) {
-        rows.forEach((row) => {
-          const title = row.querySelector<HTMLElement>('.post-title');
-          const cover = row.querySelector<HTMLElement>('.post-cover-thumb');
-          row.addEventListener('pointermove', (e) => {
-            const r = row.getBoundingClientRect();
-            const nx = (e.clientX - r.left) / r.width - 0.5;
-            const ny = (e.clientY - r.top) / r.height - 0.5;
-            gsap.to(row, { rotationY: nx * 5, rotationX: -ny * 7, duration: 0.5, ease: 'power3.out', overwrite: 'auto' });
-            if (title) gsap.to(title, { z: 30, x: nx * 8, duration: 0.5, ease: 'power3.out', overwrite: 'auto' });
-            if (cover) gsap.to(cover, { z: 60, rotationY: nx * -10, duration: 0.5, ease: 'power3.out', overwrite: 'auto' });
-          });
-          row.addEventListener('pointerleave', () => {
-            gsap.to(row, { rotationY: 0, rotationX: 0, duration: 0.9, ease: 'elastic.out(1,0.45)', overwrite: 'auto' });
-            if (title) gsap.to(title, { z: 0, x: 0, duration: 0.6, ease: 'expo.out', overwrite: 'auto' });
-            if (cover) gsap.to(cover, { z: 0, rotationY: 0, duration: 0.7, ease: 'expo.out', overwrite: 'auto' });
-          });
-        });
-      }
-    }
-  </script>
 </Layout>
+
+<script>
+  import { initBlogIndex } from '../../scripts/blogIndex';
+  initBlogIndex();
+</script>
+
+<style>
+  body { background: var(--bg); }
+
+  /* Header */
+  .blog-header {
+    border-bottom: 1px solid var(--line);
+    padding: 5rem 1.5rem 3.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+  @media (min-width: 1024px) {
+    .blog-header { padding: 6rem 5rem 4rem; }
+  }
+  .blog-bg-word {
+    position: absolute;
+    right: -0.04em;
+    top: 50%;
+    transform: translateY(-50%);
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(10rem, 22vw, 20rem);
+    line-height: 1;
+    color: var(--line);
+    letter-spacing: -0.04em;
+    select: none;
+    pointer-events: none;
+    user-select: none;
+  }
+  .blog-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    color: var(--ink-3);
+    text-decoration: none;
+    margin-bottom: 2.5rem;
+    transition: color 0.2s;
+  }
+  .blog-back:hover { color: var(--accent); }
+  .blog-eyebrow {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    color: var(--accent);
+    margin-bottom: 0.75rem;
+  }
+  .blog-h1 {
+    font-family: var(--font-display);
+    font-size: clamp(3rem, 8vw, 6.5rem);
+    font-weight: 700;
+    letter-spacing: -0.04em;
+    line-height: 0.95;
+    color: var(--ink);
+  }
+  .blog-meta-strip {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--ink-3);
+    margin-top: 1.25rem;
+    flex-wrap: wrap;
+  }
+  .blog-meta-strip .dot-sep { color: var(--line-2); }
+
+
+  /* ─── 3D ─── */
+  .blog-header { perspective: 1200px; }
+  .blog-bg-word {
+    transform-style: preserve-3d;
+    will-change: transform;
+    text-shadow:
+      1px 1px 0 var(--line-2), 2px 2px 0 var(--line-2), 3px 3px 0 var(--line-2),
+      4px 4px 0 var(--line-2), 5px 5px 0 var(--line-2), 6px 6px 0 var(--line-2),
+      7px 7px 0 var(--line-2), 8px 8px 0 var(--bg-2),
+      14px 18px 28px rgba(255, 0, 60, 0.18);
+  }
+
+  /* Theme accent line at top */
+  .blog-accent-bar {
+    height: 2px;
+    background: var(--accent);
+    width: 56px;
+    margin-bottom: 1.5rem;
+  }
+</style>

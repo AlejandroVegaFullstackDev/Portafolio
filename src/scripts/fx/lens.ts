@@ -16,7 +16,6 @@ export function initLens() {
   label.className = 'cy-lens-label';
   lens.appendChild(label);
   document.body.appendChild(lens);
-  document.documentElement.classList.add('has-lens');
 
   const mouse = { x: -100, y: -100 };
   const pos = { x: -100, y: -100 };

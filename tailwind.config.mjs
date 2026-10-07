@@ -4,8 +4,8 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        mono: ['JetBrains Mono', 'ui-monospace', 'monospace'],
-        display: ['Space Grotesk', 'system-ui', 'sans-serif'],
+        mono: ['JetBrains Mono Variable', 'JetBrains Mono', 'ui-monospace', 'monospace'],
+        display: ['Space Grotesk Variable', 'Space Grotesk', 'system-ui', 'sans-serif'],
       },
     },
   },

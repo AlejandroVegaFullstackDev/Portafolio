@@ -34,7 +34,6 @@
 .cy-lens-label { position: absolute; opacity: 0; transition: opacity 0.2s; }
 .cy-lens.is-active .cy-lens-label { opacity: 1; }
 @media (hover: none) { .cy-lens { display: none; } }
-html.has-lens, html.has-lens a, html.has-lens button { cursor: none; }
 
 /* fx/odometer.ts — rodillos de dígitos */
 .odo { display: inline-flex; align-items: flex-end; perspective: 400px; }

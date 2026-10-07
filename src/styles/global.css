@@ -7,5 +7,6 @@
 @import "tailwindcss/components";
 @import "./components.css";
 @import "./effects.css";
+@import "./coverflow.css";
 @import "./prose.css";
 @import "tailwindcss/utilities";

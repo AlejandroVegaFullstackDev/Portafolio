@@ -1,0 +1,61 @@
+---
+// Encabezado de un post: etiquetas, título, descripción, metadatos y portada.
+import type { CollectionEntry } from 'astro:content';
+import { fmtLongDate, readingTime } from '../../lib/blog';
+
+interface Props { post: CollectionEntry<'blog'> }
+const { post } = Astro.props;
+const d = post.data;
+---
+<header class:list={['head', { 'has-cover': d.cover }]}>
+  <div class:list={['hero', { 'has-cover': d.cover }]}>
+    <div class="copy">
+      {d.tags.length > 0 && <div class="tags">{d.tags.map((t) => <span class="tag">{t}</span>)}</div>}
+      <h1 class="h1">{d.title}</h1>
+      {d.description && <p class="desc">{d.description}</p>}
+      <div class="meta">
+        <time class="accent" datetime={d.date.toISOString()}>{fmtLongDate(d.date)}</time>
+        <span aria-hidden="true">·</span>
+        <span>{readingTime(post.body)} min de lectura</span>
+        <span aria-hidden="true">·</span>
+        <span>Alejandro Vega</span>
+      </div>
+    </div>
+    {d.cover && (
+      <figure class="cover">
+        <img src={d.cover} alt={d.coverAlt ?? d.title} loading="eager" decoding="async" />
+        {d.coverCaption && <figcaption>{d.coverCaption}</figcaption>}
+      </figure>
+    )}
+  </div>
+  <div class="divider" aria-hidden="true"><span class="line"></span><span class="dot"></span><span class="line short"></span></div>
+</header>
+
+<style>
+  .head { padding: 6rem 1.5rem 2.5rem; max-width: 860px; margin: 0 auto; }
+  .head.has-cover { max-width: 1180px; }
+  .hero { display: grid; gap: 2rem; align-items: end; }
+  .copy { min-width: 0; }
+  .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 1.5rem; }
+  .tag { font-family: var(--font-mono); font-size: 0.65rem; letter-spacing: 0.12em; border: 1px solid var(--accent); padding: 2px 9px; color: var(--accent); }
+  .h1 { font-family: var(--font-display); font-size: clamp(2.2rem, 6vw, 4rem); font-weight: 700; letter-spacing: -0.04em; line-height: 1.05; color: var(--ink); margin: 0 0 1.25rem; text-wrap: balance; }
+  .desc { font-size: 1.05rem; color: var(--ink-2); line-height: 1.65; margin: 0 0 1.5rem; max-width: 58ch; }
+  .meta { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; font-family: var(--font-mono); font-size: 0.7rem; color: var(--ink-3); }
+  .accent { color: var(--accent); }
+  .cover { margin: 0; border: 1px solid var(--line); background: var(--panel); overflow: hidden; }
+  .cover img { display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover; }
+  .cover figcaption {
+    display: flex; align-items: center; gap: 8px; min-height: 34px; padding: 8px 12px;
+    font-family: var(--font-mono); font-size: 0.62rem; line-height: 1.35; color: var(--ink-3);
+    background: color-mix(in srgb, var(--bg) 82%, transparent); border-top: 1px solid var(--line);
+  }
+  .cover figcaption::before { content: '▣'; color: var(--accent); font-size: 0.7rem; }
+  .divider { display: flex; align-items: center; gap: 0.75rem; margin-top: 1.5rem; }
+  .line { flex: 1; height: 1px; background: var(--line); }
+  .line.short { max-width: 24px; }
+  .dot { width: 6px; height: 6px; background: var(--accent); flex-shrink: 0; }
+  @media (min-width: 1024px) {
+    .head { padding: 7rem 2rem 3rem; }
+    .hero.has-cover { grid-template-columns: minmax(0, 0.92fr) minmax(420px, 1.08fr); gap: 3rem; }
+  }
+</style>

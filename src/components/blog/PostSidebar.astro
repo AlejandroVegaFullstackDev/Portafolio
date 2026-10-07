@@ -1,0 +1,36 @@
+---
+// Barra lateral del post (desktop): índice con sección activa y enlaces de salida.
+interface Props { toc: { id: string; text: string }[] }
+const { toc } = Astro.props;
+---
+<aside class="side">
+  {toc.length > 0 && (
+    <nav aria-label="Contenido del post">
+      <p class="label">// CONTENIDO</p>
+      <div class="block toc">
+        {toc.map((item) => <a class="toc-link" href={`#${item.id}`} data-toc-link={item.id}>{item.text}</a>)}
+      </div>
+    </nav>
+  )}
+  <p class="label mt">// LINKS</p>
+  <div class="links">
+    <a href="/blog" class="link">← todos los posts</a>
+    <a href="/" class="link accent">AV/_ ↗</a>
+  </div>
+</aside>
+
+<style>
+  .side { display: none; }
+  .label { font-family: var(--font-mono); font-size: 0.62rem; letter-spacing: 0.18em; color: var(--accent); margin: 0 0 0.75rem; }
+  .label.mt { margin-top: 1.5rem; }
+  .block { border: 1px solid var(--line); padding: 16px 14px; background: var(--panel); position: relative; }
+  .block::before { content: ''; position: absolute; top: -1px; left: -1px; width: 10px; height: 10px; border-top: 1px solid var(--accent); border-left: 1px solid var(--accent); }
+  .toc { display: flex; flex-direction: column; gap: 0.55rem; }
+  .toc-link { display: block; font-family: var(--font-mono); font-size: 0.68rem; line-height: 1.35; color: var(--ink-3); transition: color 0.2s, transform 0.2s; }
+  .toc-link:hover, .toc-link:global(.is-active) { color: var(--accent); transform: translateX(3px); }
+  .links { display: flex; flex-direction: column; gap: 8px; }
+  .link { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.12em; color: var(--ink-3); transition: color 0.2s; }
+  .link:hover { color: var(--accent); }
+  .link.accent { color: var(--accent); }
+  @media (min-width: 1024px) { .side { display: block; position: sticky; top: 80px; } }
+</style>

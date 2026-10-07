@@ -51,12 +51,14 @@ export const experience = [
     bullets: {
       es: [
         "Automaticé la reprogramación de guías con un flujo asistido por IA que detectaba los casos elegibles, actualizaba las entregas y repartía reportes en Excel por Gmail.",
-        "Módulo de escaneo masivo de códigos: más de 10.000 guías en segundos. Rediseñé los procedimientos en PostgreSQL bajo arquitectura hexagonal y el rendimiento del sistema subió ×10.",
+        "Convertí la generación masiva de guías, que tomaba horas, en un proceso de segundos para más de 10.000 guías, con un stored procedure en PostgreSQL invocado desde NestJS.",
+        "Armé grafos de la arquitectura de microservicios para que el equipo entendiera dependencias y flujos entre servicios.",
         "Funcionalidades end-to-end de la plataforma logística en React y NestJS, apoyo a la app móvil en Flutter y adopción de Scrum en el equipo de tecnología.",
       ],
       en: [
         "Automated waybill rescheduling with an AI-assisted flow that spotted eligible cases, updated deliveries and sent Excel reports over Gmail.",
-        "Bulk code-scanning module: over 10,000 waybills in seconds. I redesigned the PostgreSQL procedures under a hexagonal architecture and system throughput went up ×10.",
+        "Turned bulk waybill generation, which took hours, into a seconds-long process for 10,000+ waybills, using a PostgreSQL stored procedure called from NestJS.",
+        "Built graphs of the microservice architecture so the team could understand dependencies and flows between services.",
         "End-to-end features for the logistics platform in React and NestJS, support for the Flutter mobile app and Scrum adoption across the tech team.",
       ],
     },

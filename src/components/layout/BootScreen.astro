@@ -1,11 +1,16 @@
 ---
-// Pantalla de arranque tipo consola. La secuencia está en scripts/core/boot.ts.
+// Pantalla de arranque tipo consola, solo en la primera visita de la sesión.
+// La secuencia está en scripts/core/boot.ts.
 ---
 <div id="boot" class="boot">
   <div class="text-center font-mono text-[var(--ok)] text-sm leading-relaxed max-w-xl px-6">
     <div id="bootLog" class="text-left"></div>
   </div>
 </div>
+<script is:inline>
+  // Antes de pintar: si ya se vio en esta sesión, no se muestra (cero espera para quien vuelve).
+  try { if (sessionStorage.getItem('av_booted')) document.getElementById('boot').style.display = 'none'; } catch (e) {}
+</script>
 
 <style>
   .boot {

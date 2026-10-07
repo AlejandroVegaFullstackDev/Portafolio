@@ -3,6 +3,7 @@
 // sola grilla compacta. Datos: src/data/profile.ts.
 import SectionHeading from '../ui/SectionHeading.astro';
 import { portfolioData as D } from '../../data';
+import { Image } from 'astro:assets';
 import ingecatImg from '../../assets/img/Ingecat.jpg';
 
 const facts = [
@@ -29,7 +30,7 @@ const facts = [
     </article>
 
     <figure class="tile tile-img" data-tilt>
-      <img src={ingecatImg.src} alt="Ilustración de Ingecat, alias de trabajo de Alejandro" loading="lazy" decoding="async" data-crt />
+      <Image src={ingecatImg} alt="Ilustración de Ingecat, alias de trabajo de Alejandro" widths={[320, 640]} sizes="(max-width: 1023px) 50vw, 30vw" data-crt />
       <figcaption><span class="text-[var(--accent)]">~/</span> ingecatdev · <span class="lang-es">alias de trabajo</span><span class="lang-en">work alias</span></figcaption>
     </figure>
 

@@ -110,18 +110,18 @@ export const projects = [
     name: { es: "Escaneo masivo de guías", en: "Bulk waybill scanning" },
     kicker: { es: "Rendimiento · PostgreSQL", en: "Performance · PostgreSQL" },
     summary: {
-      es: "Módulo de escaneo masivo con lectores de código para registrar condiciones de devolución (fraude, daño). Procesa más de 10.000 guías en segundos: rediseñé los procedimientos en PostgreSQL y moví el módulo a arquitectura hexagonal, con lo que el rendimiento del sistema subió ×10.",
-      en: "Bulk scanning module with barcode readers to register return conditions (fraud, damage). It processes over 10,000 waybills in seconds: I redesigned the PostgreSQL procedures and moved the module to a hexagonal architecture, taking system throughput up ×10.",
+      es: "Módulo de escaneo masivo con lectores de código para registrar condiciones de devolución (fraude, daño). Lo que antes tomaba horas ahora procesa más de 10.000 guías en segundos, con un stored procedure en PostgreSQL invocado desde NestJS.",
+      en: "Bulk scanning module with barcode readers to register return conditions (fraud, damage). What used to take hours now processes over 10,000 waybills in seconds, through a PostgreSQL stored procedure called from NestJS.",
     },
     role: { es: "Desarrollador a cargo", en: "Lead developer" },
     year: "2024",
     company: "Kiki LATAM",
     github: null,
-    stack: ["NestJS", "PostgreSQL", "TypeScript", "Hexagonal"],
+    stack: ["NestJS", "PostgreSQL", "TypeScript"],
     metrics: [
       { k: { es: "guías por corrida", en: "waybills per run" }, v: "+10.000" },
-      { k: { es: "rendimiento", en: "throughput" }, v: "×10" },
-      { k: { es: "arquitectura", en: "architecture" }, v: "Hexagonal" },
+      { k: { es: "antes", en: "before" }, v: "horas" },
+      { k: { es: "ahora", en: "now" }, v: "segundos" },
     ],
   },
   {

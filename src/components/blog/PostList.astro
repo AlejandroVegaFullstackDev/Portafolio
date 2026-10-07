@@ -1,0 +1,197 @@
+---
+// Lista de posts de /blog: filas que entran volteándose en 3D (scripts/blogIndex.ts).
+import type { CollectionEntry } from 'astro:content';
+import { readingTime } from '../../lib/blog';
+
+interface Props { posts: CollectionEntry<'blog'>[] }
+const { posts } = Astro.props;
+const fmtDate = (d: Date) => d.toLocaleDateString('es-CO', { year: 'numeric', month: '2-digit', day: '2-digit', timeZone: 'UTC' });
+---
+<div class="posts-wrap">
+  {posts.length > 0 ? (
+    <div>
+      {posts.map((post, i) => (
+        <a href={`/blog/${post.slug}`} class:list={["post-row", { "has-cover": post.data.cover }]}>
+          <span class="post-num">{String(i + 1).padStart(2, '0')}</span>
+          <div class="post-body">
+            <h2 class="post-title">{post.data.title}</h2>
+            {post.data.description && (
+              <p class="post-desc">{post.data.description}</p>
+            )}
+            <div class="post-tags">
+              <span class="post-date">{fmtDate(post.data.date)}</span>
+              <span style="color:var(--line-2);font-size:0.7rem;">·</span>
+              <span class="post-rt">{readingTime(post.body)} min de lectura</span>
+              {post.data.tags.length > 0 && (
+                <>
+                  <span style="color:var(--line-2);font-size:0.7rem;">·</span>
+                  {post.data.tags.map(tag => (
+                    <span class="post-tag">{tag}</span>
+                  ))}
+                </>
+              )}
+            </div>
+          </div>
+          {post.data.cover && (
+            <div class="post-cover-thumb" aria-hidden="true">
+              <img src={post.data.cover} alt="" loading="lazy" decoding="async" />
+            </div>
+          )}
+          <span class="post-arrow">→</span>
+        </a>
+      ))}
+    </div>
+  ) : (
+    <div class="blog-empty">// nada por aquí todavía</div>
+  )}
+</div>
+
+<style>
+  .posts-wrap > div { perspective: 1400px; }
+  .post-row { transform-style: preserve-3d; will-change: transform; }
+  .post-cover-thumb { will-change: transform; }
+
+  /* Post list */
+  .posts-wrap {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1.5rem 6rem;
+  }
+  @media (min-width: 1024px) {
+    .posts-wrap { padding: 0 5rem 6rem; }
+  }
+
+  .post-row {
+    display: grid;
+    grid-template-columns: 56px 1fr auto;
+    gap: 1.25rem;
+    align-items: start;
+    padding: 2.25rem 0;
+    border-bottom: 1px solid var(--line);
+    text-decoration: none;
+    color: inherit;
+    position: relative;
+    transition: background 0.2s;
+  }
+  .post-row::after {
+    content: '';
+    position: absolute;
+    left: 0; bottom: -1px;
+    height: 1px; width: 0;
+    background: var(--accent);
+    transition: width 0.45s cubic-bezier(0.22,1,0.36,1);
+  }
+  .post-row:hover::after { width: 100%; }
+  .post-row.has-cover {
+    grid-template-columns: 56px minmax(0, 1fr) minmax(150px, 220px) auto;
+  }
+
+  .post-num {
+    font-family: var(--font-display);
+    font-size: clamp(2.8rem, 5vw, 4rem);
+    font-weight: 700;
+    color: var(--line-2);
+    line-height: 1;
+    padding-top: 0.1em;
+    letter-spacing: -0.04em;
+    transition: color 0.25s;
+  }
+  .post-row:hover .post-num { color: var(--line); }
+
+  .post-body { min-width: 0; }
+  .post-title {
+    font-family: var(--font-display);
+    font-size: clamp(1.4rem, 3.5vw, 2.2rem);
+    font-weight: 600;
+    letter-spacing: -0.025em;
+    line-height: 1.1;
+    color: var(--ink);
+    margin-bottom: 0.5rem;
+    transition: color 0.2s;
+  }
+  .post-row:hover .post-title { color: var(--ink); }
+  .post-cover-thumb {
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    border: 1px solid var(--line);
+    background: var(--panel);
+    overflow: hidden;
+    align-self: center;
+  }
+  .post-cover-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.35s cubic-bezier(0.22,1,0.36,1), filter 0.35s;
+    filter: saturate(0.78) contrast(1.06);
+  }
+  .post-row:hover .post-cover-thumb img {
+    transform: scale(1.04);
+    filter: saturate(1) contrast(1.08);
+  }
+
+  .post-desc {
+    font-size: 0.88rem;
+    color: var(--ink-2);
+    line-height: 1.6;
+    margin-bottom: 0.85rem;
+    max-width: 65ch;
+  }
+  .post-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+  }
+  .post-date {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    color: var(--accent);
+    letter-spacing: 0.08em;
+  }
+  .post-rt {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    color: var(--ink-3);
+  }
+  .post-tag {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.08em;
+    border: 1px solid var(--line-2);
+    padding: 2px 7px;
+    color: var(--ink-3);
+  }
+
+  .post-arrow {
+    font-family: var(--font-mono);
+    font-size: 1.1rem;
+    color: var(--line-2);
+    align-self: center;
+    transition: color 0.2s, transform 0.25s;
+  }
+  .post-row:hover .post-arrow {
+    color: var(--accent);
+    transform: translateX(5px);
+  }
+
+  /* Mobile */
+  @media (max-width: 600px) {
+    .post-row,
+    .post-row.has-cover { grid-template-columns: 40px 1fr auto; gap: 0.75rem; padding: 1.75rem 0; }
+    .post-num { font-size: 2.2rem; }
+    .post-title { font-size: 1.25rem; }
+    .post-arrow { display: none; }
+    .post-cover-thumb { display: none; }
+  }
+
+  /* Empty state */
+  .blog-empty {
+    font-family: var(--font-mono);
+    color: var(--ink-3);
+    text-align: center;
+    padding: 6rem 0;
+    font-size: 0.85rem;
+  }
+
+</style>

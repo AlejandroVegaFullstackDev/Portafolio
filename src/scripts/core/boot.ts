@@ -14,10 +14,17 @@ const LINES = [
   '> launching portfolio.exe',
 ];
 
+const SEEN_KEY = 'av_booted';
+
+/** Corre la secuencia solo la primera vez por sesión; después resuelve al instante. */
 export function bootSequence(): Promise<void> {
   const boot = document.getElementById('boot');
   const log = document.getElementById('bootLog');
   if (!boot || !log) return Promise.resolve();
+  try {
+    if (sessionStorage.getItem(SEEN_KEY)) { boot.style.display = 'none'; return Promise.resolve(); }
+    sessionStorage.setItem(SEEN_KEY, '1');
+  } catch { /* sin storage: se muestra siempre */ }
   return new Promise((resolve) => {
     let i = 0;
     const tick = () => {

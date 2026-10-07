@@ -99,8 +99,8 @@ export const caseStudies = {
       en: "Return registration was done waybill by waybill. With batches of thousands, operations sat waiting on the system, and return conditions (fraud, damage) were noted separately and after the fact.",
     },
     solution: {
-      es: "Rediseñé los procedimientos en PostgreSQL para trabajar por lote en vez de por fila y moví el módulo a arquitectura hexagonal, con el dominio separado del acceso a datos. El escaneo con lectores entra directo y procesa más de 10.000 guías en segundos; el rendimiento del sistema subió ×10.",
-      en: "I redesigned the PostgreSQL procedures to work per batch instead of per row and moved the module to a hexagonal architecture, with the domain separated from data access. Reader scanning feeds in directly and processes over 10,000 waybills in seconds; system throughput went up ×10.",
+      es: "Moví el procesamiento a un stored procedure en PostgreSQL que trabaja por lote en vez de por fila, invocado desde NestJS. El escaneo con lectores entra directo y procesa más de 10.000 guías en segundos, cuando antes tomaba horas.",
+      en: "I moved processing into a PostgreSQL stored procedure that works per batch instead of per row, called from NestJS. Reader scanning feeds in directly and processes over 10,000 waybills in seconds, where it used to take hours.",
     },
     arch: ["Lector de códigos", "API NestJS", "Casos de uso", "Procedimientos PostgreSQL", "Reportes"],
     learnings: {

@@ -1,594 +1,78 @@
 ---
+// Página de un post. Encabezado y barra lateral son componentes (components/blog);
+// los estilos del contenido Markdown viven en styles/prose.css.
 import Layout from '../../layouts/Layout.astro';
+import PostHeader from '../../components/blog/PostHeader.astro';
+import PostSidebar from '../../components/blog/PostSidebar.astro';
 import { getCollection, render } from 'astro:content';
+import { getToc, readingTime } from '../../lib/blog';
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog');
-  return posts.map(post => ({
-    params: { slug: post.slug },
-    props: { post },
-  }));
+  return posts.map((post) => ({ params: { slug: post.slug }, props: { post } }));
 }
 
 const { post } = Astro.props;
 const { Content } = await render(post);
-
-function fmtDate(d: Date) {
-  return d.toLocaleDateString('es-CO', { year: 'numeric', month: 'long', day: 'numeric' });
-}
-
-function readingTime(body: string | undefined) {
-  if (!body) return '1 min';
-  return Math.max(1, Math.round(body.trim().split(/\s+/).length / 200)) + ' min';
-}
-
-const rt = readingTime(post.body);
-
-function stripInlineMarkdown(text: string) {
-  return text
-    .replace(/`([^`]+)`/g, '$1')
-    .replace(/\[([^\]]+)\]\([^\)]+\)/g, '$1')
-    .replace(/[\*_~]/g, '')
-    .trim();
-}
-
-function slugifyHeading(text: string) {
-  return text
-    .toLowerCase()
-    .replace(/[^\p{L}\p{N}\s-]/gu, '')
-    .trim()
-    .replace(/\s+/g, '-')
-    .replace(/-+/g, '-');
-}
-
-function getToc(body: string | undefined) {
-  if (!body) return [];
-  const seen = new Map<string, number>();
-  return body
-    .split('\n')
-    .map(line => line.match(/^##\s+(.+)$/)?.[1])
-    .filter((text): text is string => Boolean(text))
-    .map(stripInlineMarkdown)
-    .map(text => {
-      const baseId = slugifyHeading(text);
-      const count = seen.get(baseId) ?? 0;
-      seen.set(baseId, count + 1);
-      return { text, id: count ? `${baseId}-${count}` : baseId };
-    });
-}
-
 const toc = getToc(post.body);
 ---
+<Layout title={`${post.data.title} — Alejandro Vega`} description={post.data.description} image={post.data.cover} type="article">
+  <div id="read-bar" aria-hidden="true"></div>
 
-<Layout title={`${post.data.title} — Alejandro Vega`}>
-  <style>
-    /* ── Reading progress bar ── */
-    #read-bar {
-      position: fixed;
-      top: 0; left: 0;
-      height: 2px;
-      background: var(--accent);
-      width: 0%;
-      z-index: 1000;
-      transition: width 0.1s linear;
-      box-shadow: 0 0 8px var(--accent-glow);
-    }
-
-    /* ── Top nav ── */
-    .post-nav {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      z-index: 100;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 1.5rem;
-      height: 52px;
-      background: rgba(5,5,7,0.88);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--line);
-    }
-    .post-nav-back {
-      font-family: var(--font-mono);
-      font-size: 0.72rem;
-      letter-spacing: 0.12em;
-      color: var(--ink-3);
-      text-decoration: none;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      transition: color 0.2s;
-    }
-    .post-nav-back:hover { color: var(--accent); }
-    .post-nav-logo {
-      font-family: var(--font-mono);
-      font-size: 0.78rem;
-      letter-spacing: 0.14em;
-      color: var(--ink-3);
-      text-decoration: none;
-      transition: color 0.2s;
-    }
-    .post-nav-logo:hover { color: var(--ink); }
-    .post-nav-rt {
-      font-family: var(--font-mono);
-      font-size: 0.68rem;
-      color: var(--ink-3);
-    }
-
-    /* ── Header ── */
-    .post-header {
-      padding: 6rem 1.5rem 2.5rem;
-      max-width: 860px;
-      margin: 0 auto;
-      position: relative;
-    }
-    .post-header.has-cover {
-      max-width: 1180px;
-    }
-    @media (min-width: 1024px) {
-      .post-header { padding: 7rem 2rem 3rem; }
-    }
-    .post-hero {
-      display: grid;
-      gap: 2rem;
-      align-items: end;
-    }
-    @media (max-width: 1023px) {
-      .post-hero {
-        grid-template-columns: 1fr;
-        align-items: start;
-      }
-      .post-hero.has-cover {
-        grid-template-columns: 1fr;
-      }
-    }
-    @media (min-width: 1024px) {
-      .post-hero.has-cover {
-        grid-template-columns: minmax(0, 0.92fr) minmax(420px, 1.08fr);
-        gap: 3rem;
-      }
-    }
-    .post-hero-copy { min-width: 0; }
-    .post-tags-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin-bottom: 1.5rem;
-    }
-    .post-tag {
-      font-family: var(--font-mono);
-      font-size: 0.65rem;
-      letter-spacing: 0.12em;
-      border: 1px solid var(--accent);
-      padding: 2px 9px;
-      color: var(--accent);
-    }
-    .post-h1 {
-      font-family: var(--font-display);
-      font-size: clamp(2.2rem, 6vw, 4rem);
-      font-weight: 700;
-      letter-spacing: -0.04em;
-      line-height: 1.05;
-      color: var(--ink);
-      margin-bottom: 1.25rem;
-    }
-    .post-desc {
-      font-size: 1.05rem;
-      color: var(--ink-2);
-      line-height: 1.65;
-      margin-bottom: 1.5rem;
-      max-width: 58ch;
-    }
-    .post-meta-row {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      font-family: var(--font-mono);
-      font-size: 0.7rem;
-      color: var(--ink-3);
-      flex-wrap: wrap;
-    }
-    .post-meta-row .accent { color: var(--accent); }
-    .post-divider {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      margin-top: 1.5rem;
-    }
-    .post-divider-line { flex: 1; height: 1px; background: var(--line); }
-    .post-divider-dot { width: 6px; height: 6px; background: var(--accent); flex-shrink: 0; }
-    .post-cover {
-      margin: 0;
-      border: 1px solid var(--line);
-      background: var(--panel);
-      position: relative;
-      overflow: hidden;
-    }
-    .post-cover::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
-      border: 1px solid rgba(255, 255, 255, 0.04);
-      z-index: 1;
-    }
-    .post-cover img {
-      display: block;
-      width: 100%;
-      aspect-ratio: 16 / 9;
-      object-fit: cover;
-    }
-    .post-cover figcaption {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      min-height: 34px;
-      padding: 8px 12px;
-      font-family: var(--font-mono);
-      font-size: 0.62rem;
-      line-height: 1.35;
-      color: var(--ink-3);
-      background: rgba(5, 5, 7, 0.82);
-      border-top: 1px solid var(--line);
-    }
-    .post-cover figcaption::before {
-      content: '▣';
-      color: var(--accent);
-      font-size: 0.7rem;
-    }
-    @media (max-width: 600px) {
-      .post-cover img {
-        aspect-ratio: 16 / 9;
-      }
-      .post-cover figcaption {
-        font-size: 0.6rem;
-      }
-    }
-
-    /* ── Inline images inside prose ── */
-    .post-pull-right {
-      float: right;
-      margin: 0.5em 0 1em 1.5em;
-      width: 50%;
-      overflow: hidden;
-    }
-    .post-pull-right img {
-      display: block;
-      width: 100%;
-      max-width: none;
-      object-fit: cover;
-    }
-    .post-pull-right figcaption {
-      padding: 6px 10px;
-      font-family: var(--font-mono);
-      font-size: 0.6rem;
-      line-height: 1.4;
-      color: var(--ink-3);
-      border-top: 1px solid var(--line);
-    }
-    .post-pull-right figcaption::before {
-      content: '// ';
-      color: var(--accent);
-    }
-
-    .post-sticky-side {
-      display: none;
-    }
-    @media (min-width: 1024px) {
-      .post-sticky-side {
-        display: block;
-        position: sticky;
-        top: 100px;
-        align-self: start;
-        margin-bottom: 2rem;
-      }
-      .post-sticky-side img {
-        width: 50%;
-        max-width: none;
-        object-fit: cover;
-        border: 0;
-        background: transparent;
-      }
-    }
-
-    .post-ending {
-      margin: 4rem auto 2rem;
-      text-align: center;
-    }
-    .post-ending img {
-      display: block;
-      width: 50%;
-      max-width: none;
-      margin: 0 auto;
-      object-fit: cover;
-      border: 0;
-      background: transparent;
-    }
-
-    .post-ending-political {
-      margin: 3rem auto 2rem;
-      text-align: center;
-    }
-    .post-ending-political img {
-      display: block;
-      width: 50%;
-      max-width: none;
-      margin: 0 auto;
-      object-fit: cover;
-      border: 0;
-      background: transparent;
-    }
-
-    .post-trial {
-      margin: 3rem auto 2rem;
-      text-align: center;
-    }
-    .post-trial img {
-      display: block;
-      width: 50%;
-      max-width: none;
-      margin: 0 auto;
-      object-fit: cover;
-      border: 0;
-      background: transparent;
-    }
-
-    .post-trial figcaption,
-    .post-ending-political figcaption,
-    .post-ending figcaption {
-      padding: 8px 0;
-      font-family: var(--font-mono);
-      font-size: 0.62rem;
-      line-height: 1.4;
-      color: var(--ink-3);
-    }
-    .post-trial figcaption::before,
-    .post-ending-political figcaption::before,
-    .post-ending figcaption::before {
-      content: '// ';
-      color: var(--accent);
-    }
-
-    /* ── Content layout ── */
-    .post-layout {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 3rem;
-      max-width: 860px;
-      margin: 0 auto;
-      padding: 1.5rem 1.5rem 5rem;
-    }
-    @media (min-width: 1024px) {
-      .post-layout {
-        grid-template-columns: 1fr 220px;
-        gap: 4rem;
-        padding: 1.5rem 2rem 6rem;
-        max-width: 1100px;
-        align-items: start;
-      }
-    }
-
-    /* ── Sidebar ── */
-    .post-sidebar {
-      display: none;
-    }
-    @media (min-width: 1024px) {
-      .post-sidebar {
-        display: block;
-        position: sticky;
-        top: 80px;
-      }
-    }
-    .sidebar-label {
-      font-family: var(--font-mono);
-      font-size: 0.62rem;
-      letter-spacing: 0.18em;
-      color: var(--accent);
-      margin-bottom: 0.75rem;
-    }
-    .sidebar-block {
-      border: 1px solid var(--line);
-      padding: 16px 14px;
-      margin-bottom: 1rem;
-      background: var(--panel);
-      position: relative;
-    }
-    .sidebar-block::before {
-      content: '';
-      position: absolute;
-      top: -1px; left: -1px;
-      width: 10px; height: 10px;
-      border-top: 1px solid var(--accent);
-      border-left: 1px solid var(--accent);
-    }
-    .sidebar-toc {
-      display: flex;
-      flex-direction: column;
-      gap: 0.55rem;
-    }
-    .sidebar-toc-link {
-      display: block;
-      font-family: var(--font-mono);
-      font-size: 0.68rem;
-      line-height: 1.35;
-      color: var(--ink-3);
-      text-decoration: none;
-      transition: color 0.2s, transform 0.2s;
-    }
-    .sidebar-toc-link:hover,
-    .sidebar-toc-link.is-active {
-      color: var(--accent);
-      transform: translateX(3px);
-    }
-
-
-    /* ── Footer ── */
-    .post-footer {
-      max-width: 860px;
-      margin: 0 auto;
-      padding: 2rem 1.5rem 5rem;
-      border-top: 1px solid var(--line);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 1rem;
-    }
-    @media (min-width: 1024px) { .post-footer { padding: 2rem 2rem 5rem; } }
-    .footer-link {
-      font-family: var(--font-mono);
-      font-size: 0.72rem;
-      letter-spacing: 0.12em;
-      color: var(--ink-3);
-      text-decoration: none;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      transition: color 0.2s;
-    }
-    .footer-link:hover { color: var(--accent); }
-    .footer-link.accent { color: var(--accent); }
-    .footer-link.accent:hover { color: var(--ink); }
-  </style>
-
-  <!-- Reading progress -->
-  <div id="read-bar"></div>
-
-  <!-- Fixed nav -->
-  <nav class="post-nav">
-    <a href="/blog" class="post-nav-back">← blog</a>
-    <span class="post-nav-rt">{rt} lectura</span>
-    <a href="/" class="post-nav-logo">AV/_</a>
+  <nav class="nav" aria-label="Navegación del post">
+    <a href="/blog" class="nav-back">← blog</a>
+    <span class="nav-rt">{readingTime(post.body)} min de lectura</span>
+    <a href="/" class="nav-logo">AV/_</a>
   </nav>
 
   <main>
-    <!-- Header -->
-    <div class:list={["post-header", { "has-cover": post.data.cover }]}>
-      <div class:list={["post-hero", { "has-cover": post.data.cover }]}>
-        <div class="post-hero-copy">
-          {post.data.tags.length > 0 && (
-            <div class="post-tags-row">
-              {post.data.tags.map(tag => (
-                <span class="post-tag">{tag}</span>
-              ))}
-            </div>
-          )}
-          <h1 class="post-h1">{post.data.title}</h1>
-          {post.data.description && (
-            <p class="post-desc">{post.data.description}</p>
-          )}
-          <div class="post-meta-row">
-            <span class="accent">{fmtDate(post.data.date)}</span>
-            <span>·</span>
-            <span>{rt} de lectura</span>
-            <span>·</span>
-            <span>Alejandro Vega</span>
-          </div>
-        </div>
-        {post.data.cover && (
-          <figure class="post-cover">
-            <img
-              src={post.data.cover}
-              alt={post.data.coverAlt ?? post.data.title}
-              loading="eager"
-              decoding="async"
-            />
-            {post.data.coverCaption && <figcaption>{post.data.coverCaption}</figcaption>}
-          </figure>
-        )}
-      </div>
-      <div class="post-divider">
-        <div class="post-divider-line"></div>
-        <div class="post-divider-dot"></div>
-        <div class="post-divider-line" style="max-width:24px;"></div>
-      </div>
-    </div>
+    <PostHeader post={post} />
 
-    <!-- Layout: article + sidebar -->
-    <div class="post-layout">
-      <!-- Article -->
+    <div class="layout">
       <article class="prose">
-        <div class="post-sticky-side" data-sticky-side>
-          <img src="/blog/sidebar-sticky.jpg" alt="Ilustración lateral" loading="lazy" decoding="async" />
+        <div class="sticky-side">
+          <img src="/blog/sidebar-sticky.jpg" alt="" loading="lazy" decoding="async" />
         </div>
         <Content />
       </article>
-
-      <!-- Sidebar -->
-      <aside class="post-sidebar">
-        {toc.length > 0 && (
-          <>
-            <div class="sidebar-label">{'// CONTENIDO'}</div>
-            <div class="sidebar-block sidebar-toc">
-              {toc.map(item => (
-                <a class="sidebar-toc-link" href={`#${item.id}`} data-toc-link={item.id}>{item.text}</a>
-              ))}
-            </div>
-          </>
-        )}
-
-        <div style="margin-top:1.5rem;">
-          <div class="sidebar-label">// LINKS</div>
-          <div style="display:flex;flex-direction:column;gap:8px;">
-            <a href="/blog" class="footer-link">← todos los posts</a>
-            <a href="/" class="footer-link accent">AV/_ ↗</a>
-          </div>
-        </div>
-      </aside>
+      <PostSidebar toc={toc} />
     </div>
 
-    <!-- Footer -->
-    <footer class="post-footer">
-      <a href="/blog" class="footer-link">← todos los posts</a>
-      <a href="/" class="footer-link accent">AV/_ ↗</a>
+    <footer class="foot">
+      <a href="/blog" class="foot-link">← todos los posts</a>
+      <a href="/" class="foot-link accent">AV/_ ↗</a>
     </footer>
   </main>
-
-  <script>
-    // Reading progress bar
-    const bar = document.getElementById('read-bar');
-    if (bar) {
-      function updateBar() {
-        const doc = document.documentElement;
-        const scrolled = doc.scrollTop / (doc.scrollHeight - doc.clientHeight);
-        bar.style.width = (scrolled * 100) + '%';
-      }
-      window.addEventListener('scroll', updateBar, { passive: true });
-      updateBar();
-    }
-
-    // Code block language labels
-    document.querySelectorAll('.prose pre > code[class*="language-"]').forEach((code) => {
-      const langClass = Array.from(code.classList).find((className) => className.startsWith('language-'));
-      const lang = langClass?.replace('language-', '').trim();
-      const pre = code.parentElement;
-      if (lang && pre instanceof HTMLPreElement) pre.dataset.lang = lang;
-    });
-
-    // Sidebar table of contents active state
-    const tocLinks = Array.from(document.querySelectorAll<HTMLAnchorElement>('[data-toc-link]'));
-    const headings = tocLinks
-      .map((link) => document.getElementById(link.dataset.tocLink ?? ''))
-      .filter((heading): heading is HTMLElement => Boolean(heading));
-
-    if (tocLinks.length && headings.length) {
-      const setActive = (id: string) => {
-        tocLinks.forEach((link) => {
-          link.classList.toggle('is-active', link.dataset.tocLink === id);
-        });
-      };
-      const observer = new IntersectionObserver(
-        (entries) => {
-          const visible = entries
-            .filter((entry) => entry.isIntersecting)
-            .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
-          if (visible?.target.id) setActive(visible.target.id);
-        },
-        { rootMargin: '-18% 0px -65% 0px', threshold: [0, 0.25, 0.5, 1] }
-      );
-      headings.forEach((heading) => observer.observe(heading));
-      setActive(headings[0].id);
-    }
-  </script>
 </Layout>
+
+<script>
+  import { initBlogPost } from '../../scripts/blogPost';
+  initBlogPost();
+</script>
+
+<style>
+  #read-bar { position: fixed; top: 0; left: 0; right: 0; height: 2px; background: var(--accent); z-index: 1000; transform: scaleX(0); transform-origin: left; }
+  .nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100; height: 52px; padding: 0 1.5rem;
+    display: flex; align-items: center; justify-content: space-between;
+    background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(12px); border-bottom: 1px solid var(--line);
+  }
+  .nav-back, .nav-logo { font-family: var(--font-mono); font-size: 0.74rem; letter-spacing: 0.12em; color: var(--ink-3); transition: color 0.2s; }
+  .nav-back:hover, .nav-logo:hover { color: var(--accent); }
+  .nav-rt { font-family: var(--font-mono); font-size: 0.68rem; color: var(--ink-3); }
+
+  .layout { display: grid; grid-template-columns: 1fr; gap: 3rem; max-width: 860px; margin: 0 auto; padding: 1.5rem 1.5rem 5rem; }
+  .sticky-side { display: none; }
+
+  .foot { max-width: 860px; margin: 0 auto; padding: 2rem 1.5rem 5rem; border-top: 1px solid var(--line); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
+  .foot-link { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.12em; color: var(--ink-3); transition: color 0.2s; }
+  .foot-link:hover { color: var(--accent); }
+  .foot-link.accent { color: var(--accent); }
+
+  @media (min-width: 1024px) {
+    .layout { grid-template-columns: 1fr 220px; gap: 4rem; padding: 1.5rem 2rem 6rem; max-width: 1100px; align-items: start; }
+    .sticky-side { display: block; position: sticky; top: 100px; align-self: start; margin-bottom: 2rem; }
+    .sticky-side img { width: 50%; max-width: none; object-fit: cover; border: 0; background: transparent; }
+    .foot { padding: 2rem 2rem 5rem; }
+  }
+</style>

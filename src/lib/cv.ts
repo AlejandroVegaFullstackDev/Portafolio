@@ -21,48 +21,53 @@ const M = 46; // margen lateral
 // Las fuentes estándar de PDF usan WinAnsi: se reemplaza lo que no existe ahí.
 const clean = (s: string) => s.replace(/→/g, '->').replace(/[‘’]/g, "'").replace(/[“”]/g, '"').replace(/[^\x00-\xFF—–·×•…€]/g, '');
 
-export function buildCv(lang: Lang): Promise<Uint8Array> {
+export function buildCv(lang: Lang): Promise<ArrayBuffer> {
   const t = T[lang];
   const doc = new PDFDocument({
     size: 'LETTER',
-    margins: { top: 40, bottom: 36, left: M, right: M },
+    margins: { top: 36, bottom: 30, left: M, right: M },
     info: { Title: `${D.identity.name} — CV`, Author: D.identity.name, Subject: cv.headline[lang] },
   });
   const chunks: Buffer[] = [];
   doc.on('data', (c: Buffer) => chunks.push(c));
-  const done = new Promise<Uint8Array>((resolve) => doc.on('end', () => resolve(new Uint8Array(Buffer.concat(chunks)))));
+  const done = new Promise<ArrayBuffer>((resolve) => doc.on('end', () => {
+    const b = Buffer.concat(chunks);
+    resolve(b.buffer.slice(b.byteOffset, b.byteOffset + b.byteLength) as ArrayBuffer);
+  }));
   const W = doc.page.width - M * 2;
 
-  /** Escribe un párrafo donde **x** va en negrita. */
-  const rich = (s: string, size: number, opts: PDFKit.Mixins.TextOptions = {}, color = INK) => {
+  /** Escribe un párrafo donde **x** va en negrita, empezando en (x, y). */
+  const rich = (s: string, size: number, x: number, w: number, opts: PDFKit.Mixins.TextOptions = {}, color = INK) => {
     const parts = clean(s).split(/(\*\*[^*]+\*\*)/).filter(Boolean);
     parts.forEach((p, i) => {
       const bold = p.startsWith('**');
       doc.font(bold ? 'Helvetica-Bold' : 'Helvetica').fontSize(size).fillColor(color);
-      doc.text(bold ? p.slice(2, -2) : p, { width: W, ...opts, continued: i < parts.length - 1 });
+      const o = { width: w, ...opts, continued: i < parts.length - 1 };
+      const txt = bold ? p.slice(2, -2) : p;
+      if (i === 0) doc.text(txt, x, doc.y, o);
+      else doc.text(txt, o);
     });
   };
 
   const section = (title: string) => {
-    doc.moveDown(0.55);
-    doc.font('Helvetica-Bold').fontSize(9.5).fillColor(ACCENT).text(clean(title.toUpperCase()), M, doc.y, { width: W, characterSpacing: 1.2 });
+    doc.moveDown(0.42);
+    doc.font('Helvetica-Bold').fontSize(9.5).fillColor(ACCENT).text(clean(title.toUpperCase()), M, doc.y, { width: W });
     const y = doc.y + 1.5;
     doc.moveTo(M, y).lineTo(M + W, y).lineWidth(0.6).strokeColor(RULE).stroke();
     doc.y = y + 5;
   };
 
   const bullet = (s: string) => {
-    const x = doc.x;
-    doc.font('Helvetica').fontSize(8.8).fillColor(ACCENT).text('•', M + 4, doc.y, { continued: false, lineBreak: false });
-    doc.y -= doc.currentLineHeight();
-    doc.x = M + 14;
-    rich(s, 8.8, { width: W - 14, lineGap: 0.8, paragraphGap: 1.6 });
-    doc.x = x;
+    const y = doc.y;
+    doc.font('Helvetica').fontSize(8.8).fillColor(ACCENT).text('•', M + 4, y, { lineBreak: false });
+    doc.y = y;
+    rich(s, 8.8, M + 14, W - 14, { lineGap: 0.6, paragraphGap: 1.2 });
+    doc.x = M;
   };
 
   // ── Encabezado ──
   doc.rect(0, 0, doc.page.width, 4).fill(ACCENT);
-  doc.font('Helvetica-Bold').fontSize(23).fillColor(INK).text(D.identity.name, M, 40, { width: W });
+  doc.font('Helvetica-Bold').fontSize(23).fillColor(INK).text(D.identity.name, M, 34, { width: W });
   doc.font('Helvetica-Bold').fontSize(10.5).fillColor(ACCENT).text(clean(cv.headline[lang]), { width: W });
   doc.moveDown(0.25);
   doc.font('Helvetica').fontSize(8.8).fillColor(MUTED).text(clean(cv.location[lang]), { width: W });
@@ -78,7 +83,7 @@ export function buildCv(lang: Lang): Promise<Uint8Array> {
 
   // ── Perfil ──
   section(t.profile);
-  rich(cv.profile[lang], 9.2, { lineGap: 1.2 });
+  rich(cv.profile[lang], 9.2, M, W, { lineGap: 1.2 });
 
   // ── Experiencia ──
   section(t.experience);

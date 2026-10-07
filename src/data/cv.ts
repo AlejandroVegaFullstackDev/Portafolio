@@ -13,8 +13,8 @@ export const cv = {
   },
   location: { es: 'Bogotá, Colombia (GMT-5) · Remoto / híbrido', en: 'Bogotá, Colombia (GMT-5) · Remote / hybrid' },
   profile: {
-    es: 'Desarrollador Full Stack con 4 años construyendo productos en fintech, logística y medios. Trabajo de punta a punta: frontend en React, microservicios en Python y Node, integraciones con APIs de terceros y datos en PostgreSQL y BigQuery. Me enfoco en automatizar procesos manuales y en que los sistemas aguanten volumen real: pasé la generación de +10.000 guías logísticas de horas a segundos e integré el rastreo GPS de una flota de +500 vehículos.',
-    en: 'Full Stack Developer with 4 years building products in fintech, logistics and media. I work end to end: React on the frontend, Python and Node microservices, third-party API integrations, and data in PostgreSQL and BigQuery. I focus on automating manual processes and on systems that handle real volume: I took the generation of 10,000+ shipping labels from hours to seconds and integrated GPS tracking for a fleet of 500+ vehicles.',
+    es: 'Desarrollador Full Stack en la industria desde 2023 (programando desde 2021), en fintech, logística y medios. Me encargo de funcionalidades de punta a punta, desde el diseño hasta producción, y trabajo cerca de negocio: entiendo el problema antes de escribir código y propongo la forma más simple de resolverlo. Mi foco es quitar trabajo manual: pasé la generación de +10.000 guías de envío de horas a segundos, construí el rastreo GPS de una flota de ~500 vehículos y automatizaciones que le ahorran al equipo entre 5 y 20 horas por semana.',
+    en: 'Full Stack Developer in the industry since 2023 (coding since 2021), across fintech, logistics and media. I own features end to end, from design to production, and I work close to the business: I understand the problem before writing code and propose the simplest way to solve it. My focus is removing manual work: I took the generation of 10,000+ shipping labels from hours to seconds, built GPS tracking for a ~500-vehicle fleet, and automations that save the team 5 to 20 hours a week.',
   },
   experience: [
     {
@@ -22,10 +22,11 @@ export const cv = {
       role: { es: 'Full Stack Developer', en: 'Full Stack Developer' },
       meta: { es: 'Fintech de movilidad (vehículos eléctricos y a gasolina) · Jun 2025 – actual', en: 'Mobility fintech (electric and gas vehicles) · Jun 2025 – present' },
       bullets: [
-        { es: 'Construí el backend y la integración de la **plataforma inicial de rastreo GPS**: conexión con el operador GPS, procesamiento de datos y API para visualizar en mapa **+500 vehículos** de la flota.', en: 'Built the backend and integration of the **initial GPS tracking platform**: connection to the GPS operator, data processing and an API to map **500+ fleet vehicles**.' },
-        { es: 'Desarrollé microservicios en **Python (FastAPI / Flask)** para **pagos, créditos y cartera**. Automaticé procesos que eran manuales y **reduje errores y descuadres** en la aplicación de pagos.', en: 'Developed **Python (FastAPI / Flask)** microservices for **payments, credit and collections**. Automated manual processes and **reduced errors and mismatches** in payment application.' },
-        { es: 'Construí funcionalidades de **CRM** y paneles internos en **React + Vite** para operaciones, además de vistas para clientes.', en: 'Built **CRM** features and internal dashboards in **React + Vite** for operations, plus customer-facing views.' },
-        { es: 'Automaticé flujos internos con las APIs de Trello, Notion y Gmail. Ahorran **entre 5 y 20 horas semanales** al equipo.', en: 'Automated internal workflows with the Trello, Notion and Gmail APIs, saving the team **5 to 20 hours a week**.' },
+        { es: 'Diseñé y lideré la **plataforma inicial de rastreo GPS**: hoy operaciones ve en un mapa la ubicación de los **~500 vehículos** de la flota. (Integración con el operador GPS, procesamiento de datos y API.)', en: 'Designed and led the **initial GPS tracking platform**: operations now sees the **~500 fleet vehicles** on a map. (GPS operator integration, data processing and API.)' },
+        { es: 'Automaticé procesos de **pagos, créditos y cartera** que se hacían a mano, con **menos errores y descuadres** al aplicar pagos. (Microservicios en Python: FastAPI / Flask.)', en: 'Automated manual **payments, credit and collections** processes, with **fewer errors and mismatches** when applying payments. (Python microservices: FastAPI / Flask.)' },
+        { es: 'Construí el **CRM** y los paneles internos con los que trabaja operaciones, además de vistas para clientes. (React + Vite.)', en: 'Built the **CRM** and internal dashboards operations works with, plus customer-facing views. (React + Vite.)' },
+        { es: 'Automaticé tareas repetitivas del equipo, que ahora ahorran **entre 5 y 20 horas por semana**. (APIs de Trello, Notion y Gmail.)', en: 'Automated the team\'s repetitive tasks, now saving **5 to 20 hours a week**. (Trello, Notion and Gmail APIs.)' },
+        { es: 'Creé una herramienta con IA y contexto técnico y de negocio que ayuda a los **PMs a redactar historias de usuario**.', en: 'Built an AI tool, grounded in technical and business context, that helps **PMs write user stories**.' },
       ],
     },
     {
@@ -33,7 +34,7 @@ export const cv = {
       role: { es: 'Full Stack Developer (freelance)', en: 'Full Stack Developer (freelance)' },
       meta: { es: '2025', en: '2025' },
       bullets: [
-        { es: 'Diseñé y desarrollé el sitio web del cliente con puntajes de Lighthouse de **SEO 100, accesibilidad 96 y rendimiento 90**.', en: "Designed and built the client's website with Lighthouse scores of **SEO 100, accessibility 96 and performance 90**." },
+        { es: 'Diseñé y desarrollé el sitio del negocio para que lo encuentren en Google: puntajes de Google PageSpeed de **SEO 100, accesibilidad 96 y rendimiento 90**. (Next.js.)', en: 'Designed and built the business website so customers find it on Google: Google PageSpeed scores of **SEO 100, accessibility 96 and performance 90**. (Next.js.)' },
       ],
     },
     {
@@ -41,8 +42,9 @@ export const cv = {
       role: { es: 'Desarrollador Middle', en: 'Mid-level Developer' },
       meta: { es: 'Logística / e-commerce · 2024 – 2025', en: 'Logistics / e-commerce · 2024 – 2025' },
       bullets: [
-        { es: 'Rediseñé la generación masiva de guías logísticas, que antes se hacía **a mano, una por una**. Moví la carga a un **stored procedure en PostgreSQL** invocado desde **NestJS** y optimicé las consultas: **+10.000 guías en segundos** en vez de horas (**mejora de ×10 o más**).', en: 'Redesigned bulk shipping-label generation, previously done **by hand, one at a time**. Moved the load to a **PostgreSQL stored procedure** called from **NestJS** and optimized the queries: **10,000+ labels in seconds** instead of hours (**10× or better**).' },
-        { es: 'Desarrollé **APIs REST** en NestJS / Node.js, integraciones con **transportadoras** externas y pantallas de frontend para la operación.', en: 'Developed **REST APIs** in NestJS / Node.js, integrations with external **carriers** and frontend screens for operations.' },
+        { es: 'La generación de guías de envío se hacía **a mano, una por una, y tomaba horas**. La convertí en un proceso de **segundos para +10.000 guías**, y operaciones dejó de hacerlo manualmente. (Stored procedure en PostgreSQL invocado desde NestJS.)', en: 'Shipping labels were generated **by hand, one at a time, taking hours**. I turned it into a **seconds-long process for 10,000+ labels**, and operations stopped doing it manually. (PostgreSQL stored procedure called from NestJS.)' },
+        { es: 'Conecté la plataforma con **transportadoras externas** y construí pantallas para la operación. (APIs REST en NestJS / Node.js.)', en: 'Connected the platform with **external carriers** and built screens for operations. (REST APIs in NestJS / Node.js.)' },
+        { es: 'Armé **grafos de la arquitectura de microservicios** para que el equipo entendiera dependencias y flujos entre servicios.', en: 'Built **graphs of the microservice architecture** so the team could understand dependencies and flows between services.' },
       ],
     },
     {
@@ -50,8 +52,8 @@ export const cv = {
       role: { es: 'Desarrollador Backend Data Tracking Jr. (ingresé como practicante)', en: 'Junior Backend Data Tracking Developer (joined as an intern)' },
       meta: { es: 'Medio digital · 2023 – 2024 · ascendido de practicante a desarrollador en 6 meses', en: 'Digital media · 2023 – 2024 · promoted from intern to developer in 6 months' },
       bullets: [
-        { es: 'Centralicé **más de 5 años de datos de Google Analytics** (UA y GA4) en **BigQuery** con pipelines en **Python**, y creé desde cero los **dashboards en Looker Studio** del equipo comercial y los directivos.', en: 'Centralized **5+ years of Google Analytics data** (UA and GA4) in **BigQuery** with **Python** pipelines, and built the **Looker Studio dashboards** for the sales team and leadership from scratch.' },
-        { es: 'Ejecuté la **migración de UA a GA4 sin perder el histórico** e implementé el **tracking de eventos** del sitio.', en: 'Ran the **UA to GA4 migration without losing history** and implemented the site\'s **event tracking**.' },
+        { es: 'Junté **más de 5 años de datos de audiencia** en un solo lugar y creé desde cero los **dashboards que usan el equipo comercial y los directivos**. (Python, BigQuery, Looker Studio.)', en: 'Brought **5+ years of audience data** into one place and built the **dashboards the sales team and leadership use** from scratch. (Python, BigQuery, Looker Studio.)' },
+        { es: 'Migré la analítica del sitio a la nueva versión de Google (**UA a GA4**) **sin perder el histórico**, e implementé la medición de eventos.', en: 'Migrated the site analytics to Google\'s new version (**UA to GA4**) **without losing history**, and implemented event tracking.' },
       ],
     },
   ] satisfies CvJob[],

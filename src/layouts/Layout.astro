@@ -1,42 +1,106 @@
 ---
+// Documento base de todas las páginas: metadatos (SEO + vista previa al compartir),
+// fuentes self-hosted, estilos globales, analítica y restauración de preferencias.
+import '@fontsource-variable/space-grotesk';
+import '@fontsource-variable/jetbrains-mono';
+import '../styles/global.css';
+import Analytics from '@vercel/analytics/astro';
+import { portfolioData as D } from '../data';
+
 interface Props {
   title?: string;
+  description?: string;
+  image?: string;
+  type?: 'website' | 'article';
 }
-const { title = 'Alejandro Vega — Senior Full Stack Developer' } = Astro.props;
-import '../styles/global.css';
+
+const {
+  title = `${D.identity.name} — Full Stack Developer`,
+  description = 'Alejandro Vega — Desarrollador Full Stack en Bogotá: React, Python, NestJS y PostgreSQL. Backend, automatización, datos y plataformas internas. Roda, Kiki LATAM y Pulzo.',
+  image = '/og.png',
+  type = 'website',
+} = Astro.props;
+
+const site = Astro.site ?? new URL('https://4ledmt.dev');
+const canonical = new URL(Astro.url.pathname, site).href;
+const ogImage = new URL(image, site).href;
+
+// Datos estructurados: le dicen a Google quién es la persona detrás del sitio.
+const person = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: D.identity.name,
+  jobTitle: D.identity.title.en,
+  url: site.href,
+  image: ogImage,
+  address: { '@type': 'PostalAddress', addressLocality: 'Bogotá', addressCountry: 'CO' },
+  sameAs: [D.identity.contact.linkedin, D.identity.contact.github],
+  knowsAbout: ['TypeScript', 'Python', 'NestJS', 'React', 'PostgreSQL', 'FastAPI', 'BigQuery'],
+};
 ---
 <!doctype html>
 <html lang="es" data-lang="es">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="Alejandro Vega — Desarrollador Full Stack Senior: React, Python, NestJS y LLMs. Backend, automatización, datos y plataformas internas. Roda, Kiki LATAM y Pulzo. Bogotá, Colombia." />
-  <meta property="og:url" content="https://4ledmt.dev/" />
-  <meta property="og:site_name" content="4ledmt.dev" />
-  <meta property="og:title" content={title} />
-  <meta property="og:description" content="Senior Full Stack · React · Python · NestJS · LLMs · backend · automatización · datos · Bogotá" />
-  <meta property="og:type" content="website" />
-  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <title>{title}</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&family=Bebas+Neue&family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter+Tight:wght@300;400;500;600&display=swap" rel="stylesheet" />
-  <!-- Restore theme/lang before first paint to avoid flash -->
+  <meta name="description" content={description} />
+  <link rel="canonical" href={canonical} />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <meta name="theme-color" content="#050507" />
+
+  <meta property="og:type" content={type} />
+  <meta property="og:site_name" content="4ledmt.dev" />
+  <meta property="og:url" content={canonical} />
+  <meta property="og:title" content={title} />
+  <meta property="og:description" content={description} />
+  <meta property="og:image" content={ogImage} />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:locale" content="es_CO" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content={title} />
+  <meta name="twitter:description" content={description} />
+  <meta name="twitter:image" content={ogImage} />
+
+  <script type="application/ld+json" set:html={JSON.stringify(person)} />
+  <slot name="head" />
+
+  <!-- Antes del primer pintado: tema, idioma y (solo si se eligieron en el panel)
+       las fuentes alternativas, que se cargan bajo demanda. -->
   <script is:inline>
-    (function(){
+    (function () {
+      var FONTS = {
+        serif: 'family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter+Tight:wght@300;400;500;600',
+        brutal: 'family=Bebas+Neue',
+      };
+      window.__avLoadFont = function (name) {
+        if (!FONTS[name] || document.getElementById('font-' + name)) return;
+        var l = document.createElement('link');
+        l.id = 'font-' + name;
+        l.rel = 'stylesheet';
+        l.href = 'https://fonts.googleapis.com/css2?' + FONTS[name] + '&display=swap';
+        document.head.appendChild(l);
+      };
       try {
-        var t = JSON.parse(localStorage.getItem('av_tweaks')||'{}');
+        var t = JSON.parse(localStorage.getItem('av_tweaks') || '{}');
         var r = document.documentElement;
-        if(t.theme) r.setAttribute('data-tweak-theme',t.theme);
-        if(t.accent) r.setAttribute('data-tweak-accent',t.accent);
-        if(t.font) r.setAttribute('data-tweak-font',t.font);
-      } catch(e){}
-      var lang = localStorage.getItem('av_lang')||'es';
-      document.documentElement.setAttribute('data-lang',lang);
+        if (t.theme) r.setAttribute('data-tweak-theme', t.theme);
+        if (t.accent) r.setAttribute('data-tweak-accent', t.accent);
+        if (t.font) { r.setAttribute('data-tweak-font', t.font); window.__avLoadFont(t.font); }
+      } catch (e) {}
+      var lang = localStorage.getItem('av_lang') || 'es';
+      document.documentElement.setAttribute('data-lang', lang);
+      document.documentElement.setAttribute('lang', lang);
     })();
   </script>
 </head>
 <body>
   <slot />
+  <Analytics />
+  <script>
+    import { initTracking } from '../scripts/core/track';
+    initTracking();
+  </script>
 </body>
 </html>

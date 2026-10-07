@@ -1,6 +1,7 @@
 ---
 // 06 · Contacto + pie. Los stickers reaccionan al giroscopio y a la velocidad
 // del scroll (scripts/sections/contact.ts).
+import { Image } from 'astro:assets';
 import { portfolioData as D } from '../../data';
 import linuxImg from '../../assets/img/Linux.jpg';
 import vsImg from '../../assets/img/VS.jpg';
@@ -29,7 +30,7 @@ const githubHandle = '/' + D.identity.contact.github.split('/').pop();
   <div id="stickerCluster" class="cluster" aria-hidden="true">
     {stickers.map((s, i) => (
       <div class="stk" data-rot={s.d[3]} data-depth={s.d[4]} style={`top:${s.d[0]}px;left:${s.d[1]}px;width:${s.d[2]}px;z-index:${i === 2 ? 3 : 1}`}>
-        <img src={s.img.src} alt="" loading="lazy" decoding="async" />
+        <Image src={s.img} alt="" width={Math.round(s.d[2] * 2)} />
       </div>
     ))}
   </div>
@@ -71,7 +72,7 @@ const githubHandle = '/' + D.identity.contact.github.split('/').pop();
     <div class="stickers-m" aria-hidden="true">
       {stickers.map((s, i) => (
         <span class="stk-mw" data-depth={s.d[4]}>
-          <img src={s.img.src} alt="" class="stk-m" loading="lazy" decoding="async" style={`width:${s.m[0]}px;--stk-rot:rotate(${s.m[1]}deg);animation-delay:${(i * 0.37) % 1.1}s`} />
+          <Image src={s.img} alt="" width={s.m[0] * 2} class="stk-m" style={`width:${s.m[0]}px;--stk-rot:rotate(${s.m[1]}deg);animation-delay:${(i * 0.37) % 1.1}s`} />
         </span>
       ))}
     </div>
@@ -88,7 +89,7 @@ const githubHandle = '/' + D.identity.contact.github.split('/').pop();
   .contact-title { font-size: clamp(2.6rem, 10vw, 10rem); line-height: 0.9; }
   .cluster { position: absolute; top: 2rem; right: 3.5rem; width: 300px; height: 420px; pointer-events: none; display: none; }
   .stk { position: absolute; pointer-events: auto; cursor: pointer; }
-  .stk img { display: block; width: 100%; filter: drop-shadow(2px 4px 12px rgba(0,0,0,0.8)); will-change: transform; }
+  .stk img { display: block; width: 100%; height: auto; filter: drop-shadow(2px 4px 12px rgba(0,0,0,0.8)); will-change: transform; }
   .sysinfo { margin: 0; font-family: var(--font-mono); font-size: 0.875rem; }
   .sysinfo div { display: flex; justify-content: space-between; gap: 1rem; padding: 0.5rem 0; border-bottom: 1px solid var(--line); }
   .sysinfo div:last-child { border-bottom: 0; }
@@ -96,7 +97,7 @@ const githubHandle = '/' + D.identity.contact.github.split('/').pop();
   .sysinfo dd { margin: 0; }
   .stickers-m { margin-top: 3rem; display: flex; flex-wrap: wrap; justify-content: center; align-items: flex-end; gap: 0.75rem; }
   .stk-mw { display: inline-block; will-change: transform; }
-  .stk-m { display: block; filter: drop-shadow(2px 4px 10px rgba(0,0,0,0.75)); animation: floatM 3s ease-in-out infinite alternate; }
+  .stk-m { display: block; height: auto; filter: drop-shadow(2px 4px 10px rgba(0,0,0,0.75)); animation: floatM 3s ease-in-out infinite alternate; }
   @keyframes floatM { from { transform: var(--stk-rot) translateY(0); } to { transform: var(--stk-rot) translateY(-7px); } }
   .foot { margin-top: 6rem; border-top: 1px solid var(--line); padding-top: 1.5rem; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 1rem; font-family: var(--font-mono); font-size: 0.75rem; color: var(--ink-3); }
   @media (min-width: 1024px) {

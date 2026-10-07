@@ -24,6 +24,8 @@ function applyTweaks(t: Tweaks) {
   root.setAttribute('data-tweak-theme', t.theme);
   root.setAttribute('data-tweak-accent', t.accent);
   root.setAttribute('data-tweak-font', t.font);
+  // Las fuentes alternativas solo se descargan si se eligen (ver Layout.astro).
+  (window as unknown as { __avLoadFont?: (f: string) => void }).__avLoadFont?.(t.font);
   root.setAttribute('data-tweak-anim', t.animations);
   root.toggleAttribute('data-tweak-noscanlines', !t.scanlines);
   root.toggleAttribute('data-tweak-nocursor', !t.cursor);

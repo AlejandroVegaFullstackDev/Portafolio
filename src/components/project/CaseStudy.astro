@@ -1,0 +1,131 @@
+---
+// Cuerpo de un caso de proyecto (/proyecto/[slug]), renderizado en servidor en ambos
+// idiomas: impacto, reto/solución, arquitectura, proceso y aprendizajes.
+// Datos: src/data/projects.ts + src/data/case-studies.ts.
+import type { Project } from '../../data';
+
+type L = { es: string; en: string };
+interface Deep {
+  challenge?: L; solution?: L; arch?: readonly string[]; code?: string;
+  timeline?: { es: readonly (readonly string[])[]; en: readonly (readonly string[])[] };
+  learnings?: { es: readonly (readonly string[])[]; en: readonly (readonly string[])[] };
+}
+interface Props { project: Project; deep: Deep }
+const { project: p, deep } = Astro.props;
+const metrics = (p.metrics ?? []) as readonly { k: L; v: string | L }[];
+const val = (v: string | L, lang: 'es' | 'en') => (typeof v === 'string' ? v : v[lang]);
+---
+{metrics.length > 0 && (
+  <section class="block">
+    <div class="wrap">
+      <p class="ed-num"><span class="lang-es">// IMPACTO</span><span class="lang-en">// IMPACT</span></p>
+      <div class="metrics">
+        {metrics.map((m) => (
+          <div class="card">
+            <div class="v"><span class="lang-es">{val(m.v, 'es')}</span><span class="lang-en">{val(m.v, 'en')}</span></div>
+            <div class="k"><span class="lang-es">{m.k.es}</span><span class="lang-en">{m.k.en}</span></div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+)}
+
+{(deep.challenge || deep.solution) && (
+  <section class="block alt">
+    <div class="wrap two">
+      {deep.challenge && (
+        <div>
+          <h2 class="ed-display"><span class="lang-es">El problema</span><span class="lang-en">The problem</span></h2>
+          <p class="lead"><span class="lang-es">{deep.challenge.es}</span><span class="lang-en">{deep.challenge.en}</span></p>
+        </div>
+      )}
+      {deep.solution && (
+        <div>
+          <h2 class="ed-display"><span class="lang-es">Cómo lo resolví</span><span class="lang-en">How I solved it</span></h2>
+          <p class="lead"><span class="lang-es">{deep.solution.es}</span><span class="lang-en">{deep.solution.en}</span></p>
+        </div>
+      )}
+    </div>
+  </section>
+)}
+
+<section class="block">
+  <div class="wrap">
+    <h2 class="ed-display"><span class="lang-es">Arquitectura y stack</span><span class="lang-en">Architecture & stack</span></h2>
+    {deep.arch && (
+      <ol class="arch">
+        {deep.arch.map((s, i) => <li><span class="idx">[{String(i + 1).padStart(2, '0')}]</span><span class="name">{s}</span></li>)}
+      </ol>
+    )}
+    <div class:list={['two', { solo: !deep.code }]}>
+      <ul class="pills">{p.stack.map((s) => <li>{s}</li>)}</ul>
+      {deep.code && <pre class="code"><code set:html={deep.code} /></pre>}
+    </div>
+  </div>
+</section>
+
+{deep.timeline && (
+  <section class="block alt">
+    <div class="wrap">
+      <h2 class="ed-display"><span class="lang-es">Proceso</span><span class="lang-en">Process</span></h2>
+      {(['es', 'en'] as const).map((lang) => (
+        <ol class={`timeline lang-${lang}`}>
+          {deep.timeline![lang].map(([k, v]) => <li><span class="ed-num">{k}</span><span>{v}</span></li>)}
+        </ol>
+      ))}
+    </div>
+  </section>
+)}
+
+{deep.learnings && (
+  <section class="block">
+    <div class="wrap">
+      <h2 class="ed-display"><span class="lang-es">Lo que aprendí</span><span class="lang-en">What I learned</span></h2>
+      {(['es', 'en'] as const).map((lang) => (
+        <div class={`learn lang-${lang}`}>
+          {deep.learnings![lang].map(([k, v], i) => (
+            <div class="card"><p class="ed-num">{String(i + 1).padStart(2, '0')} //</p><h3>{k}</h3><p>{v}</p></div>
+          ))}
+        </div>
+      ))}
+    </div>
+  </section>
+)}
+
+<style>
+  .block { padding: clamp(3rem, 7vw, 5rem) clamp(1.25rem, 5vw, 4rem); }
+  .alt { background: var(--bg-2); border-block: 1px solid var(--line); }
+  .wrap { max-width: 1400px; margin: 0 auto; }
+  .two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 3rem; align-items: start; }
+  .two.solo { grid-template-columns: 1fr; }
+  .ed-display { font-family: var(--font-display); font-weight: 700; font-size: clamp(2rem, 4.5vw, 3.4rem); line-height: 0.95; letter-spacing: -0.03em; margin: 0 0 1.75rem; }
+  .ed-num { font-family: var(--font-mono); font-size: 0.76rem; letter-spacing: 0.18em; color: var(--accent); text-transform: uppercase; margin: 0 0 1rem; }
+  .lead { font-size: 1.12rem; line-height: 1.7; color: var(--ink-2); max-width: 62ch; margin: 0; }
+  .metrics { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
+  .card { border: 1px solid var(--line); padding: 1.5rem; background: var(--panel); }
+  .card .v { font-family: var(--font-display); font-size: clamp(2rem, 4vw, 3.2rem); font-weight: 700; line-height: 1; color: var(--accent); }
+  .card .k { font-family: var(--font-mono); font-size: 0.74rem; letter-spacing: 0.15em; color: var(--ink-3); text-transform: uppercase; margin-top: 0.6rem; }
+  .arch { list-style: none; margin: 0 0 2.5rem; padding: 0; display: flex; flex-wrap: wrap; gap: 0.5rem; counter-reset: s; }
+  .arch li { display: flex; align-items: center; gap: 0.75rem; padding: 0.9rem 1.1rem; border: 1px solid var(--line); background: var(--panel); }
+  .arch li + li::before { content: "→"; color: var(--accent); font-family: var(--font-mono); margin-right: 0.25rem; }
+  .idx { font-family: var(--font-mono); font-size: 0.74rem; color: var(--accent); letter-spacing: 0.12em; }
+  .name { font-family: var(--font-display); font-weight: 600; }
+  .pills { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.5rem; align-content: flex-start; }
+  .pills li { padding: 4px 10px; border: 1px solid var(--line-2); font-family: var(--font-mono); font-size: 0.78rem; }
+  .code { margin: 0; font-family: var(--font-mono); font-size: 0.84rem; line-height: 1.6; background: var(--panel); border: 1px solid var(--line); padding: 1.25rem; white-space: pre; overflow-x: auto; }
+  .code :global(.k) { color: var(--accent); }
+  .code :global(.s) { color: var(--ok); }
+  .code :global(.c) { color: var(--ink-3); }
+  .timeline { list-style: none; margin: 0; padding: 0 0 0 1.5rem; border-left: 1px solid var(--line-2); display: grid; gap: 1.25rem; }
+  .timeline li { display: grid; gap: 0.25rem; font-size: 1.1rem; position: relative; }
+  .timeline li::before { content: ""; position: absolute; left: calc(-1.5rem - 5px); top: 0.3rem; width: 9px; height: 9px; background: var(--accent); }
+  .timeline .ed-num { margin: 0; }
+  .learn { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
+  .learn h3 { font-family: var(--font-display); font-size: 1.35rem; margin: 0 0 0.6rem; letter-spacing: -0.02em; }
+  .learn p:last-child { color: var(--ink-2); line-height: 1.6; margin: 0; }
+  @media (max-width: 900px) {
+    .two, .metrics, .learn { grid-template-columns: 1fr; gap: 1rem; }
+    .two { gap: 2rem; }
+  }
+</style>

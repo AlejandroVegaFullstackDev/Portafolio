@@ -149,3 +149,20 @@
 .prose hr::before {
   content: '';
 }
+
+/* Figuras que los posts insertan en el Markdown (<figure class="post-…">).
+   Van aquí, globales, porque el contenido del Markdown no recibe el scope del componente. */
+.prose .post-pull-right { float: right; margin: 0.5em 0 1em 1.5em; width: 50%; overflow: hidden; }
+.prose .post-pull-right img { display: block; width: 100%; max-width: none; margin: 0; object-fit: cover; }
+.prose .post-pull-right figcaption { padding: 6px 10px; border-top: 1px solid var(--line); }
+.prose .post-ending,
+.prose .post-ending-political,
+.prose .post-trial { margin: 3rem auto 2rem; text-align: center; }
+.prose .post-ending { margin-top: 4rem; }
+.prose .post-ending img,
+.prose .post-ending-political img,
+.prose .post-trial img { display: block; width: 50%; max-width: none; margin: 0 auto; object-fit: cover; border: 0; background: transparent; }
+@media (max-width: 600px) {
+  .prose .post-pull-right { float: none; width: 100%; margin: 1.5em 0; }
+  .prose .post-ending img, .prose .post-ending-political img, .prose .post-trial img { width: 80%; }
+}
