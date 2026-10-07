@@ -14,8 +14,8 @@ export const identity = {
   educationSub: { es: "2021–22 · 2025 – en curso", en: "2021–22 · 2025 – ongoing" },
   title: { es: "Desarrollador Full Stack Senior", en: "Senior Full Stack Developer" },
   tagline: {
-    es: "Desarrollo productos web de punta a punta: frontend, backend, automatización, datos y plataformas internas que sí aguantan operación real.",
-    en: "I build end-to-end web products: frontend, backend, automation, data and internal platforms for real operations.",
+    es: "Desarrollo productos web de punta a punta: frontend, backend, automatización, datos y plataformas internas. Hoy en Roda, fintech de movilidad eléctrica.",
+    en: "I build end-to-end web products: frontend, backend, automation, data and internal platforms. Currently at Roda, an electric-mobility fintech.",
   },
   status: {
     es: "Disponible para incorporación inmediata",

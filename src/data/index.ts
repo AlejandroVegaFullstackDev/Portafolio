@@ -1,7 +1,7 @@
 // Punto único de acceso a los datos del portafolio.
 // Cada archivo de esta carpeta es una sección; aquí solo se arman.
 import { identity, highlights, about } from './profile';
-import { stack, automation } from './stack';
+import { stack, stackTiers, automation } from './stack';
 import { experience } from './experience';
 import { projects } from './projects';
 import { caseStudies } from './case-studies';
@@ -11,6 +11,7 @@ export const portfolioData = {
   highlights,
   about,
   stack,
+  stackTiers,
   automation,
   experience,
   projects,

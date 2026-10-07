@@ -10,14 +10,14 @@ const featured = D.projects.slice(0, FEATURED);
 const rest = D.projects.slice(FEATURED);
 const clip = (s: string, n = 170) => (s.length > n ? s.slice(0, n).replace(/\s+\S*$/, '') + '…' : s);
 ---
-<Coverflow id="projects" label="Proyectos" total={featured.length + 2} bgA="CASOS · PRODUCCIÓN · OPEN SOURCE" bgB="CÓDIGO QUE AGUANTA OPERACIÓN REAL">
+<Coverflow id="projects" label="Proyectos" total={featured.length + 2} bgA="PROYECTOS · PRODUCCIÓN · OPEN SOURCE" bgB="NESTJS · PYTHON · REACT · POSTGRESQL">
   <div class="hs-slide hs-intro" data-hs-slide data-hs-intro>
     <div class="hs-inner">
       <div>
-        <SectionHeading num="03" label={{ es: 'PROYECTOS', en: 'PROJECTS' }} es={{ pre: 'Casos que ', accent: 'construí', post: '.' }} en={{ pre: 'Cases I ', accent: 'built', post: '.' }} />
+        <SectionHeading num="03" label={{ es: 'PROYECTOS', en: 'PROJECTS' }} es={{ pre: 'Lo que he ', accent: 'construido', post: '.' }} en={{ pre: 'What I have ', accent: 'built', post: '.' }} />
         <p class="font-mono text-sm text-[var(--ink-3)] max-w-sm mt-6">
-          <span class="lang-es">{D.projects.length} proyectos entre producción y open source. Estos son los {FEATURED} que mejor me representan.</span>
-          <span class="lang-en">{D.projects.length} projects across production and open source. These {FEATURED} represent me best.</span>
+          <span class="lang-es">{D.projects.length} proyectos entre trabajo en producción y open source. Aquí van {FEATURED}; el resto está al final.</span>
+          <span class="lang-en">{D.projects.length} projects across production work and open source. Here are {FEATURED}; the rest are at the end.</span>
         </p>
         <p class="hs-hint" aria-hidden="true">
           <span class="lang-es">sigue bajando</span><span class="lang-en">keep scrolling</span>

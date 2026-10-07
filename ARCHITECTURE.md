@@ -17,7 +17,7 @@ src/
 ├─ scripts/
 │  ├─ home.ts             Orquestador: qué se inicia y en qué orden. Empieza a leer por aquí.
 │  ├─ core/               Infraestructura: idioma (i18n), pantalla de arranque, menú móvil.
-│  ├─ sections/           Interacción propia de una sección (hero, stack, blog, experience, contact, nowBand).
+│  ├─ sections/           Interacción propia de una sección (hero, blog, experience, contact, nowBand).
 │  └─ fx/                 Efectos reutilizables, uno por archivo (ver tabla).
 ├─ data/                  Contenido del portafolio. index.ts los junta en `portfolioData`.
 ├─ lib/                   Utilidades: blog.ts (posts, fechas, lectura), ticker.ts.

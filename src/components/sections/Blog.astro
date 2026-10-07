@@ -9,14 +9,14 @@ import { getSortedPosts, fmtPostDate, readingTime } from '../../lib/blog';
 const allPosts = await getSortedPosts();
 const latest = allPosts.slice(0, 3);
 ---
-<Coverflow id="blog" label="Blog" total={latest.length + 2} bgA="BLOG · NOTAS · CÓDIGO · IA" bgB="ESCRIBIR ES PENSAR DOS VECES">
+<Coverflow id="blog" label="Blog" total={latest.length + 2} bgA="BLOG · NOTAS · CÓDIGO · IA" bgB="CÓDIGO · IA · APRENDIZAJE">
   <div class="hs-slide hs-intro" data-hs-slide data-hs-intro>
     <div class="hs-inner">
       <div>
         <SectionHeading num="04" label={{ es: 'BLOG', en: 'BLOG' }} es={{ pre: 'Lo que ', accent: 'escribo', post: '.' }} en={{ pre: 'What I ', accent: 'write', post: '.' }} />
         <p class="intro-copy font-mono text-sm text-[var(--ink-3)] max-w-sm mt-6">
-          <span class="lang-es">Código, IA, aprendizaje y lo que me esté dando vueltas. Sin algoritmos de por medio.</span>
-          <span class="lang-en">Code, AI, learning and whatever is on my mind. Posts are in Spanish.</span>
+          <span class="lang-es">Escribo sobre código, IA y lo que voy aprendiendo.</span>
+          <span class="lang-en">I write about code, AI and what I am learning. Posts are in Spanish.</span>
         </p>
         <p class="hs-hint" aria-hidden="true">
           <span class="lang-es">sigue bajando</span><span class="lang-en">keep scrolling</span>
@@ -53,10 +53,10 @@ const latest = allPosts.slice(0, 3);
 
   <div class="hs-slide hs-end" data-hs-slide>
     <div class="hs-inner">
-      <p class="hs-end-kicker"><span class="lang-es">fin del carrete</span><span class="lang-en">end of the reel</span></p>
+      <p class="hs-end-kicker"><span class="lang-es">eso es todo por ahora</span><span class="lang-en">that is all for now</span></p>
       <p class="hs-end-title">
-        <span class="lang-es">¿Quieres leer <span class="text-[var(--accent)]">más</span>?</span>
-        <span class="lang-en">Want to read <span class="text-[var(--accent)]">more</span>?</span>
+        <span class="lang-es">El resto está en el <span class="text-[var(--accent)]">blog</span>.</span>
+        <span class="lang-en">The rest is on the <span class="text-[var(--accent)]">blog</span>.</span>
       </p>
       <a href="/blog" class="cy-btn solid">
         <span class="lang-es">TODOS LOS POSTS ({allPosts.length}) ↗</span>

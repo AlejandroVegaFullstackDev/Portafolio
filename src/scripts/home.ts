@@ -23,7 +23,6 @@ import { initMarquees, initScrollProgress, initSpotlight } from './fx/chrome';
 
 import { initHero } from './sections/hero';
 import { initNowBand } from './sections/nowBand';
-import { initStack } from './sections/stack';
 import { initPaperStack } from './sections/blog';
 import { initExperience } from './sections/experience';
 import { initContact } from './sections/contact';
@@ -46,7 +45,6 @@ async function start() {
   // De arriba abajo, en el orden de la página.
   initHero();
   initNowBand();
-  initStack();
   coverflow('projects');
   initPaperStack();
   coverflow('blog');

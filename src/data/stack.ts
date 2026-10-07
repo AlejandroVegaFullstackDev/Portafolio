@@ -11,6 +11,25 @@ export const stack = {
   tools: ["Git", "GitHub", "GitLab", "Power Query / Power BI", "Selenium", "Scrum", "Kanban"],
 } as const;
 
+// Stack por nivel de uso: es lo primero que escanea un reclutador.
+export const stackTiers = [
+  {
+    key: 'daily',
+    label: { es: 'Uso a diario', en: 'Daily' },
+    items: ['TypeScript', 'Python', 'NestJS', 'React', 'PostgreSQL'],
+  },
+  {
+    key: 'prod',
+    label: { es: 'En producción', en: 'In production' },
+    items: ['FastAPI', 'Flask', 'Node.js', 'Redis', 'BigQuery', 'GCP (Cloud Run)', 'Docker', 'GitHub Actions', 'Next.js', 'Astro', 'Tailwind CSS'],
+  },
+  {
+    key: 'past',
+    label: { es: 'He trabajado con', en: 'Worked with' },
+    items: ['PHP', 'Laravel', 'Angular', 'MySQL', 'AWS', 'Selenium', 'Power BI'],
+  },
+] as const;
+
 // Sección del CV que no existía en el sitio.
 export const automation = {
   title: { es: "Automatización e IA aplicada", en: "Automation & applied AI" },

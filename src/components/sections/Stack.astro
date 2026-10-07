@@ -1,107 +1,91 @@
 ---
-// 02 · Stack: tambor 3D de tecnologías que gira con el scroll (scripts/sections/stack.ts)
-// + lista compacta por categoría y bloque de automatización. Datos: src/data/stack.ts.
+// 02 · Stack, pensado para escanearse en segundos: tecnologías por nivel de uso
+// (a diario / en producción / he trabajado con), prácticas y automatización.
+// Datos: src/data/stack.ts.
 import SectionHeading from '../ui/SectionHeading.astro';
 import { portfolioData as D } from '../../data';
 
 const S = D.stack;
-const drum = [...S.languages, ...S.frameworks, ...S.databases, 'GCP', 'AWS', 'Docker', 'CI/CD'];
-const groups = [
-  { es: 'lenguajes', en: 'languages', items: S.languages },
-  { es: 'frameworks', en: 'frameworks', items: S.frameworks },
+const practices = [
   { es: 'arquitectura', en: 'architecture', items: S.architectures },
   { es: 'patrones', en: 'patterns', items: S.patterns },
-  { es: 'datos', en: 'data', items: S.databases },
   { es: 'testing / ci', en: 'testing / ci', items: S.testing },
-  { es: 'nube / devops', en: 'cloud / devops', items: S.cloud },
   { es: 'herramientas', en: 'tools', items: S.tools },
 ];
 ---
-<section id="stack" class="relative px-6 lg:px-20 py-20 lg:py-28 border-y border-[var(--line)] bg-[var(--bg-2)] cy-scanlines overflow-hidden" data-wipe>
-  <div class="max-w-[1480px] mx-auto stack-grid">
-    <div class="stack-copy">
-      <SectionHeading num="02" label={{ es: 'STACK', en: 'STACK' }} es={{ pre: 'Las herramientas que ', accent: 'domino', post: '.' }} en={{ pre: 'The tools I ', accent: 'master', post: '.' }} />
-      <p class="font-mono text-sm text-[var(--ink-3)] max-w-sm mt-6">
-        <span class="lang-es">Sin religiones tecnológicas. Elijo la herramienta correcta para el problema correcto.</span>
-        <span class="lang-en">No tech religions. The right tool for the right problem.</span>
+<section id="stack" class="relative px-6 lg:px-20 py-20 lg:py-28 border-y border-[var(--line)] bg-[var(--bg-2)] overflow-hidden" data-wipe>
+  <div class="max-w-[1480px] mx-auto">
+    <div class="head">
+      <SectionHeading num="02" label={{ es: 'STACK', en: 'STACK' }} es={{ pre: 'Con qué ', accent: 'trabajo', post: '.' }} en={{ pre: 'What I ', accent: 'work', post: ' with.' }} />
+      <p class="font-mono text-sm text-[var(--ink-3)] max-w-sm">
+        <span class="lang-es">Agrupado por cuánto lo uso hoy.</span>
+        <span class="lang-en">Grouped by how much I use it today.</span>
       </p>
     </div>
 
-    <dl class="cats">
-        {groups.map((g) => (
-          <div class="cat" data-stagger-item>
-            <dt><span class="lang-es">{g.es}</span><span class="lang-en">{g.en}</span></dt>
-            <dd>{g.items.join(' · ')}</dd>
-          </div>
-        ))}
+    <div class="tiers">
+      {D.stackTiers.map((t) => (
+        <div class:list={['tier', `tier--${t.key}`]} data-stagger-item>
+          <h3 class="tier-label"><span class="lang-es">{t.label.es}</span><span class="lang-en">{t.label.en}</span></h3>
+          <ul class="chips">{t.items.map((i) => <li>{i}</li>)}</ul>
+        </div>
+      ))}
+    </div>
+
+    <dl class="practices">
+      {practices.map((g) => (
+        <div class="practice" data-stagger-item>
+          <dt><span class="lang-es">{g.es}</span><span class="lang-en">{g.en}</span></dt>
+          <dd>{g.items.join(' · ')}</dd>
+        </div>
+      ))}
     </dl>
 
-    <div class="drum-stage" aria-hidden="true" style={`--n:${drum.length}`}>
-      <div class="drum" id="stackDrum">
-        {drum.map((t, i) => <span class="drum-item" style={`--i:${i}`}>{t}</span>)}
-      </div>
-      <div class="drum-window"></div>
+    <div class="auto-box">
+      <h3 class="cy-eyebrow mb-4"><span class="lang-es">{D.automation.title.es}</span><span class="lang-en">{D.automation.title.en}</span></h3>
+      <ul class="auto-list">
+        {D.automation.items.es.map((_, i) => (
+          <li data-stagger-item><span class="lang-es">{D.automation.items.es[i]}</span><span class="lang-en">{D.automation.items.en[i]}</span></li>
+        ))}
+      </ul>
     </div>
-  </div>
-
-  <div class="max-w-[1480px] mx-auto auto-box">
-    <div class="cy-eyebrow mb-4">// <span class="lang-es">{D.automation.title.es.toUpperCase()}</span><span class="lang-en">{D.automation.title.en.toUpperCase()}</span></div>
-    <ol class="auto-list">
-      {D.automation.items.es.map((_, i) => (
-        <li data-stagger-item>
-          <span class="auto-n">{String(i + 1).padStart(2, '0')} //</span>
-          <span><span class="lang-es">{D.automation.items.es[i]}</span><span class="lang-en">{D.automation.items.en[i]}</span></span>
-        </li>
-      ))}
-    </ol>
   </div>
 </section>
 
 <style>
-  .stack-grid {
-    display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 2.5rem 3rem; align-items: center;
-    grid-template-areas: "copy drum" "cats drum";
-  }
-  .stack-copy { grid-area: copy; }
-  .cats { grid-area: cats; margin: 0; border-top: 1px solid var(--line); align-self: start; }
-  .drum-stage { grid-area: drum; }
-  .cat { display: grid; grid-template-columns: 9.5rem minmax(0, 1fr); gap: 1rem; padding: 0.7rem 0; border-bottom: 1px solid var(--line); }
-  .cat dt { font-family: var(--font-mono); font-size: 0.66rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-3); padding-top: 0.2rem; }
-  .cat dd { margin: 0; color: var(--ink-2); font-size: 0.92rem; line-height: 1.5; }
+  .head { display: flex; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; gap: 1.5rem; margin-bottom: 2.5rem; }
 
-  /* Tambor: cada ítem rota alrededor del eje X y se empuja hacia afuera (radio R). */
-  .drum-stage {
-    --h: 52px; --R: calc(var(--h) * var(--n) / 6.2832);
-    position: relative; height: calc(var(--R) * 2 + var(--h)); max-height: 560px;
-    perspective: 1000px; display: grid; place-items: center;
-    -webkit-mask: linear-gradient(180deg, transparent, #000 22%, #000 78%, transparent);
-            mask: linear-gradient(180deg, transparent, #000 22%, #000 78%, transparent);
-  }
-  .drum { position: relative; width: 100%; height: var(--h); transform-style: preserve-3d; will-change: transform; }
-  .drum-item {
-    position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
-    font-family: var(--font-display); font-weight: 700; font-size: clamp(1.4rem, 3vw, 2.2rem); letter-spacing: -0.03em;
-    color: var(--ink); backface-visibility: hidden;
-    transform: rotateX(calc(var(--i) * -360deg / var(--n))) translateZ(var(--R));
-  }
-  .drum-window {
-    position: absolute; left: 0; right: 0; top: 50%; height: var(--h); transform: translateY(-50%);
-    border-top: 1px solid var(--accent); border-bottom: 1px solid var(--accent);
-    background: color-mix(in srgb, var(--accent) 7%, transparent); pointer-events: none;
-  }
+  .tiers { border-top: 1px solid var(--line); }
+  .tier { display: grid; grid-template-columns: 11rem minmax(0, 1fr); gap: 1.5rem; align-items: baseline; padding: 1.25rem 0; border-bottom: 1px solid var(--line); }
+  .tier-label { margin: 0; font-family: var(--font-mono); font-size: 0.72rem; font-weight: 500; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-3); }
+  .chips { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.5rem 0.6rem; }
+  .chips li { font-family: var(--font-mono); font-size: 0.82rem; color: var(--ink-2); border: 1px solid var(--line-2); padding: 4px 10px; }
 
-  .auto-box { margin-top: 3.5rem; border: 1px solid var(--line); padding: 1.5rem; background: linear-gradient(135deg, var(--panel), transparent); }
+  /* El nivel diario es lo que más pesa: más grande y con acento. */
+  .tier--daily .tier-label { color: var(--accent); }
+  .tier--daily .chips li {
+    font-family: var(--font-display); font-weight: 700; font-size: clamp(1.15rem, 2.2vw, 1.6rem); letter-spacing: -0.02em;
+    color: var(--ink); border-color: var(--accent); padding: 6px 14px;
+  }
+  .tier--past .chips li { color: var(--ink-3); border-style: dashed; }
+
+  .practices { margin: 2.5rem 0 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 2.5rem; }
+  .practice { display: grid; grid-template-columns: 8.5rem minmax(0, 1fr); gap: 1rem; padding: 0.7rem 0; border-bottom: 1px solid var(--line); }
+  .practice dt { font-family: var(--font-mono); font-size: 0.66rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-3); padding-top: 0.2rem; }
+  .practice dd { margin: 0; color: var(--ink-2); font-size: 0.92rem; line-height: 1.5; }
+
+  .auto-box { margin-top: 3rem; border: 1px solid var(--line); padding: 1.5rem; background: linear-gradient(135deg, var(--panel), transparent); }
   .auto-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.5rem; }
-  .auto-list li { display: flex; flex-direction: column; gap: 8px; color: var(--ink-2); line-height: 1.6; font-size: 0.95rem; }
-  .auto-n { font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.18em; color: var(--accent); }
+  .auto-list li { color: var(--ink-2); line-height: 1.6; font-size: 0.95rem; }
 
   @media (max-width: 1023px) {
-    .stack-grid { grid-template-columns: 1fr; gap: 1.5rem; grid-template-areas: "copy" "drum" "cats"; }
-    .drum-stage { --h: 40px; max-height: 300px; }
+    .practices { grid-template-columns: 1fr; }
     .auto-list { grid-template-columns: 1fr; gap: 1rem; }
   }
   @media (max-width: 767px) {
-    .cat { grid-template-columns: 1fr; gap: 0.2rem; }
+    .head { margin-bottom: 1.5rem; }
+    .tier { grid-template-columns: 1fr; gap: 0.7rem; padding: 1rem 0; }
+    .practice { grid-template-columns: 1fr; gap: 0.2rem; }
     .auto-box { padding: 1.1rem; margin-top: 2rem; }
   }
 </style>
