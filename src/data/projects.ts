@@ -7,6 +7,10 @@ export const projects = [
     n: "001",
     name: { es: "Support Triage", en: "Support Triage" },
     kicker: { es: "Microservicios + LLMs · Open source", en: "Microservices + LLMs · Open source" },
+    plain: {
+      es: "Un sistema de soporte que lee cada ticket, lo clasifica y sugiere una respuesta con IA. Si la IA falla, sigue funcionando con un clasificador propio.",
+      en: "A support system that reads each ticket, classifies it and suggests a reply with AI. If the AI fails, it keeps working with its own classifier.",
+    },
     summary: {
       es: "Sistema de soporte orientado a eventos: una API en NestJS guarda los tickets en PostgreSQL y los publica en RabbitMQ; un agente en FastAPI los clasifica (categoría, prioridad y respuesta sugerida) con Claude u OpenAI usando salida estructurada, y cae a un clasificador local si el LLM falla. Panel en React, colas de dead-letter, CI con prueba end-to-end del stack completo y decisiones documentadas en ADRs.",
       en: "Event-driven support system: a NestJS API stores tickets in PostgreSQL and publishes them to RabbitMQ; a FastAPI agent classifies them (category, priority and suggested reply) with Claude or OpenAI using structured output, falling back to a local classifier when the LLM fails. React panel, dead-letter queues, CI with an end-to-end run of the full stack, and decisions documented as ADRs.",
@@ -28,6 +32,10 @@ export const projects = [
     n: "002",
     name: { es: "Worker de sincronización GPS", en: "GPS sync worker" },
     kicker: { es: "Concurrencia y locks · Python", en: "Concurrency & locks · Python" },
+    plain: {
+      es: "La sincronización del GPS de la flota se demoraba tanto que una corrida se pisaba con la siguiente. Ahora consulta los dispositivos en paralelo y nunca procesa el mismo lote dos veces.",
+      en: "The fleet GPS sync took so long that one run overlapped the next. Now it queries devices in parallel and never processes the same batch twice.",
+    },
     summary: {
       es: "Worker que sincroniza el estado de los dispositivos GPS de la flota contra la API del proveedor. Tenía un cuello de botella de latencia por peticiones HTTP en serie; lo reemplacé por ejecución concurrente con ThreadPoolExecutor, sesiones con keep-alive y un lock distribuido en Redis que impide que dos ejecuciones procesen el mismo lote.",
       en: "Worker that syncs the fleet's GPS device state against the provider's API. It had a latency bottleneck from serial HTTP requests; I replaced it with concurrent execution via ThreadPoolExecutor, keep-alive sessions and a distributed Redis lock that stops two runs from processing the same batch.",
@@ -48,6 +56,10 @@ export const projects = [
     n: "003",
     name: { es: "Plataforma administrativa interna", en: "Internal admin platform" },
     kicker: { es: "Plataforma interna · Python", en: "Internal platform · Python" },
+    plain: {
+      es: "La parte más grande de la herramienta interna con la que el equipo gestiona clientes y cartera todos los días.",
+      en: "The largest part of the internal tool the team uses every day to manage customers and their accounts.",
+    },
     summary: {
       es: "El componente de mayor volumen funcional de la plataforma administrativa interna de Roda: gestión de clientes, seguimiento de cartera y los flujos que el equipo de operación usa todos los días. Backend en Python (Flask / FastAPI), interfaz en React y PostgreSQL sobre GCP.",
       en: "The largest functional component of Roda's internal admin platform: customer management, portfolio follow-up and the flows the operations team uses every day. Python (Flask / FastAPI) backend, React interface and PostgreSQL on GCP.",
@@ -68,6 +80,10 @@ export const projects = [
     n: "004",
     name: { es: "Recuperación de cartera y activos", en: "Portfolio & asset recovery" },
     kicker: { es: "Operación de campo · Python", en: "Field operations · Python" },
+    plain: {
+      es: "El proceso para recuperar vehículos y créditos vivía en hojas de cálculo y chats. Ahora tiene su propia herramienta, con un panel para la oficina y otro para el equipo en campo.",
+      en: "Recovering vehicles and loans used to live in spreadsheets and chats. Now it has its own tool, with one panel for the office and one for the field team.",
+    },
     summary: {
       es: "Recuperación de vehículos y créditos, de punta a punta. Dos interfaces administrativas que sustituyeron un proceso que se llevaba entre hojas de cálculo y coordinación por chat con los equipos de campo.",
       en: "Vehicle and credit recovery, end to end. Two admin interfaces that replaced a process previously run across spreadsheets and chat coordination with the field teams.",
@@ -88,6 +104,10 @@ export const projects = [
     n: "005",
     name: { es: "vegareparaciones.com", en: "vegareparaciones.com" },
     kicker: { es: "Sitio y SEO · Next.js", en: "Site & SEO · Next.js" },
+    plain: {
+      es: "La página web de un negocio familiar de reparaciones, hecha para que lo encuentren en Google y lo llamen.",
+      en: "The website of a family repair business, built so people find it on Google and call.",
+    },
     summary: {
       es: "Sitio completo en Next.js para un negocio de reparaciones en Bogotá: arquitectura de contenido orientada a conversión, SEO técnico y local con JSON-LD, Search Console y Google Business Profile, GA4 para iterar sobre el comportamiento real, y despliegues automatizados con dominio y DNS propios.",
       en: "A full Next.js site for a repairs business in Bogotá: conversion-oriented content architecture, technical and local SEO with JSON-LD, Search Console and Google Business Profile, GA4 to iterate on real behaviour, and automated deployments with its own domain and DNS.",
@@ -109,6 +129,10 @@ export const projects = [
     n: "006",
     name: { es: "Escaneo masivo de guías", en: "Bulk waybill scanning" },
     kicker: { es: "Rendimiento · PostgreSQL", en: "Performance · PostgreSQL" },
+    plain: {
+      es: "Registrar devoluciones guía por guía tomaba horas. Ahora se escanean con lector y se procesan más de 10.000 guías en segundos.",
+      en: "Registering returns one waybill at a time took hours. Now they're scanned with a reader and 10,000+ waybills are processed in seconds.",
+    },
     summary: {
       es: "Módulo de escaneo masivo con lectores de código para registrar condiciones de devolución (fraude, daño). Lo que antes tomaba horas ahora procesa más de 10.000 guías en segundos, con un stored procedure en PostgreSQL invocado desde NestJS.",
       en: "Bulk scanning module with barcode readers to register return conditions (fraud, damage). What used to take hours now processes over 10,000 waybills in seconds, through a PostgreSQL stored procedure called from NestJS.",
@@ -129,6 +153,10 @@ export const projects = [
     n: "007",
     name: { es: "ETL de audiencia a BigQuery", en: "Audience ETL into BigQuery" },
     kicker: { es: "Datos · Python", en: "Data · Python" },
+    plain: {
+      es: "Más de 5 años de datos de audiencia de un medio digital estaban repartidos. Los junté en un solo lugar y los reportes dejaron de tomar horas.",
+      en: "Over 5 years of a digital outlet's audience data were scattered. I brought them into one place and reports stopped taking hours.",
+    },
     summary: {
       es: "Procesos ETL en Python que integran Universal Analytics y GA4 en BigQuery para uno de los medios digitales más grandes de Colombia. Centralizaron más de 5 años de datos históricos de tráfico y comportamiento de audiencia, y con ellos los reportes que antes tomaban horas.",
       en: "Python ETL processes bringing Universal Analytics and GA4 into BigQuery for one of Colombia's largest digital outlets. They centralized over 5 years of historical traffic and audience data, and with it the reports that used to take hours.",
@@ -151,6 +179,10 @@ export const projects = [
     n: "008",
     name: { es: "CUFE Scraper DIAN", en: "CUFE DIAN Scraper" },
     kicker: { es: "Automatización fiscal · Python", en: "Tax automation · Python" },
+    plain: {
+      es: "Consultar facturas electrónicas en la DIAN una por una era lento. Este servicio lo hace en lote y guarda los resultados.",
+      en: "Looking up e-invoices on the DIAN site one by one was slow. This service does it in bulk and stores the results.",
+    },
     summary: {
       es: "Servicio Flask + Selenium que automatiza la consulta masiva de CUFEs en el catálogo DIAN. Extrae datos de emisor, receptor y eventos; los persiste en MySQL vía REST API. Dockerizado, con tests (pytest) y CI en GitHub Actions.",
       en: "Flask + Selenium service that automates bulk CUFE lookups in the DIAN catalog. Extracts issuer, receiver and event data; persists it in MySQL via REST API. Dockerized, with tests (pytest) and CI on GitHub Actions.",
@@ -170,6 +202,10 @@ export const projects = [
     n: "009",
     name: { es: "API de envíos NestJS", en: "NestJS Shipment API" },
     kicker: { es: "Backend · NestJS", en: "Backend · NestJS" },
+    plain: {
+      es: "Una API para registrar envíos que calcula sola la tarifa según la distancia.",
+      en: "An API to register shipments that calculates the fee from the distance on its own.",
+    },
     summary: {
       es: "API NestJS para gestión de envíos: registro, cálculo automático de tarifas por distancia e historial completo. Arquitectura hexagonal (domain → use cases → controllers), validación con ValidationPipe, tests con Jest y CI en GitHub Actions. Dockerizado.",
       en: "NestJS API for shipment management: registration, automatic tariff calculation by distance and full history. Hexagonal architecture (domain → use cases → controllers), input validation with ValidationPipe, Jest tests and CI on GitHub Actions. Dockerized.",
@@ -189,6 +225,10 @@ export const projects = [
     n: "010",
     name: { es: "Task Manager Laravel", en: "Laravel Task Manager" },
     kicker: { es: "Full stack · Laravel", en: "Full stack · Laravel" },
+    plain: {
+      es: "Un gestor de tareas con usuarios y login, hecho para practicar una arquitectura ordenada y con pruebas.",
+      en: "A task manager with users and login, built to practice a clean, tested architecture.",
+    },
     summary: {
       es: "API REST full stack con Laravel + PostgreSQL. CRUD de tareas, autenticación JWT (tymon/jwt-auth), arquitectura en capas (controllers → services → repositories → models), CI/CD con GitHub Actions y tests con PHPUnit.",
       en: "Full stack REST API with Laravel + PostgreSQL. Task CRUD, JWT auth (tymon/jwt-auth), layered architecture (controllers → services → repositories → models), CI/CD with GitHub Actions and PHPUnit tests.",
@@ -208,6 +248,10 @@ export const projects = [
     n: "011",
     name: { es: "Microservicio e-Bike Autolock", en: "e-Bike Autolock Microservice" },
     kicker: { es: "Clean Architecture · Python", en: "Clean Architecture · Python" },
+    plain: {
+      es: "El sistema que bloquea y desbloquea bicicletas eléctricas según su ubicación y la contraseña del usuario.",
+      en: "The system that locks and unlocks e-bikes based on their location and the user's password.",
+    },
     summary: {
       es: "Microservicio para sistema de bloqueo automático de e-bikes. Clean Architecture en Python: domain, use cases, interfaces API y capa de infraestructura. Simulación GPS, triggers, hashing de contraseñas, Docker, tests de dominio (pytest) y CI.",
       en: "Microservice for an e-bike automatic locking system. Clean Architecture in Python: domain, use cases, API interfaces and infrastructure layer. GPS simulation, triggers, password hashing, Docker, domain tests (pytest) and CI.",
@@ -227,6 +271,10 @@ export const projects = [
     n: "012",
     name: { es: "Extractor Universal Analytics", en: "Universal Analytics Extractor" },
     kicker: { es: "Data · Python", en: "Data · Python" },
+    plain: {
+      es: "Una herramienta para sacar reportes de Google Analytics a Excel sin hacerlo a mano.",
+      en: "A tool to pull Google Analytics reports into Excel without doing it by hand.",
+    },
     summary: {
       es: "Herramienta Python que extrae reportes de Universal Analytics (Reporting API v4) y los exporta a CSV/Excel. Arquitectura por capas (domain · usecases · controller · infrastructure · view), con tests (pytest) y CI en GitHub Actions.",
       en: "Python tool that extracts Universal Analytics reports (Reporting API v4) and exports them to CSV/Excel. Layered architecture (domain · usecases · controller · infrastructure · view), with tests (pytest) and CI on GitHub Actions.",
@@ -246,6 +294,10 @@ export const projects = [
     n: "013",
     name: { es: "Reportes GA4 · Factory Method", en: "GA4 Reports · Factory Method" },
     kicker: { es: "Patrón de diseño · Python", en: "Design pattern · Python" },
+    plain: {
+      es: "Reportes diarios de Google Analytics 4 exportados automáticamente, fáciles de extender con nuevos tipos de reporte.",
+      en: "Daily Google Analytics 4 reports exported automatically, easy to extend with new report types.",
+    },
     summary: {
       es: "Generador de reportes de Google Analytics 4 (Data API v1beta) que exporta métricas diarias a CSV. Usa el patrón Factory Method para construir distintos tipos de reporte, con arquitectura por capas, tests (pytest) y CI.",
       en: "Google Analytics 4 report generator (Data API v1beta) that exports daily metrics to CSV. Uses the Factory Method pattern to build different report types, with layered architecture, tests (pytest) and CI.",

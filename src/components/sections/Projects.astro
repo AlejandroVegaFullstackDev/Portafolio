@@ -8,7 +8,6 @@ import { portfolioData as D } from '../../data';
 const FEATURED = 6;
 const featured = D.projects.slice(0, FEATURED);
 const rest = D.projects.slice(FEATURED);
-const clip = (s: string, n = 170) => (s.length > n ? s.slice(0, n).replace(/\s+\S*$/, '') + '…' : s);
 ---
 <Coverflow id="projects" label="Proyectos" total={featured.length + 2} bgA="PROYECTOS · PRODUCCIÓN · OPEN SOURCE" bgB="NESTJS · PYTHON · REACT · POSTGRESQL">
   <div class="hs-slide hs-intro" data-hs-slide data-hs-intro>
@@ -52,7 +51,7 @@ const clip = (s: string, n = 170) => (s.length > n ? s.slice(0, n).replace(/\s+\
             {'company' in p && p.company && (<><span aria-hidden="true">·</span><span>{p.company}</span></>)}
           </span>
           <span class="hs-title"><span class="lang-es">{p.name.es}</span><span class="lang-en">{p.name.en}</span></span>
-          <span class="hs-desc"><span class="lang-es">{clip(p.summary.es)}</span><span class="lang-en">{clip(p.summary.en)}</span></span>
+          <span class="hs-desc"><span class="lang-es">{p.plain.es}</span><span class="lang-en">{p.plain.en}</span></span>
           {p.metrics && (
             <span class="metrics">
               {p.metrics.slice(0, 3).map((m) => (

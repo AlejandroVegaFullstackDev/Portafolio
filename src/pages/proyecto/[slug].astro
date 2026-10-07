@@ -18,7 +18,7 @@ const others = D.projects.filter((x) => x.slug !== p.slug).slice(0, 2);
 const live = 'url' in p ? (p.url as string | undefined) : undefined;
 const repo = 'github' in p ? (p.github as string | null | undefined) : undefined;
 ---
-<Layout title={`${p.name.es} — Alejandro Vega`} description={`${p.name.es}: ${p.kicker.es}. ${p.summary.es.slice(0, 120)}…`}>
+<Layout title={`${p.name.es} — Alejandro Vega`} description={`${p.name.es}: ${p.plain.es}`}>
   <link slot="head" rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@1,9..144,600&display=swap" />
   <SubpageBar trail={`/ proyectos / ${p.slug}`} />
 
@@ -28,7 +28,8 @@ const repo = 'github' in p ? (p.github as string | null | undefined) : undefined
         <p class="num">// PRJ_{p.n} · {p.year}</p>
         <h1 class="title"><span class="lang-es">{p.name.es}</span><span class="lang-en">{p.name.en}</span></h1>
         <p class="kicker"><span class="lang-es">{p.kicker.es}</span><span class="lang-en">{p.kicker.en}</span></p>
-        <p class="summary"><span class="lang-es">{p.summary.es}</span><span class="lang-en">{p.summary.en}</span></p>
+        <p class="summary"><span class="lang-es">{p.plain.es}</span><span class="lang-en">{p.plain.en}</span></p>
+        <p class="tech"><span class="tech-label"><span class="lang-es">En detalle</span><span class="lang-en">In detail</span></span><span class="lang-es">{p.summary.es}</span><span class="lang-en">{p.summary.en}</span></p>
       </div>
     </section>
 
@@ -89,6 +90,8 @@ const repo = 'github' in p ? (p.github as string | null | undefined) : undefined
   .kicker { font-family: "Fraunces", Georgia, serif; font-style: italic; font-weight: 600; font-size: 1.5rem; color: var(--accent); margin: 1.5rem 0 0; }
   .kicker.sm { font-size: 1rem; margin: 0; }
   .summary { margin: 2rem 0 0; font-size: clamp(1.05rem, 2vw, 1.4rem); line-height: 1.6; color: var(--ink-2); max-width: 62ch; }
+  .tech { margin: 1.5rem 0 0; max-width: 72ch; font-size: 0.95rem; line-height: 1.65; color: var(--ink-3); }
+  .tech-label { display: block; font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.35rem; }
   .meta { border-block: 1px solid var(--line); background: var(--bg-2); padding: 2rem clamp(1.25rem, 5vw, 4rem); }
   .meta-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1.5rem; margin: 0 auto; }
   .meta dt { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 0.4rem; }
