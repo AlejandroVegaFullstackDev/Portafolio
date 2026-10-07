@@ -142,13 +142,18 @@ img, pre, canvas, iframe { max-width: 100%; }
   transition: transform 0.3s cubic-bezier(.6,.05,.4,1);
   z-index: -1;
 }
-.cy-btn:hover { color: #000; }
-.cy-btn:hover::before { transform: scaleX(1); }
+/* Solo en dispositivos con hover real: en iOS el :hover queda "pegado" tras un toque. */
+@media (hover: hover) {
+  .cy-btn:hover { color: #000; }
+  .cy-btn:hover::before { transform: scaleX(1); }
+}
 .cy-btn.solid {
   background: var(--accent);
   color: #000;
 }
-.cy-btn.solid:hover { background: var(--ink); color: var(--ink); }
+@media (hover: hover) {
+  .cy-btn.solid:hover { background: var(--ink); color: var(--ink); }
+}
 
 /* Section label */
 .cy-eyebrow {

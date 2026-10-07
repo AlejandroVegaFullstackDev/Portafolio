@@ -148,8 +148,8 @@ const tickerItems = [
       </div>
       <div class="mt-12 lg:mt-16 grid grid-cols-3 gap-3 sm:gap-6 max-w-xl">
         {D.highlights.map(h => (
-          <div style="border-top:1px solid var(--line);padding-top:14px;">
-            <div class="font-display text-[2.4rem] font-bold leading-none" data-counter={h.value} data-counter-prefix={h.prefix} data-counter-suffix={h.suffix}>0</div>
+          <div style="border-top:1px solid var(--line);padding-top:14px;min-width:0;">
+            <div class="hero-stat-num font-display font-bold leading-none whitespace-nowrap" style="font-size:clamp(1.3rem,5.6vw,2.4rem);font-variant-numeric:tabular-nums;" data-counter={h.value} data-counter-prefix={h.prefix} data-counter-suffix={h.suffix}>0</div>
             <div class="font-mono text-[0.7rem] text-[var(--ink-3)] tracking-[0.15em] uppercase mt-[6px] leading-tight">
               <span class="lang-es">{h.label.es}</span><span class="lang-en">{h.label.en}</span>
             </div>
