@@ -1,0 +1,49 @@
+/* Tokens: colores, fuentes y variantes del panel de tweaks. */
+
+:root {
+  --bg: #050507;
+  --bg-2: #0a0a0d;
+  --panel: #0f0f14;
+  --line: #1c1c24;
+  --line-2: #2a2a36;
+  --ink: #f4f4f6;
+  --ink-2: #b9b9c4;
+  --ink-3: #6e6e82;
+  --accent: #ff003c;
+  --accent-2: #ff3860;
+  --accent-glow: rgba(255, 0, 60, 0.55);
+  --warn: #ffb000;
+  --ok: #5cffb1;
+  --grid: rgba(255, 0, 60, 0.06);
+  --shadow-red: 0 0 24px rgba(255, 0, 60, 0.35), 0 0 64px rgba(255, 0, 60, 0.15);
+  --font-mono: "JetBrains Mono", "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --font-display: "Space Grotesk", "Bebas Neue", system-ui, sans-serif;
+  --font-body: "Space Grotesk", system-ui, sans-serif;
+}
+
+[data-tweak-theme="light"] {
+  --bg: #f3f1ec;
+  --bg-2: #ebe9e2;
+  --panel: #fffdf7;
+  --line: #d8d4c9;
+  --line-2: #b9b3a3;
+  --ink: #0a0a0d;
+  --ink-2: #2a2a36;
+  --ink-3: #6e6e82;
+  --grid: rgba(255, 0, 60, 0.08);
+  --shadow-red: 0 6px 30px rgba(255, 0, 60, 0.18);
+}
+
+[data-tweak-font="serif"] {
+  --font-display: "Fraunces", "Cormorant Garamond", Georgia, serif;
+  --font-body: "Inter Tight", system-ui, sans-serif;
+}
+[data-tweak-font="brutal"] {
+  --font-display: "Bebas Neue", "Anton", "Impact", system-ui, sans-serif;
+  --font-body: "JetBrains Mono", ui-monospace, monospace;
+}
+
+[data-tweak-accent="crimson"] { --accent: #ff003c; --accent-2: #ff3860; --accent-glow: rgba(255,0,60,0.55); }
+[data-tweak-accent="amber"]   { --accent: #ff8a00; --accent-2: #ffb347; --accent-glow: rgba(255,138,0,0.55); }
+[data-tweak-accent="acid"]    { --accent: #d4ff00; --accent-2: #b3e000; --accent-glow: rgba(212,255,0,0.55); }
+[data-tweak-accent="cyan"]    { --accent: #00e5ff; --accent-2: #5ce8ff; --accent-glow: rgba(0,229,255,0.55); }

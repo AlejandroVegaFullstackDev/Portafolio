@@ -1,0 +1,94 @@
+---
+// Hero: nombre, propuesta, CTAs y cifras (odómetro). Capas con [data-depth] para el
+// parallax de mouse/giroscopio. Animación en scripts/sections/hero.ts.
+import { portfolioData as D } from '../../data';
+import fondoImg from '../../assets/img/fondo.jpg';
+---
+<section id="hero" class="hero relative cy-scanlines flex items-center px-6 lg:px-20 overflow-hidden max-w-full">
+  <img id="heroBg" src={fondoImg.src} alt="" aria-hidden="true" class="hero-bg" data-depth="0.6" />
+  <div class="cy-grid absolute inset-0 pointer-events-none" data-depth="0.25"></div>
+
+  <div class="hero-grid grid lg:grid-cols-12 gap-10 w-full max-w-[1480px] mx-auto items-end relative z-10">
+    <div class="lg:col-span-7" data-depth="1">
+      <div class="flex items-center gap-3 mb-8">
+        <span class="cy-eyebrow">// SENIOR FULL STACK DEVELOPER</span>
+        <span class="h-px w-10 bg-[var(--accent)]"></span>
+        <span class="font-mono text-[0.72rem] text-[var(--ink-3)] tracking-widest">v.2026</span>
+      </div>
+      <h1 id="heroName" class="hero-name font-mono font-extrabold whitespace-nowrap" aria-label={D.identity.name}></h1>
+      <p class="mt-8 max-w-xl text-[var(--ink-2)] text-lg leading-relaxed font-display">
+        <span class="lang-es">{D.identity.tagline.es}</span>
+        <span class="lang-en">{D.identity.tagline.en}</span>
+      </p>
+      <div class="hero-ctas mt-10 flex flex-wrap gap-4">
+        <a href="#contact" class="cy-btn solid" data-magnetic><span class="lang-es">HABLEMOS ↗</span><span class="lang-en">LET'S TALK ↗</span></a>
+        <a href="#blog" class="cy-btn" data-magnetic><span class="lang-es">LEER EL BLOG</span><span class="lang-en">READ THE BLOG</span></a>
+      </div>
+      <div class="hero-stats mt-12 lg:mt-16 grid grid-cols-3 gap-2 sm:gap-6 max-w-xl">
+        {D.highlights.map((h) => (
+          <div class="hero-stat">
+            <div class="hero-stat-num font-display font-bold" data-counter={h.value} data-counter-prefix={h.prefix} data-counter-suffix={h.suffix}>{h.prefix}{h.value.toLocaleString('es-CO')}{h.suffix}</div>
+            <div class="hero-stat-label"><span class="lang-es">{h.label.es}</span><span class="lang-en">{h.label.en}</span></div>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <div class="hidden lg:block lg:col-span-5 relative" data-depth="1.4">
+      <div class="relative border border-[var(--line)] bg-[var(--panel)] overflow-hidden">
+        <div class="cy-term-bar">
+          <span class="dot r"></span><span class="dot"></span><span class="dot"></span>
+          <span>~/alejandro@4ledmt</span><span class="label">tty/01</span>
+        </div>
+        <div class="cy-term-body min-h-[280px] font-mono text-sm" id="heroTerm"></div>
+      </div>
+      <div class="hero-stamp" aria-hidden="true"><div>BOGOTÁ<br />·<br />04°N</div></div>
+    </div>
+  </div>
+
+  <pre class="hero-ascii" aria-hidden="true" data-depth="0.4">
+█████╗  ██╗   ██╗
+██╔══██╗ ██║   ██║
+███████║ ██║   ██║
+██╔══██║ ╚██╗ ██╔╝
+██║  ██║  ╚████╔╝
+╚═╝  ╚═╝   ╚═══╝</pre>
+</section>
+
+<style>
+  .hero {
+    min-height: calc(100svh - 100px);
+    background: radial-gradient(1200px 600px at 80% -10%, color-mix(in srgb, var(--accent) 18%, transparent), transparent 60%),
+                radial-gradient(900px 500px at 0% 110%, color-mix(in srgb, var(--accent) 10%, transparent), transparent 60%), var(--bg);
+  }
+  .hero-bg {
+    position: absolute; right: 0; top: 0; height: 110%; width: auto; object-fit: cover;
+    pointer-events: none; user-select: none; opacity: 0;
+    mix-blend-mode: lighten; filter: saturate(1.4) brightness(0.9); transform-origin: center top;
+  }
+  .hero-name { font-size: clamp(3rem, 9vw, 9rem); letter-spacing: -0.06em; line-height: 0.82; transform-style: preserve-3d; perspective: 800px; }
+  .hero-name :global(.hc) { display: inline-block; transform-style: preserve-3d; will-change: transform; }
+  .hero-name :global(.reveal-wrap) { overflow: hidden; display: block; }
+  .hero-stat { border-top: 1px solid var(--line); padding-top: 14px; min-width: 0; }
+  .hero-stat-num { font-size: clamp(1.3rem, 5.6vw, 2.4rem); line-height: 1; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .hero-stat-label { font-family: var(--font-mono); font-size: 0.7rem; color: var(--ink-3); letter-spacing: 0.15em; text-transform: uppercase; margin-top: 6px; line-height: 1.25; }
+  .hero-stamp {
+    position: absolute; top: -1.5rem; right: -1.5rem; width: 6rem; height: 6rem;
+    border: 1px solid var(--accent); display: flex; align-items: center; justify-content: center; text-align: center;
+    font-family: var(--font-mono); font-size: 0.75rem; line-height: 1.2; color: var(--accent); letter-spacing: 0.1em; transform: rotate(12deg);
+  }
+  .hero-ascii {
+    position: absolute; right: -2.5rem; bottom: 0; display: none;
+    font-family: var(--font-mono); font-weight: 700; font-size: 0.75rem; line-height: 0.98; white-space: pre;
+    color: var(--accent); opacity: 0.05; pointer-events: none; user-select: none;
+  }
+  [data-depth] { will-change: transform; }
+  @media (min-width: 768px) { .hero-ascii { display: block; } }
+  @media (max-width: 767px) {
+    .hero { min-height: 100svh; align-items: flex-start; }
+    .hero-grid { padding-top: 6rem; padding-bottom: 4rem; }
+    .hero-name { letter-spacing: -0.05em; font-size: clamp(2.6rem, 12vw, 5rem); }
+    .hero-ctas .cy-btn { min-width: 100%; justify-content: center; }
+    .hero-bg { height: 110%; top: -5%; right: -15%; }
+  }
+</style>

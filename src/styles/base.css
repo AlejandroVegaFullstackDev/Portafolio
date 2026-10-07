@@ -1,0 +1,46 @@
+/* Base: documento, idioma, fondos utilitarios. */
+
+html, body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+  max-width: 100%;
+}
+* { box-sizing: border-box; }
+img, pre, canvas, iframe { max-width: 100%; }
+::selection { background: var(--accent); color: #000; }
+
+[data-lang="es"] .lang-en,
+[data-lang="en"] .lang-es { display: none !important; }
+
+/* Grid background */
+.cy-grid {
+  background-image:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 56px 56px;
+}
+.cy-scanlines::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(255,255,255,0.012) 0px,
+    rgba(255,255,255,0.012) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+  mix-blend-mode: overlay;
+  z-index: 1;
+}
+
+/* Hide scrollbar */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { scrollbar-width: none; }
+/* Clip-path reveal — parent must have overflow-hidden */
+.reveal-wrap { overflow: hidden; display: block; }

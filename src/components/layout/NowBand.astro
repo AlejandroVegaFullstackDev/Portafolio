@@ -1,0 +1,33 @@
+---
+// Franja de estado bajo el hero: disponibilidad, canción (Spotify), hora en Bogotá.
+// Datos vivos en scripts/sections/nowBand.ts.
+---
+<div id="nowBand" class="band">
+  <div class="flex items-stretch overflow-x-auto no-scrollbar" style="max-width:100vw;">
+    <div class="now-item">
+      <span class="pulse-dot" aria-hidden="true"></span>
+      <span class="lang-es">DISPONIBLE — REMOTO/HÍBRIDO</span><span class="lang-en">AVAILABLE — REMOTE/HYBRID</span>
+    </div>
+    <div class="now-item track" id="nowTrackItem" hidden>
+      <span class="text-[var(--accent)]" id="nowPlayIcon">♪</span>
+      <span id="nowTrackText" class="track-text">···</span>
+    </div>
+    <div class="now-item hide-sm">
+      <span class="text-[var(--ink-3)]">BOGOTÁ</span>
+      <span class="text-[var(--accent)]" id="nowClock">--:--:--</span>
+    </div>
+    <div class="now-item hidden lg:flex">
+      <span class="text-[var(--ink-3)]">RODA</span>
+      <span class="text-[var(--ok)]"><span class="lang-es">ACTIVO DESDE JUN 2025</span><span class="lang-en">ACTIVE SINCE JUN 2025</span></span>
+    </div>
+  </div>
+</div>
+
+<style>
+  .band { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); overflow: hidden; background: var(--bg-2); position: relative; }
+  .pulse-dot { flex-shrink: 0; width: 8px; height: 8px; border-radius: 50%; background: var(--ok); box-shadow: 0 0 8px var(--ok); animation: pulse 1.6s ease-in-out infinite; }
+  .track { flex: 1; }
+  .track[hidden] { display: none; }
+  .track-text { font-family: var(--font-mono); font-size: 0.74rem; letter-spacing: 0.08em; }
+  @media (max-width: 767px) { .hide-sm { display: none; } }
+</style>

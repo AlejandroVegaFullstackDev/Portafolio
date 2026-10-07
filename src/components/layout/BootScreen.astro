@@ -1,0 +1,16 @@
+---
+// Pantalla de arranque tipo consola. La secuencia está en scripts/core/boot.ts.
+---
+<div id="boot" class="boot">
+  <div class="text-center font-mono text-[var(--ok)] text-sm leading-relaxed max-w-xl px-6">
+    <div id="bootLog" class="text-left"></div>
+  </div>
+</div>
+
+<style>
+  .boot {
+    position: fixed; inset: 0; z-index: 10000; background: #000;
+    display: flex; align-items: center; justify-content: center; flex-direction: column;
+    font-family: var(--font-mono); color: var(--ok);
+  }
+</style>

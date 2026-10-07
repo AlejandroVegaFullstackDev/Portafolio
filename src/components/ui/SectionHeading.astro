@@ -1,0 +1,30 @@
+---
+// Encabezado de sección: etiqueta "// 0N _ NOMBRE" + titular bilingüe que se tipea
+// como en terminal (fx/typewriter). El acento es la palabra en color.
+interface Line { pre?: string; accent: string; post?: string }
+interface Props {
+  num: string;
+  label: { es: string; en: string };
+  es: Line;
+  en: Line;
+  size?: 'md' | 'lg';
+  class?: string;
+}
+const { num, label, es, en, size = 'lg', class: className = '' } = Astro.props;
+---
+<div class={className}>
+  <div class="cy-eyebrow mb-4" data-scramble>
+    <span class="lang-es">// {num} _ {label.es}</span>
+    <span class="lang-en">// {num} _ {label.en}</span>
+  </div>
+  <h2 class:list={['cy-headline section-title', size === 'lg' ? 'text-5xl lg:text-7xl' : 'text-4xl lg:text-6xl']} data-type>
+    <span class="lang-es">{es.pre}<span class="text-[var(--accent)]">{es.accent}</span>{es.post}</span>
+    <span class="lang-en">{en.pre}<span class="text-[var(--accent)]">{en.accent}</span>{en.post}</span>
+  </h2>
+</div>
+
+<style>
+  @media (max-width: 767px) {
+    .section-title { font-size: clamp(2.2rem, 10vw, 3.8rem); line-height: 0.92; }
+  }
+</style>

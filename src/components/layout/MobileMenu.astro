@@ -1,0 +1,51 @@
+---
+// Menú móvil a pantalla completa: las opciones caen como cartas en 3D.
+// Apertura/cierre y foco: scripts/core/menu.ts.
+const links = [
+  { href: '#about', es: 'Sobre mí', en: 'About' },
+  { href: '#stack', es: 'Stack', en: 'Stack' },
+  { href: '#projects', es: 'Proyectos', en: 'Projects' },
+  { href: '#blog', es: 'Blog', en: 'Blog' },
+  { href: '#exp', es: 'Experiencia', en: 'Experience' },
+  { href: '#contact', es: 'Contacto', en: 'Contact' },
+];
+---
+<div id="mobileMenu" class="mm" role="dialog" aria-modal="true" aria-label="Menú" hidden>
+  <nav class="mm-list">
+    {links.map((l, i) => (
+      <a href={l.href} class="mm-card" data-mm-card>
+        <span class="mm-n">{String(i + 1).padStart(2, '0')}</span>
+        <span class="mm-label"><span class="lang-es">{l.es}</span><span class="lang-en">{l.en}</span></span>
+        <span class="mm-arrow" aria-hidden="true">→</span>
+      </a>
+    ))}
+  </nav>
+  <div class="mm-foot" data-mm-card>
+    <a href="/blog"><span class="lang-es">todos los posts ↗</span><span class="lang-en">all posts ↗</span></a>
+    <a href="/about">about ↗</a>
+  </div>
+</div>
+
+<style>
+  .mm {
+    position: fixed; inset: 0; z-index: 39; padding: 96px 1.5rem 2rem;
+    display: flex; flex-direction: column; justify-content: space-between;
+    background: color-mix(in srgb, var(--bg) 96%, transparent);
+    perspective: 900px; perspective-origin: 50% 0%;
+  }
+  .mm[hidden] { display: none; }
+  .mm-list { display: flex; flex-direction: column; transform-style: preserve-3d; }
+  .mm-card {
+    display: grid; grid-template-columns: 2.5rem 1fr auto; align-items: baseline; gap: 0.5rem;
+    padding: 0.9rem 0; border-bottom: 1px solid var(--line);
+    color: var(--ink); text-decoration: none; transform-origin: 50% 0%; will-change: transform, opacity;
+  }
+  .mm-card:first-child { border-top: 1px solid var(--line); }
+  .mm-n { font-family: var(--font-mono); font-size: 0.72rem; color: var(--accent); letter-spacing: 0.1em; }
+  .mm-label { font-family: var(--font-display); font-weight: 700; font-size: clamp(2rem, 9vw, 3rem); letter-spacing: -0.035em; line-height: 1; }
+  .mm-arrow { font-family: var(--font-mono); color: var(--accent); }
+  .mm-card:active .mm-label, .mm-card:focus-visible .mm-label { color: var(--accent); }
+  .mm-card:focus-visible { outline: none; }
+  .mm-foot { display: flex; gap: 1.5rem; font-family: var(--font-mono); font-size: 0.78rem; letter-spacing: 0.1em; }
+  .mm-foot a { color: var(--ink-3); }
+</style>

@@ -1,0 +1,101 @@
+---
+// Pila de hojas 3D (intro del blog). Animación en scripts/sections/blog.ts.
+// La hoja del frente es el último post; si hay menos de 4, las de atrás son "borrador".
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  posts: CollectionEntry<'blog'>[];
+  fmtDate: (d: Date) => string;
+  readingTime: (body?: string) => number;
+}
+const { posts, fmtDate, readingTime } = Astro.props;
+const PAPER_COUNT = 4;
+const pages = Array.from({ length: PAPER_COUNT }, (_, i) => posts[i] ?? null);
+const latest = posts[0];
+---
+{latest && (
+  <a href={`/blog/${latest.slug}`} class="paper-stage" id="paperStage" aria-label={`Leer el último post: ${latest.data.title}`} data-lens="leer">
+    <span class="paper-float" id="paperFloat">
+      <span class="paper-rig" id="paperRig">
+        <span class="paper-tilt" id="paperTilt">
+          {pages.map((post, i) => (
+            <span class:list={['paper', { 'is-front': i === 0 }]} aria-hidden="true">
+              <span class="paper-top">
+                <span>POST_{post ? String(posts.length - i).padStart(2, '0') : '··'}</span>
+                {post && <span>{fmtDate(post.data.date)}</span>}
+              </span>
+              {post
+                ? <span class="paper-title">{post.data.title}</span>
+                : <span class="paper-title paper-title--draft">borrador…</span>}
+              <span class="paper-lines"></span>
+              <span class="paper-foot">
+                <span>{post ? `${readingTime(post.body)} min` : '—'}</span>
+                {i === 0 && <span class="paper-cta"><span class="lang-es">leer →</span><span class="lang-en">read →</span></span>}
+              </span>
+            </span>
+          ))}
+        </span>
+      </span>
+    </span>
+    <span class="paper-shadow" id="paperShadow" aria-hidden="true"></span>
+  </a>
+)}
+
+<style>
+  .paper-stage {
+    --pw: 230px; --ph: 300px;
+    position: relative; display: block; height: calc(var(--ph) + 90px);
+    perspective: 1100px; perspective-origin: 50% 30%;
+    color: inherit; text-decoration: none; -webkit-tap-highlight-color: transparent;
+  }
+  .paper-stage:focus-visible { outline: 1px solid var(--accent); outline-offset: 6px; }
+  .paper-float, .paper-rig, .paper-tilt { position: absolute; inset: 0; display: block; transform-style: preserve-3d; }
+  .paper-float { top: 10px; }
+  .paper {
+    position: absolute; left: 50%; top: 50%;
+    width: var(--pw); height: var(--ph);
+    margin: calc(var(--ph) / -2) 0 0 calc(var(--pw) / -2);
+    display: flex; flex-direction: column; gap: 14px; padding: 18px 18px 16px;
+    background: linear-gradient(160deg, var(--panel) 0%, var(--bg-2) 100%);
+    border: 1px solid var(--line-2); box-shadow: 0 18px 40px -18px rgba(0,0,0,0.65);
+    backface-visibility: hidden; transform-style: preserve-3d; will-change: transform;
+  }
+  .paper.is-front { border-color: var(--accent); }
+  .paper.is-front::before {
+    content: ""; position: absolute; top: -1px; right: -1px; width: 34px; height: 34px;
+    background: linear-gradient(225deg, var(--bg) 50%, var(--accent) 50%);
+  }
+  .paper-top {
+    display: flex; justify-content: space-between; gap: 8px;
+    font-family: var(--font-mono); font-size: 0.62rem; letter-spacing: 0.14em;
+    color: var(--ink-3); text-transform: uppercase; font-variant-numeric: tabular-nums;
+  }
+  .is-front .paper-top span:first-child { color: var(--accent); }
+  .paper-title { font-family: var(--font-display); font-weight: 700; font-size: 1.35rem; line-height: 1.04; letter-spacing: -0.03em; color: var(--ink); text-wrap: balance; }
+  .paper-title--draft { color: var(--ink-3); font-style: italic; font-weight: 500; }
+  .paper-lines {
+    flex: 1; min-height: 0; opacity: 0.55;
+    background: repeating-linear-gradient(180deg, var(--line-2) 0 2px, transparent 2px 14px);
+    -webkit-mask: linear-gradient(180deg, #000 55%, transparent); mask: linear-gradient(180deg, #000 55%, transparent);
+  }
+  .paper-foot {
+    display: flex; justify-content: space-between; align-items: center;
+    font-family: var(--font-mono); font-size: 0.66rem; letter-spacing: 0.12em; color: var(--ink-3); text-transform: uppercase;
+    padding-top: 10px; border-top: 1px solid var(--line);
+  }
+  .paper-cta { color: var(--accent); }
+  .paper-shadow {
+    position: absolute; left: 50%; bottom: 6px;
+    width: calc(var(--pw) * 1.25); height: 34px; margin-left: calc(var(--pw) * -0.625);
+    background: radial-gradient(closest-side, color-mix(in srgb, var(--accent) 28%, transparent), transparent);
+    filter: blur(10px); pointer-events: none;
+  }
+  @media (max-width: 1023px) {
+    .paper-stage { --pw: 160px; --ph: 210px; height: calc(var(--ph) + 50px); max-width: 420px; margin: 0 auto; }
+    .paper-title { font-size: 1.05rem; }
+  }
+  @media (max-width: 1023px) and (max-height: 720px) {
+    .paper-stage { --pw: 132px; --ph: 172px; }
+    .paper-title { font-size: 0.92rem; }
+  }
+</style>

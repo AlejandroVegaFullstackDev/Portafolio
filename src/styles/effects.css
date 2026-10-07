@@ -1,0 +1,65 @@
+/* Efectos globales creados por scripts/fx/*. Cada bloque nombra su módulo. */
+
+/* fx/chrome.ts — halo que sigue al cursor (desktop) */
+.cy-spotlight {
+  position: fixed; top: 0; left: 0;
+  width: 700px; height: 700px; border-radius: 50%;
+  background: radial-gradient(circle, color-mix(in srgb, var(--accent) 6%, transparent) 0%, color-mix(in srgb, var(--accent) 1%, transparent) 35%, transparent 65%);
+  pointer-events: none; z-index: 0;
+  transform: translate(-50%, -50%);
+  mix-blend-mode: screen; will-change: transform;
+}
+
+/* fx/lens.ts — cursor lente magnético (solo con mouse) */
+.cy-lens {
+  position: fixed; top: 0; left: 0; z-index: 9999;
+  width: 18px; height: 18px; margin: -9px 0 0 -9px;
+  border: 1px solid var(--accent); border-radius: 50%;
+  pointer-events: none;
+  display: grid; place-items: center;
+  font-family: var(--font-mono); font-size: 0.6rem; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--accent);
+  transition: width 0.35s cubic-bezier(.16,1,.3,1), height 0.35s cubic-bezier(.16,1,.3,1),
+              margin 0.35s cubic-bezier(.16,1,.3,1), background-color 0.3s, backdrop-filter 0.3s;
+  will-change: transform;
+}
+.cy-lens::after { content: ""; width: 4px; height: 4px; border-radius: 50%; background: var(--accent); transition: opacity 0.2s; }
+.cy-lens.is-active {
+  width: 76px; height: 76px; margin: -38px 0 0 -38px;
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+  -webkit-backdrop-filter: contrast(1.25) saturate(1.5) brightness(1.12);
+          backdrop-filter: contrast(1.25) saturate(1.5) brightness(1.12);
+}
+.cy-lens.is-active::after { opacity: 0; }
+.cy-lens-label { position: absolute; opacity: 0; transition: opacity 0.2s; }
+.cy-lens.is-active .cy-lens-label { opacity: 1; }
+@media (hover: none) { .cy-lens { display: none; } }
+html.has-lens, html.has-lens a, html.has-lens button { cursor: none; }
+
+/* fx/odometer.ts — rodillos de dígitos */
+.odo { display: inline-flex; align-items: flex-end; perspective: 400px; }
+.odo-win { display: inline-block; height: 1em; overflow: hidden; line-height: 1; }
+.odo-reel { display: flex; flex-direction: column; transform-style: preserve-3d; will-change: transform; }
+.odo-reel > span { display: block; height: 1em; line-height: 1; text-align: center; }
+.odo-sep { display: inline-block; line-height: 1; }
+
+/* fx/typewriter.ts — cursor de terminal en titulares */
+.tw-cursor {
+  display: inline-block; width: 0.08em; min-width: 3px; height: 0.82em;
+  margin-left: 0.04em; vertical-align: -0.04em;
+  background: var(--accent);
+}
+.tw-cursor--idle { animation: tw-blink 0.9s steps(1) infinite; }
+@keyframes tw-blink { 50% { opacity: 0; } }
+
+/* fx/crt.ts y coverflow — letras partidas */
+.hs-word { display: inline-block; white-space: nowrap; }
+.hs-char { display: inline-block; will-change: transform, opacity; transform-origin: 50% 100%; }
+
+/* Mientras se tipea, el fantasma del glitch no adelanta el texto */
+[data-type]:not(.tw-done) .cy-glitch::before,
+[data-type]:not(.tw-done) .cy-glitch::after { opacity: 0; }
+
+@media (prefers-reduced-motion: reduce) {
+  .tw-cursor--idle { animation: none; }
+}

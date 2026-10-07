@@ -1,8 +1,7 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import TweaksPanel from '../../components/TweaksPanel';
-import { portfolioData } from '../../lib/data';
-import '../../styles/global.css';
+import { portfolioData } from '../../data';
 
 export function getStaticPaths() {
   return portfolioData.projects.map((p) => ({ params: { slug: p.slug } }));
@@ -211,7 +210,7 @@ const project = D.projects.find((p) => p.slug === slug)!;
 <TweaksPanel client:only="react" />
 
 <script>
-import { portfolioData as D } from '../../lib/data';
+import { portfolioData as D } from '../../data';
 
 const LANG_KEY = 'av_lang';
 const getLang = (): 'es' | 'en' => (localStorage.getItem(LANG_KEY) as 'es' | 'en') || 'es';

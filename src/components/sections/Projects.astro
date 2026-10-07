@@ -1,0 +1,114 @@
+---
+// 03 · Proyectos: mismo carrusel que el blog. Seis destacados como diapositivas
+// y el resto en la diapositiva final. Datos: src/data/projects.ts.
+import Coverflow from '../ui/Coverflow.astro';
+import SectionHeading from '../ui/SectionHeading.astro';
+import { portfolioData as D } from '../../data';
+
+const FEATURED = 6;
+const featured = D.projects.slice(0, FEATURED);
+const rest = D.projects.slice(FEATURED);
+const clip = (s: string, n = 170) => (s.length > n ? s.slice(0, n).replace(/\s+\S*$/, '') + '…' : s);
+---
+<Coverflow id="projects" label="Proyectos" total={featured.length + 2} bgA="CASOS · PRODUCCIÓN · OPEN SOURCE" bgB="CÓDIGO QUE AGUANTA OPERACIÓN REAL">
+  <div class="hs-slide hs-intro" data-hs-slide data-hs-intro>
+    <div class="hs-inner">
+      <div>
+        <SectionHeading num="03" label={{ es: 'PROYECTOS', en: 'PROJECTS' }} es={{ pre: 'Casos que ', accent: 'construí', post: '.' }} en={{ pre: 'Cases I ', accent: 'built', post: '.' }} />
+        <p class="font-mono text-sm text-[var(--ink-3)] max-w-sm mt-6">
+          <span class="lang-es">{D.projects.length} proyectos entre producción y open source. Estos son los {FEATURED} que mejor me representan.</span>
+          <span class="lang-en">{D.projects.length} projects across production and open source. These {FEATURED} represent me best.</span>
+        </p>
+        <p class="hs-hint" aria-hidden="true">
+          <span class="lang-es">sigue bajando</span><span class="lang-en">keep scrolling</span>
+          <span class="hs-hint-arrow">→</span>
+        </p>
+      </div>
+      <ol class="toc" aria-label="Índice de proyectos destacados">
+        {featured.map((p) => (
+          <li>
+            <a href={`/proyecto/${p.slug}`}>
+              <span class="toc-n">{p.n}</span>
+              <span class="toc-name"><span class="lang-es">{p.name.es}</span><span class="lang-en">{p.name.en}</span></span>
+              <span class="toc-year">{p.year}</span>
+            </a>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </div>
+
+  {featured.map((p) => (
+    <a href={`/proyecto/${p.slug}`} class="hs-slide hs-card" data-hs-slide data-lens="ver">
+      <span class="hs-inner">
+        <span class="hs-media" aria-hidden="true">
+          <span class="hs-bignum">{p.n}</span>
+          <span class="media-kicker"><span class="lang-es">{p.kicker.es}</span><span class="lang-en">{p.kicker.en}</span></span>
+        </span>
+        <span class="hs-copy">
+          <span class="hs-meta">
+            <span>{p.year}</span><span aria-hidden="true">·</span>
+            <span><span class="lang-es">{p.role.es}</span><span class="lang-en">{p.role.en}</span></span>
+            {'company' in p && p.company && (<><span aria-hidden="true">·</span><span>{p.company}</span></>)}
+          </span>
+          <span class="hs-title"><span class="lang-es">{p.name.es}</span><span class="lang-en">{p.name.en}</span></span>
+          <span class="hs-desc"><span class="lang-es">{clip(p.summary.es)}</span><span class="lang-en">{clip(p.summary.en)}</span></span>
+          {p.metrics && (
+            <span class="metrics">
+              {p.metrics.slice(0, 3).map((m) => (
+                <span class="metric"><span class="metric-v">{m.v}</span><span class="metric-k"><span class="lang-es">{m.k.es}</span><span class="lang-en">{m.k.en}</span></span></span>
+              ))}
+            </span>
+          )}
+          <span class="hs-tags">{p.stack.slice(0, 4).map((s) => <span class="cy-tag">{s}</span>)}</span>
+          <span class="hs-cta"><span class="lang-es">Ver caso</span><span class="lang-en">Open case</span> <span aria-hidden="true">→</span></span>
+        </span>
+      </span>
+    </a>
+  ))}
+
+  <div class="hs-slide hs-end" data-hs-slide>
+    <div class="hs-inner">
+      <p class="hs-end-kicker"><span class="lang-es">y {rest.length} más</span><span class="lang-en">and {rest.length} more</span></p>
+      <ul class="hs-end-list">
+        {rest.map((p) => (
+          <li><a href={`/proyecto/${p.slug}`} data-lens="ver">
+            <span class="toc-n">{p.n}</span>
+            <span class="toc-name"><span class="lang-es">{p.name.es}</span><span class="lang-en">{p.name.en}</span></span>
+            <span class="toc-year">{p.year}</span>
+          </a></li>
+        ))}
+      </ul>
+      <a href={D.identity.contact.github} target="_blank" rel="noopener" class="cy-btn solid">GITHUB ↗</a>
+    </div>
+  </div>
+</Coverflow>
+
+<style>
+  .toc, .hs-end-list { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); width: 100%; }
+  .toc a, .hs-end-list a {
+    display: grid; grid-template-columns: 3.2rem minmax(0, 1fr) auto; gap: 1rem; align-items: baseline;
+    padding: 0.8rem 0; border-bottom: 1px solid var(--line);
+    color: var(--ink-2); text-decoration: none; transition: color 0.25s, padding 0.35s cubic-bezier(.16,1,.3,1);
+  }
+  .toc a:hover, .hs-end-list a:hover, .toc a:focus-visible, .hs-end-list a:focus-visible { color: var(--ink); padding-left: 0.5rem; outline: none; }
+  .toc-n, .toc-year { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.1em; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+  .toc-n { color: var(--accent); }
+  .toc-name { font-family: var(--font-display); font-size: 1.15rem; font-weight: 600; letter-spacing: -0.02em; min-width: 0; }
+  .hs-end-list { max-width: 640px; }
+  .hs-end-list .toc-name { font-size: 1rem; }
+  .media-kicker {
+    position: absolute; left: 1.25rem; bottom: 1.1rem; right: 1.25rem;
+    font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent);
+  }
+  .metrics { display: flex; flex-wrap: wrap; gap: 0.5rem 1.5rem; }
+  .metric { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .metric-v { font-family: var(--font-display); font-weight: 700; font-size: 1.1rem; color: var(--ink); }
+  .metric-k { font-family: var(--font-mono); font-size: 0.62rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-3); }
+  @media (max-width: 1023px) {
+    .toc { display: none; }
+    .metrics { display: none; }
+    .hs-end-list a { padding: 0.55rem 0; }
+    .hs-end-list .toc-name { font-size: 0.92rem; }
+  }
+</style>

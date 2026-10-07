@@ -1,0 +1,100 @@
+---
+// 01 · Sobre mí en bento: titular, texto, foto (CRT) y cuatro datos clave en una
+// sola grilla compacta. Datos: src/data/profile.ts.
+import SectionHeading from '../ui/SectionHeading.astro';
+import { portfolioData as D } from '../../data';
+import ingecatImg from '../../assets/img/Ingecat.jpg';
+
+const facts = [
+  { key: 'FOCUS', val: { es: 'Full Stack', en: 'Full Stack' }, sub: { es: 'React · Angular · APIs', en: 'React · Angular · APIs' } },
+  { key: 'METHOD', val: { es: 'Ops + datos', en: 'Ops + data' }, sub: { es: 'Automatización · SQL · BQ', en: 'Automation · SQL · BQ' } },
+  { key: 'ROOTS', val: D.identity.educationShort, sub: D.identity.educationSub },
+  { key: 'MODE', val: { es: 'Remoto / Híbrido', en: 'Remote / Hybrid' }, sub: { es: 'incorporación inmediata', en: 'immediate start' }, live: true },
+];
+---
+<section id="about" class="relative px-6 lg:px-20 py-20 lg:py-28 overflow-hidden" data-wipe>
+  <div class="bento max-w-[1480px] mx-auto">
+    <div class="tile tile-head">
+      <SectionHeading num="01" label={{ es: 'SOBRE_MÍ', en: 'ABOUT_ME' }}
+        es={{ pre: 'Full stack con ', accent: 'foco', post: ' operativo.' }}
+        en={{ pre: 'Full stack with ', accent: 'operational', post: ' focus.' }} />
+    </div>
+
+    <article class="tile tile-text cy-term">
+      <div class="cy-term-bar"><span class="dot r"></span><span class="dot"></span><span class="dot"></span><span>cat about.md</span><span class="label">utf-8</span></div>
+      <div class="cy-term-body text-text">
+        <div class="lang-es">{D.about.es.map((p) => <p>{p}</p>)}</div>
+        <div class="lang-en">{D.about.en.map((p) => <p>{p}</p>)}</div>
+      </div>
+    </article>
+
+    <figure class="tile tile-img" data-tilt>
+      <img src={ingecatImg.src} alt="Ilustración de Ingecat, alias de trabajo de Alejandro" loading="lazy" decoding="async" data-crt />
+      <figcaption><span class="text-[var(--accent)]">~/</span> ingecatdev · <span class="lang-es">alias de trabajo</span><span class="lang-en">work alias</span></figcaption>
+    </figure>
+
+    {facts.map((f, i) => (
+      <div class:list={['tile tile-fact', `fact-${i + 1}`]} data-stagger-item>
+        <div class="fact-key">// {f.key}</div>
+        <div class="fact-val">
+          {f.live && <span class="live-dot" aria-hidden="true"></span>}
+          <span class="lang-es">{f.val.es}</span><span class="lang-en">{f.val.en}</span>
+        </div>
+        <div class="fact-sub"><span class="lang-es">{f.sub.es}</span><span class="lang-en">{f.sub.en}</span></div>
+      </div>
+    ))}
+  </div>
+</section>
+
+<style>
+  .bento {
+    display: grid; gap: 12px;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    grid-template-areas:
+      "head head head text text text"
+      "img  img  f1   text text text"
+      "img  img  f2   f3   f4   f4";
+  }
+  .tile { border: 1px solid var(--line); background: linear-gradient(135deg, var(--panel), transparent); min-width: 0; }
+  .tile-head { grid-area: head; border: 0; background: none; padding: 0 0 1rem; align-self: end; }
+  .tile-text { grid-area: text; }
+  .tile-img { grid-area: img; margin: 0; position: relative; overflow: hidden; transform-style: preserve-3d; }
+  .fact-1 { grid-area: f1; } .fact-2 { grid-area: f2; } .fact-3 { grid-area: f3; } .fact-4 { grid-area: f4; }
+
+  .text-text { display: flex; flex-direction: column; font-size: 0.98rem; line-height: 1.65; color: var(--ink-2); }
+  .text-text p + p { margin-top: 0.9rem; }
+  .tile-img img { display: block; width: 100%; height: 100%; object-fit: cover; aspect-ratio: 4 / 5; }
+  .tile-img::after {
+    content: ""; position: absolute; inset: 0; pointer-events: none;
+    background: repeating-linear-gradient(0deg, transparent 0 2px, rgba(0,0,0,0.14) 2px 3px);
+  }
+  .tile-img figcaption {
+    position: absolute; left: 0; right: 0; bottom: 0; z-index: 1; padding: 10px 12px;
+    font-family: var(--font-mono); font-size: 0.7rem; color: var(--ink-2);
+    background: linear-gradient(transparent, color-mix(in srgb, var(--bg) 85%, transparent));
+  }
+  .tile-fact { position: relative; padding: 18px 16px; display: flex; flex-direction: column; justify-content: flex-end; gap: 4px; overflow: hidden; }
+  .tile-fact::after {
+    content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 2px; background: var(--accent);
+    transform: scaleX(0); transform-origin: left; transition: transform 0.4s cubic-bezier(.16,1,.3,1);
+  }
+  @media (hover: hover) { .tile-fact:hover::after { transform: scaleX(1); } }
+  .fact-key { font-family: var(--font-mono); font-size: 0.62rem; letter-spacing: 0.18em; color: var(--accent); }
+  .fact-val { font-family: var(--font-display); font-size: 1.1rem; font-weight: 600; color: var(--ink); line-height: 1.2; display: flex; align-items: center; gap: 8px; }
+  .fact-sub { font-family: var(--font-mono); font-size: 0.68rem; color: var(--ink-3); line-height: 1.4; }
+  .live-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--ok); box-shadow: 0 0 8px var(--ok); flex-shrink: 0; }
+
+  @media (max-width: 1023px) {
+    .bento {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-areas: "head head" "text text" "img f1" "img f2" "f3 f4";
+    }
+  }
+  @media (max-width: 767px) {
+    .tile-text :global(.cy-term-bar) { display: none; }
+    .tile-text :global(.cy-term-body) { padding: 14px; }
+    .text-text { font-size: 0.92rem; }
+    .fact-val { font-size: 0.95rem; }
+    .tile-fact { padding: 14px 12px; }
+  }
+</style>

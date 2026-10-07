@@ -1,0 +1,83 @@
+---
+// 04 · Blog: carrusel horizontal pinneado. Intro con la pila 3D, un post por
+// diapositiva y cierre con enlace a /blog. Motor: scripts/fx/coverflow.ts.
+import Coverflow from '../ui/Coverflow.astro';
+import SectionHeading from '../ui/SectionHeading.astro';
+import PaperStack from '../ui/PaperStack.astro';
+import { getSortedPosts, fmtPostDate, readingTime } from '../../lib/blog';
+
+const allPosts = await getSortedPosts();
+const latest = allPosts.slice(0, 3);
+---
+<Coverflow id="blog" label="Blog" total={latest.length + 2} bgA="BLOG · NOTAS · CÓDIGO · IA" bgB="ESCRIBIR ES PENSAR DOS VECES">
+  <div class="hs-slide hs-intro" data-hs-slide data-hs-intro>
+    <div class="hs-inner">
+      <div>
+        <SectionHeading num="04" label={{ es: 'BLOG', en: 'BLOG' }} es={{ pre: 'Lo que ', accent: 'escribo', post: '.' }} en={{ pre: 'What I ', accent: 'write', post: '.' }} />
+        <p class="intro-copy font-mono text-sm text-[var(--ink-3)] max-w-sm mt-6">
+          <span class="lang-es">Código, IA, aprendizaje y lo que me esté dando vueltas. Sin algoritmos de por medio.</span>
+          <span class="lang-en">Code, AI, learning and whatever is on my mind. Posts are in Spanish.</span>
+        </p>
+        <p class="hs-hint" aria-hidden="true">
+          <span class="lang-es">sigue bajando</span><span class="lang-en">keep scrolling</span>
+          <span class="hs-hint-arrow">→</span>
+        </p>
+      </div>
+      <div><PaperStack posts={allPosts} fmtDate={fmtPostDate} readingTime={readingTime} /></div>
+    </div>
+  </div>
+
+  {latest.map((post, i) => (
+    <a href={`/blog/${post.slug}`} class="hs-slide hs-card" data-hs-slide data-lens="leer">
+      <span class="hs-inner">
+        <span class="hs-media" aria-hidden="true">
+          {post.data.cover
+            ? <img src={post.data.cover} alt="" loading="lazy" decoding="async" />
+            : <span class="hs-bignum">{String(allPosts.length - i).padStart(2, '0')}</span>}
+        </span>
+        <span class="hs-copy">
+          <span class="hs-meta">
+            <time datetime={post.data.date.toISOString()}>{fmtPostDate(post.data.date)}</time>
+            <span aria-hidden="true">·</span>
+            <span>{readingTime(post.body)} min</span>
+            {i === 0 && <span class="hs-new"><span class="lang-es">nuevo</span><span class="lang-en">new</span></span>}
+          </span>
+          <span class="hs-title">{post.data.title}</span>
+          {post.data.description && <span class="hs-desc">{post.data.description}</span>}
+          {post.data.tags.length > 0 && <span class="hs-tags">{post.data.tags.slice(0, 3).map((t) => <span class="cy-tag">{t}</span>)}</span>}
+          <span class="hs-cta"><span class="lang-es">Leer post</span><span class="lang-en">Read post</span> <span aria-hidden="true">→</span></span>
+        </span>
+      </span>
+    </a>
+  ))}
+
+  <div class="hs-slide hs-end" data-hs-slide>
+    <div class="hs-inner">
+      <p class="hs-end-kicker"><span class="lang-es">fin del carrete</span><span class="lang-en">end of the reel</span></p>
+      <p class="hs-end-title">
+        <span class="lang-es">¿Quieres leer <span class="text-[var(--accent)]">más</span>?</span>
+        <span class="lang-en">Want to read <span class="text-[var(--accent)]">more</span>?</span>
+      </p>
+      <a href="/blog" class="cy-btn solid">
+        <span class="lang-es">TODOS LOS POSTS ({allPosts.length}) ↗</span>
+        <span class="lang-en">ALL POSTS ({allPosts.length}) ↗</span>
+      </a>
+    </div>
+  </div>
+
+  <button slot="overlay" type="button" class="gyro-btn" data-gyro-btn hidden>
+    <span class="lang-es">activar inclinación</span><span class="lang-en">enable tilt</span>
+  </button>
+</Coverflow>
+
+<style>
+  .gyro-btn {
+    position: absolute; right: 16px; top: 16px; z-index: 2;
+    font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--accent); background: var(--bg); border: 1px solid var(--accent); padding: 8px 12px; cursor: pointer;
+  }
+  .gyro-btn[hidden] { display: none; }
+  @media (max-width: 1023px) and (max-height: 720px) {
+    .intro-copy { display: none; }
+  }
+</style>

@@ -1,0 +1,109 @@
+---
+// 06 · Contacto + pie. Los stickers reaccionan al giroscopio y a la velocidad
+// del scroll (scripts/sections/contact.ts).
+import { portfolioData as D } from '../../data';
+import linuxImg from '../../assets/img/Linux.jpg';
+import vsImg from '../../assets/img/VS.jpg';
+import creerImg from '../../assets/img/creer.jpg';
+import gitImg from '../../assets/img/GIT.jpg';
+import torImg from '../../assets/img/TOR.jpg';
+import esrbImg from '../../assets/img/E.jpg';
+import duckImg from '../../assets/img/duck.jpg';
+import tryImg from '../../assets/img/try.jpg';
+
+// Posición en el racimo de desktop: [top, left, ancho, rotación, profundidad]
+const stickers = [
+  { img: linuxImg, alt: 'Just sudo it', d: [10, 0, 108, -13, 1.2], m: [80, -10] },
+  { img: vsImg, alt: 'VS Code', d: [0, 168, 82, 10, 0.7], m: [65, -5] },
+  { img: creerImg, alt: 'Believe!', d: [74, 54, 122, -4, 1.5], m: [90, 4] },
+  { img: gitImg, alt: 'GitHub', d: [200, 4, 90, 14, 0.9], m: [68, -14] },
+  { img: torImg, alt: 'Tor', d: [164, 170, 90, -8, 1.1], m: [68, 8] },
+  { img: esrbImg, alt: 'ESRB Everyone', d: [250, 96, 74, 6, 0.6], m: [58, 9] },
+  { img: duckImg, alt: 'Duck Hunt', d: [310, 10, 95, -11, 1.3], m: [78, 12] },
+  { img: tryImg, alt: 'TryHackMe', d: [330, 130, 140, 7, 1], m: [110, -3] },
+];
+const linkedinHandle = D.identity.contact.linkedin.replace('https://www.linkedin.com', '').replace(/\/$/, '');
+const githubHandle = '/' + D.identity.contact.github.split('/').pop();
+---
+<section id="contact" class="relative px-6 lg:px-20 py-20 lg:py-32 overflow-hidden" data-wipe>
+  <div id="stickerCluster" class="cluster" aria-hidden="true">
+    {stickers.map((s, i) => (
+      <div class="stk" data-rot={s.d[3]} data-depth={s.d[4]} style={`top:${s.d[0]}px;left:${s.d[1]}px;width:${s.d[2]}px;z-index:${i === 2 ? 3 : 1}`}>
+        <img src={s.img.src} alt="" loading="lazy" decoding="async" />
+      </div>
+    ))}
+  </div>
+
+  <div class="max-w-[1480px] mx-auto">
+    <div class="cy-eyebrow mb-6" data-scramble><span class="lang-es">// 06 _ CONTACTO</span><span class="lang-en">// 06 _ CONTACT</span></div>
+    <h2 class="cy-headline contact-title" data-type>
+      <span class="lang-es">¿Construimos<br />algo <span class="text-[var(--accent)] cy-glitch heavy" data-text="serio?">serio?</span></span>
+      <span class="lang-en">Let's build<br />something <span class="text-[var(--accent)] cy-glitch heavy" data-text="serious?">serious?</span></span>
+    </h2>
+
+    <div class="grid lg:grid-cols-12 gap-10 mt-14">
+      <div class="lg:col-span-7 space-y-6">
+        <p class="text-[var(--ink-2)] text-xl leading-relaxed max-w-2xl">
+          <span class="lang-es">Estoy disponible para roles Full Stack Senior, contratos por proyecto y consultorías. Remoto o híbrido en Bogotá.</span>
+          <span class="lang-en">I'm open to Senior Full Stack roles, project contracts and consulting. Remote or hybrid in Bogotá.</span>
+        </p>
+        <div class="space-y-3 font-mono text-base">
+          <a href={D.identity.contact.linkedin} target="_blank" rel="noopener" class="cy-link block" data-lens="abrir"><span class="text-[var(--ink-3)]">linkedin →</span> {linkedinHandle}</a>
+          <a href={D.identity.contact.github} target="_blank" rel="noopener" class="cy-link block" data-lens="abrir"><span class="text-[var(--ink-3)]">github →</span> {githubHandle}</a>
+        </div>
+      </div>
+      <div class="lg:col-span-5">
+        <div class="border border-[var(--line)] p-6 bg-[var(--panel)]">
+          <div class="cy-num mb-3">// SYSTEM_INFO</div>
+          <dl class="sysinfo">
+            <div><dt>location</dt><dd>Bogotá, CO</dd></div>
+            <div><dt>timezone</dt><dd>GMT-5</dd></div>
+            <div><dt>status</dt><dd class="text-[var(--accent)]"><span class="lang-es">disponible</span><span class="lang-en">available</span></dd></div>
+            <div><dt>mode</dt><dd><span class="lang-es">remoto / híbrido</span><span class="lang-en">remote / hybrid</span></dd></div>
+            <div><dt>since</dt><dd>{D.identity.since}</dd></div>
+          </dl>
+        </div>
+      </div>
+    </div>
+
+    <div class="stickers-m" aria-hidden="true">
+      {stickers.map((s, i) => (
+        <span class="stk-mw" data-depth={s.d[4]}>
+          <img src={s.img.src} alt="" class="stk-m" loading="lazy" decoding="async" style={`width:${s.m[0]}px;--stk-rot:rotate(${s.m[1]}deg);animation-delay:${(i * 0.37) % 1.1}s`} />
+        </span>
+      ))}
+    </div>
+
+    <footer class="foot">
+      <span>© {new Date().getFullYear()} {D.identity.name.toUpperCase()} · 4LEDMT.DEV</span>
+      <span><span class="lang-es">DISEÑADO Y CONSTRUIDO EN BOGOTÁ</span><span class="lang-en">DESIGNED & BUILT IN BOGOTÁ</span></span>
+      <a href={D.identity.contact.github} target="_blank" rel="noopener" class="hover:text-[var(--accent)]">→ GITHUB ↗</a>
+    </footer>
+  </div>
+</section>
+
+<style>
+  .contact-title { font-size: clamp(2.6rem, 10vw, 10rem); line-height: 0.9; }
+  .cluster { position: absolute; top: 2rem; right: 3.5rem; width: 300px; height: 420px; pointer-events: none; display: none; }
+  .stk { position: absolute; pointer-events: auto; cursor: pointer; }
+  .stk img { display: block; width: 100%; filter: drop-shadow(2px 4px 12px rgba(0,0,0,0.8)); will-change: transform; }
+  .sysinfo { margin: 0; font-family: var(--font-mono); font-size: 0.875rem; }
+  .sysinfo div { display: flex; justify-content: space-between; gap: 1rem; padding: 0.5rem 0; border-bottom: 1px solid var(--line); }
+  .sysinfo div:last-child { border-bottom: 0; }
+  .sysinfo dt { color: var(--ink-3); }
+  .sysinfo dd { margin: 0; }
+  .stickers-m { margin-top: 3rem; display: flex; flex-wrap: wrap; justify-content: center; align-items: flex-end; gap: 0.75rem; }
+  .stk-mw { display: inline-block; will-change: transform; }
+  .stk-m { display: block; filter: drop-shadow(2px 4px 10px rgba(0,0,0,0.75)); animation: floatM 3s ease-in-out infinite alternate; }
+  @keyframes floatM { from { transform: var(--stk-rot) translateY(0); } to { transform: var(--stk-rot) translateY(-7px); } }
+  .foot { margin-top: 6rem; border-top: 1px solid var(--line); padding-top: 1.5rem; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 1rem; font-family: var(--font-mono); font-size: 0.75rem; color: var(--ink-3); }
+  @media (min-width: 1024px) {
+    .cluster { display: block; }
+    .stickers-m { display: none; }
+  }
+  @media (max-width: 767px) {
+    .contact-title { font-size: clamp(2rem, 12vw, 4rem); line-height: 0.88; }
+    .foot { margin-top: 2.5rem; }
+  }
+  @media (prefers-reduced-motion: reduce) { .stk-m { animation: none; transform: var(--stk-rot); } }
+</style>

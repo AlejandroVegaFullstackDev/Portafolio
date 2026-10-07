@@ -1,0 +1,79 @@
+---
+// 05 · Experiencia: cada empresa llega desde el fondo (eje Z) y la línea de tiempo
+// se dibuja con el scroll. Animación: scripts/sections/experience.ts.
+import SectionHeading from '../ui/SectionHeading.astro';
+import { portfolioData as D } from '../../data';
+const total = D.experience.length;
+---
+<section id="exp" class="relative px-6 lg:px-20 py-20 lg:py-28 bg-[var(--bg-2)] border-y border-[var(--line)] cy-scanlines overflow-hidden" data-wipe>
+  <div class="max-w-[1480px] mx-auto">
+    <SectionHeading num="05" label={{ es: 'EXPERIENCIA', en: 'EXPERIENCE' }} es={{ pre: 'Historial de ', accent: 'commits', post: '.' }} en={{ pre: 'Commit ', accent: 'history', post: '.' }} />
+
+    <div class="tunnel" id="expTunnel">
+      <span class="rail" aria-hidden="true"><span class="rail-fill" id="expRail"></span></span>
+      <ol class="jobs">
+      {D.experience.map((x, i) => (
+        <li class="job" data-job>
+          <span class="node" aria-hidden="true"></span>
+          <div class="job-card">
+            <div class="job-head">
+              <span class="job-commit">$ role_{String(total - i).padStart(2, '0')}</span>
+              <span class="job-period"><span class="lang-es">{x.period.es}</span><span class="lang-en">{x.period.en}</span></span>
+            </div>
+            <h3 class="job-company">{x.company}</h3>
+            <p class="job-role"><span class="lang-es">{x.role.es}</span><span class="lang-en">{x.role.en}</span>
+              {x.note && <span class="job-note"> · <span class="lang-es">{x.note.es}</span><span class="lang-en">{x.note.en}</span></span>}
+            </p>
+            <ul class="job-bullets lang-es">{x.bullets.es.map((b) => <li>{b}</li>)}</ul>
+            <ul class="job-bullets lang-en">{x.bullets.en.map((b) => <li>{b}</li>)}</ul>
+            <div class="job-tags">{x.stack.map((s) => <span class="cy-tag">{s}</span>)}</div>
+          </div>
+        </li>
+      ))}
+      </ol>
+    </div>
+  </div>
+</section>
+
+<style>
+  .tunnel { position: relative; margin: 3.5rem 0 0; padding: 0 0 0 3rem; perspective: 1200px; perspective-origin: 30% 20%; }
+  .jobs { list-style: none; margin: 0; padding: 0; transform-style: preserve-3d; }
+  .rail { position: absolute; left: 0.6rem; top: 0.5rem; bottom: 0.5rem; width: 1px; background: var(--line-2); }
+  .rail-fill { position: absolute; inset: 0; background: var(--accent); transform: scaleY(0); transform-origin: top; box-shadow: 0 0 10px var(--accent); }
+  .job { position: relative; padding-bottom: 2.5rem; transform-style: preserve-3d; }
+  .job:last-child { padding-bottom: 0; }
+  .node {
+    position: absolute; left: calc(-3rem + 0.6rem - 6px); top: 1.6rem; width: 13px; height: 13px;
+    border: 1px solid var(--line-2); background: var(--bg-2); transform: rotate(45deg); transition: background-color 0.3s, border-color 0.3s, box-shadow 0.3s;
+  }
+  .job.is-lit .node { background: var(--accent); border-color: var(--accent); box-shadow: 0 0 12px var(--accent); }
+  .job-card {
+    display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 0.4rem 2.5rem;
+    grid-template-areas: "head bullets" "company bullets" "role bullets" "tags bullets";
+    align-content: start; padding: 1.5rem; border: 1px solid var(--line);
+    background: linear-gradient(135deg, var(--panel), transparent); will-change: transform, opacity;
+  }
+  .job-head { grid-area: head; display: flex; flex-wrap: wrap; gap: 0.75rem; font-family: var(--font-mono); font-size: 0.74rem; letter-spacing: 0.1em; }
+  .job-commit { color: var(--accent); }
+  .job-period { color: var(--ink-3); }
+  .job-company { grid-area: company; font-family: var(--font-display); font-size: clamp(1.6rem, 3vw, 2.4rem); font-weight: 700; letter-spacing: -0.03em; line-height: 1; margin: 0.3rem 0 0; }
+  .job-role { grid-area: role; font-family: var(--font-mono); font-size: 0.82rem; color: var(--ink-2); margin: 0; }
+  .job-note { color: var(--ink-3); }
+  .job-tags { grid-area: tags; display: flex; flex-wrap: wrap; gap: 6px; margin-top: 0.9rem; align-self: end; }
+  .job-bullets { grid-area: bullets; list-style: none; margin: 0; padding: 0; color: var(--ink-2); line-height: 1.6; font-size: 0.95rem; }
+  .job-bullets li { position: relative; padding-left: 1.2rem; }
+  .job-bullets li + li { margin-top: 0.6rem; }
+  .job-bullets li::before { content: "▸"; position: absolute; left: 0; color: var(--accent); }
+
+  @media (max-width: 1023px) {
+    .job-card { grid-template-columns: 1fr; grid-template-areas: "head" "company" "role" "bullets" "tags"; }
+    .job-bullets { margin-top: 0.9rem; font-size: 0.92rem; }
+  }
+  @media (max-width: 767px) {
+    .tunnel { padding-left: 1.75rem; margin-top: 2rem; }
+    .rail { left: 0.3rem; }
+    .node { left: calc(-1.75rem + 0.3rem - 6px); }
+    .job-card { padding: 1.1rem; }
+    .job { padding-bottom: 1.5rem; }
+  }
+</style>
