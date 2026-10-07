@@ -337,6 +337,9 @@ img, pre, canvas, iframe { max-width: 100%; }
 .tg-overlay.on { display: block; }
 
 /* Project tile */
+.proj-card { display: block; }
+.proj-card[hidden] { display: none; }
+
 .cy-tile {
   position: relative;
   background: var(--panel);
@@ -579,7 +582,7 @@ img, pre, canvas, iframe { max-width: 100%; }
 /* ─── MOBILE REDESIGN (< 768px) ──────────────────────────────────────────── */
 @media (max-width: 767px) {
   /* 1. Section padding */
-  #about, #stack, #projects, #services, #exp, #playground, #contact {
+  #about, #stack, #projects, #blog, #services, #exp, #contact {
     padding-top: 3.5rem !important;
     padding-bottom: 3.5rem !important;
   }
@@ -613,8 +616,6 @@ img, pre, canvas, iframe { max-width: 100%; }
   #stackGrid { grid-template-columns: repeat(2, 1fr) !important; }
   .stack-cell { padding: 14px 12px !important; }
 
-  /* 5. Stack marquee: smaller text */
-  #stackMarquee > span { padding: 0 1rem !important; }
 
   /* 6. Experience: hide git sidebar */
   #exp .lg\:col-span-3 { display: none !important; }
@@ -654,10 +655,7 @@ img, pre, canvas, iframe { max-width: 100%; }
   /* 11. Now band: 2 items only */
   .now-item:nth-child(n+3) { display: none !important; }
 
-  /* 12. Playground section heading */
-  #playground .cy-headline {
-    font-size: clamp(2rem, 10vw, 3.5rem) !important;
-  }
+
 
   /* 13. Service cards */
   .service-card { padding: 20px 16px !important; }

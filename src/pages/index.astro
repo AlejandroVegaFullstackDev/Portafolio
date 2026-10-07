@@ -14,14 +14,24 @@ import torImg from '../assets/img/TOR.jpg';
 import esrbImg from '../assets/img/E.jpg';
 import tryImg from '../assets/img/try.jpg';
 import duckImg from '../assets/img/duck.jpg';
+import { getCollection } from 'astro:content';
 
 const D = portfolioData;
+
+// Blog: últimos posts renderizados en servidor (SEO + visibles sin esperar al JS).
+const allPosts = (await getCollection('blog')).sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+const latestPosts = allPosts.slice(0, 3);
+const fmtPostDate = (d: Date) => d.toLocaleDateString('es-CO', { year: 'numeric', month: 'short', day: '2-digit', timeZone: 'UTC' });
+const readingTime = (body?: string) => Math.max(1, Math.round((body?.trim().split(/\s+/).length ?? 0) / 200));
+const FEATURED_PROJECTS = 6;
+const extraProjects = Math.max(0, D.projects.length - FEATURED_PROJECTS);
 const topStack = [D.stack.frameworks[0], D.stack.languages[1], D.stack.databases[2]].map(s => s.toUpperCase()).join(' · ');
 const companies = D.experience.map(e => e.company.toUpperCase()).join(' · ');
 const linkedinHandle = D.identity.contact.linkedin.replace('https://www.linkedin.com', '').replace(/\/$/, '');
 const githubHandle = '/' + D.identity.contact.github.split('/').pop();
 const tickerItems = [
   { icon: '▲', text: `LOC: ${D.identity.location.en.split(',')[0].toUpperCase()} 04°38'N 74°05'W / ${D.identity.timezone}` },
+  ...(latestPosts[0] ? [{ icon: '✎', text: `NUEVO EN EL BLOG: ${latestPosts[0].data.title.toUpperCase()}` }] : []),
   { icon: '●', text: 'RODA / ACTIVO DESDE JUN 2025' },
   { icon: '▼', text: 'KIKI LATAM: +10.000 GUÍAS EN SEGUNDOS · ×10' },
   { icon: '●', text: `STACK: ${topStack}` },
@@ -52,8 +62,8 @@ const tickerItems = [
     <!-- Center: nav — desktop only -->
     <nav class="hidden md:flex absolute left-1/2 -translate-x-1/2 items-center gap-5">
       <a href="#projects" class="font-mono text-[0.74rem] tracking-widest text-[var(--ink-3)] hover:text-[var(--accent)] transition">projects</a>
+      <a href="#blog" class="font-mono text-[0.74rem] tracking-widest text-[var(--ink-3)] hover:text-[var(--accent)] transition">blog</a>
       <a href="#exp" class="font-mono text-[0.74rem] tracking-widest text-[var(--ink-3)] hover:text-[var(--accent)] transition">experience</a>
-      <a href="/blog" class="font-mono text-[0.74rem] tracking-widest text-[var(--ink-3)] hover:text-[var(--accent)] transition">blog</a>
       <a href="/about" class="font-mono text-[0.74rem] tracking-widest text-[var(--ink-3)] hover:text-[var(--accent)] transition">about</a>
     </nav>
     <!-- Right: status + lang + mobile btn -->
@@ -69,11 +79,12 @@ const tickerItems = [
   <nav id="mobileMenu" class="hidden md:hidden border-t border-[var(--line)] px-6 py-5" style="background:rgba(5,5,7,0.97);">
     <div class="flex flex-col gap-4">
       <a href="#projects" class="mob-link font-mono text-sm tracking-widest text-[var(--ink-2)] hover:text-[var(--accent)] transition flex items-center gap-2"><span class="text-[var(--accent)] text-xs">▸</span>projects</a>
+      <a href="#blog" class="mob-link font-mono text-sm tracking-widest text-[var(--ink-2)] hover:text-[var(--accent)] transition flex items-center gap-2"><span class="text-[var(--accent)] text-xs">▸</span>blog</a>
       <a href="#exp" class="mob-link font-mono text-sm tracking-widest text-[var(--ink-2)] hover:text-[var(--accent)] transition flex items-center gap-2"><span class="text-[var(--accent)] text-xs">▸</span>experience</a>
       <a href="#stack" class="mob-link font-mono text-sm tracking-widest text-[var(--ink-2)] hover:text-[var(--accent)] transition flex items-center gap-2"><span class="text-[var(--accent)] text-xs">▸</span>stack</a>
       <a href="#contact" class="mob-link font-mono text-sm tracking-widest text-[var(--ink-2)] hover:text-[var(--accent)] transition flex items-center gap-2"><span class="text-[var(--accent)] text-xs">▸</span>contact</a>
       <div class="border-t border-[var(--line)] pt-4 flex gap-4">
-        <a href="/blog" class="font-mono text-xs tracking-widest text-[var(--ink-3)] hover:text-[var(--accent)] transition">blog ↗</a>
+        <a href="/blog" class="font-mono text-xs tracking-widest text-[var(--ink-3)] hover:text-[var(--accent)] transition">todos los posts ↗</a>
         <a href="/about" class="font-mono text-xs tracking-widest text-[var(--ink-3)] hover:text-[var(--accent)] transition">about ↗</a>
       </div>
     </div>
@@ -126,6 +137,10 @@ const tickerItems = [
         <a href="#contact" class="cy-btn solid" data-magnetic>
           <span class="lang-es">HABLEMOS ↗</span>
           <span class="lang-en">LET'S TALK ↗</span>
+        </a>
+        <a href="#blog" class="cy-btn">
+          <span class="lang-es">LEER EL BLOG</span>
+          <span class="lang-en">READ THE BLOG</span>
         </a>
       </div>
       <div class="mt-12 lg:mt-16 grid grid-cols-3 gap-3 sm:gap-6 max-w-xl">
@@ -192,7 +207,7 @@ const tickerItems = [
 </div>
 
 <!-- ABOUT -->
-<section id="about" class="relative px-6 lg:px-20 py-24 lg:py-36 overflow-hidden">
+<section id="about" class="relative px-6 lg:px-20 py-20 lg:py-28 overflow-hidden">
   <!-- Decorative bg number -->
   <div class="absolute -right-4 top-1/2 -translate-y-1/2 font-display font-bold leading-none select-none pointer-events-none hidden lg:block" style="font-size:clamp(14rem,22vw,22rem);color:var(--line);opacity:0.45;letter-spacing:-0.04em;" aria-hidden="true">01</div>
 
@@ -282,7 +297,7 @@ const tickerItems = [
 </section>
 
 <!-- STACK -->
-<section id="stack" class="relative px-6 lg:px-20 py-24 lg:py-36 border-y border-[var(--line)] bg-[var(--bg-2)] cy-scanlines overflow-hidden">
+<section id="stack" class="relative px-6 lg:px-20 py-20 lg:py-28 border-y border-[var(--line)] bg-[var(--bg-2)] cy-scanlines overflow-hidden">
   <div class="max-w-[1480px] mx-auto">
     <div class="flex items-end justify-between flex-wrap gap-6 mb-12">
       <div>
@@ -296,11 +311,6 @@ const tickerItems = [
         <span class="lang-es">Sin religiones tecnológicas. Elijo la herramienta correcta para el problema correcto.</span>
         <span class="lang-en">No tech religions. The right tool for the right problem.</span>
       </p>
-    </div>
-    <div class="overflow-hidden border-y border-[var(--line)] py-5 mb-14">
-      <div class="cy-marquee" data-marquee="120">
-        <div class="flex items-center" id="stackMarquee"></div>
-      </div>
     </div>
     <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4" id="stackGrid" data-stagger></div>
 
@@ -323,7 +333,7 @@ const tickerItems = [
 
 
 <!-- PROJECTS -->
-<section id="projects" class="relative px-6 lg:px-20 py-24 lg:py-36 border-y border-[var(--line)]">
+<section id="projects" class="relative px-6 lg:px-20 py-20 lg:py-28 border-y border-[var(--line)]">
   <div class="max-w-[1480px] mx-auto">
     <div class="cy-eyebrow mb-4" data-scramble>
       <span class="lang-es">// 03 _ PROYECTOS</span>
@@ -334,14 +344,74 @@ const tickerItems = [
       <span class="lang-en">Cases I <span class="text-[var(--accent)]">built</span>.</span>
     </h2>
     <div class="grid sm:grid-cols-2 gap-4 lg:gap-6" id="projectsGrid" data-stagger></div>
+    {extraProjects > 0 && (
+      <div class="mt-10 flex justify-center">
+        <button type="button" id="projectsToggle" class="cy-btn" aria-expanded="false" aria-controls="projectsGrid" data-extra={extraProjects}>
+          <span class="lang-es" data-label-es>VER {extraProjects} PROYECTOS MÁS ↓</span>
+          <span class="lang-en" data-label-en>SHOW {extraProjects} MORE PROJECTS ↓</span>
+        </button>
+      </div>
+    )}
+  </div>
+</section>
+
+<!-- BLOG -->
+<section id="blog" class="relative px-6 lg:px-20 py-20 lg:py-28 border-y border-[var(--line)] overflow-hidden">
+  <div class="max-w-[1480px] mx-auto">
+    <div class="flex items-end justify-between flex-wrap gap-6 mb-10 lg:mb-14">
+      <div>
+        <div class="cy-eyebrow mb-4" data-scramble>
+          <span class="lang-es">// 04 _ BLOG</span>
+          <span class="lang-en">// 04 _ BLOG</span>
+        </div>
+        <h2 class="cy-headline text-5xl lg:text-7xl" data-reveal="up">
+          <span class="lang-es">Lo que <span class="text-[var(--accent)]">escribo</span>.</span>
+          <span class="lang-en">What I <span class="text-[var(--accent)]">write</span>.</span>
+        </h2>
+      </div>
+      <p class="font-mono text-sm text-[var(--ink-3)] max-w-sm">
+        <span class="lang-es">Código, IA, aprendizaje y lo que me esté dando vueltas. Sin algoritmos de por medio.</span>
+        <span class="lang-en">Code, AI, learning and whatever is on my mind. Posts are in Spanish.</span>
+      </p>
+    </div>
+
+    <ol class="post-list">
+      {latestPosts.map((post, i) => (
+        <li>
+          <a href={`/blog/${post.slug}`} class="post-row" data-cursor>
+            <span class="post-meta">
+              <time datetime={post.data.date.toISOString()}>{fmtPostDate(post.data.date)}</time>
+              <span aria-hidden="true">·</span>
+              <span>{readingTime(post.body)} min</span>
+              {i === 0 && <span class="post-new"><span class="lang-es">nuevo</span><span class="lang-en">new</span></span>}
+            </span>
+            <span class="post-body">
+              <span class="post-title">{post.data.title}</span>
+              {post.data.description && <span class="post-desc">{post.data.description}</span>}
+              {post.data.tags.length > 0 && (
+                <span class="post-tags">{post.data.tags.slice(0, 3).map((t) => <span class="cy-tag">{t}</span>)}</span>
+              )}
+            </span>
+            <span class="post-arrow" aria-hidden="true">→</span>
+          </a>
+        </li>
+      ))}
+    </ol>
+
+    <div class="mt-10 flex justify-center sm:justify-start">
+      <a href="/blog" class="cy-btn">
+        <span class="lang-es">TODOS LOS POSTS ({allPosts.length}) ↗</span>
+        <span class="lang-en">ALL POSTS ({allPosts.length}) ↗</span>
+      </a>
+    </div>
   </div>
 </section>
 
 
 <!-- EXPERIENCE -->
-<section id="exp" class="relative px-6 lg:px-20 py-24 lg:py-36 bg-[var(--bg-2)] border-y border-[var(--line)] cy-scanlines">
+<section id="exp" class="relative px-6 lg:px-20 py-20 lg:py-28 bg-[var(--bg-2)] border-y border-[var(--line)] cy-scanlines">
   <div class="max-w-[1480px] mx-auto">
-    <div class="cy-eyebrow mb-3" data-scramble><span class="lang-es">// 04 _ EXPERIENCIA</span><span class="lang-en">// 04 _ EXPERIENCE</span></div>
+    <div class="cy-eyebrow mb-3" data-scramble><span class="lang-es">// 05 _ EXPERIENCIA</span><span class="lang-en">// 05 _ EXPERIENCE</span></div>
     <h2 class="cy-headline text-5xl lg:text-7xl mb-14" data-reveal="up">
       <span class="lang-es">Historial de <span class="text-[var(--accent)]">commits</span>.</span>
       <span class="lang-en">Commit <span class="text-[var(--accent)]">history</span>.</span>
@@ -367,42 +437,6 @@ const tickerItems = [
   </div>
 </section>
 
-
-<!-- PLAYGROUND -->
-<section id="playground" class="relative px-6 lg:px-20 py-24 lg:py-36 bg-[var(--bg-2)] border-y border-[var(--line)] cy-scanlines overflow-hidden">
-  <div class="max-w-[1480px] mx-auto">
-    <div class="grid lg:grid-cols-12 gap-10 mb-10">
-      <div class="lg:col-span-6">
-        <div class="cy-eyebrow mb-3" data-scramble>// 06 _ CONSOLE</div>
-        <h2 class="cy-headline text-5xl lg:text-7xl" data-reveal="up">
-          <span class="lang-es">Explórame en <span class="text-[var(--accent)]">consola</span>.</span>
-          <span class="lang-en">Explore me in <span class="text-[var(--accent)]">console</span>.</span>
-        </h2>
-        <p class="mt-6 text-[var(--ink-2)] text-lg max-w-md leading-relaxed">
-          <span class="lang-es">Haz click o toca un comando para correrlo — sin teclado. Explora quién soy, mi stack y mis proyectos.</span>
-          <span class="lang-en">Click or tap a command to run it — no keyboard. Explore who I am, my stack and my projects.</span>
-        </p>
-        <div class="mt-8 flex flex-wrap gap-2 font-mono text-xs">
-          <span class="cy-tag">about</span><span class="cy-tag">stack</span><span class="cy-tag">projects</span>
-          <span class="cy-tag">contact</span><span class="cy-tag">whoami</span>
-        </div>
-      </div>
-      <div class="lg:col-span-6">
-        <div class="border border-[var(--line)] relative overflow-hidden bg-black">
-          <span style="position:absolute;top:-1px;left:-1px;width:18px;height:18px;border:1px solid var(--accent);border-right:0;border-bottom:0;"></span>
-          <span style="position:absolute;top:-1px;right:-1px;width:18px;height:18px;border:1px solid var(--accent);border-left:0;border-bottom:0;"></span>
-          <span style="position:absolute;bottom:-1px;left:-1px;width:18px;height:18px;border:1px solid var(--accent);border-right:0;border-top:0;"></span>
-          <span style="position:absolute;bottom:-1px;right:-1px;width:18px;height:18px;border:1px solid var(--accent);border-left:0;border-top:0;"></span>
-          <div class="cy-term-bar">
-            <span class="dot r"></span><span class="dot"></span><span class="dot"></span>
-            <span>4ledmt.console</span><span class="label"><span class="lang-es">click / toca un comando</span><span class="lang-en">click / tap a command</span></span>
-          </div>
-          <div id="touchDeck" class="relative" style="min-height:300px"></div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
 
 <!-- CONTACT -->
 <section id="contact" class="relative px-6 lg:px-20 py-24 lg:py-32 overflow-hidden">
@@ -434,7 +468,7 @@ const tickerItems = [
     </div>
   </div>
   <div class="max-w-[1480px] mx-auto">
-    <div class="cy-eyebrow mb-6" data-scramble><span class="lang-es">// 07 _ CONTACTO</span><span class="lang-en">// 07 _ CONTACT</span></div>
+    <div class="cy-eyebrow mb-6" data-scramble><span class="lang-es">// 06 _ CONTACTO</span><span class="lang-en">// 06 _ CONTACT</span></div>
     <h2 class="cy-headline text-6xl lg:text-[10rem] leading-[0.9]" data-reveal="up">
       <span class="lang-es">¿Construimos<br/>algo <span class="text-[var(--accent)] cy-glitch heavy" data-text="serio?">serio?</span></span>
       <span class="lang-en">Let's build<br/>something <span class="text-[var(--accent)] cy-glitch heavy" data-text="serious?">serious?</span></span>
@@ -498,6 +532,57 @@ const tickerItems = [
 <style>
   [data-tweak-theme="light"] [data-header] {
     background: rgba(243,241,236,0.7) !important;
+  }
+
+  /* ─── Blog en el home: filas editoriales, no tarjetas ─── */
+  .post-list { list-style: none; margin: 0; padding: 0; border-bottom: 1px solid var(--line); }
+  .post-row {
+    display: grid;
+    grid-template-columns: 11rem minmax(0, 1fr) auto;
+    gap: 1rem 2.5rem;
+    align-items: start;
+    padding: 1.75rem 0.25rem;
+    border-top: 1px solid var(--line);
+    color: inherit;
+    text-decoration: none;
+    position: relative;
+    transition: background-color 0.35s cubic-bezier(.16,1,.3,1), padding 0.35s cubic-bezier(.16,1,.3,1);
+  }
+  .post-row:hover { background: var(--panel); padding-left: 1rem; padding-right: 1rem; }
+  .post-row:focus-visible { outline: 1px solid var(--accent); outline-offset: -1px; }
+  .post-meta {
+    display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem;
+    font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.08em;
+    color: var(--ink-3); text-transform: uppercase; padding-top: 0.55rem;
+    font-variant-numeric: tabular-nums;
+  }
+  .post-new {
+    color: var(--accent); border: 1px solid var(--accent);
+    padding: 1px 6px; margin-left: 0.25rem; letter-spacing: 0.14em;
+  }
+  .post-body { display: flex; flex-direction: column; gap: 0.6rem; min-width: 0; }
+  .post-title {
+    font-family: var(--font-display); font-weight: 700;
+    font-size: clamp(1.5rem, 3vw, 2.4rem); line-height: 1.02; letter-spacing: -0.03em;
+    text-wrap: balance; transition: color 0.25s;
+  }
+  .post-row:hover .post-title { color: var(--accent); }
+  .post-desc { color: var(--ink-2); font-size: 1rem; line-height: 1.6; max-width: 65ch; }
+  .post-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 0.25rem; }
+  .post-arrow {
+    font-family: var(--font-mono); font-size: 1.4rem; color: var(--accent);
+    padding-top: 0.4rem; transition: transform 0.35s cubic-bezier(.16,1,.3,1);
+  }
+  .post-row:hover .post-arrow { transform: translateX(6px); }
+
+  @media (max-width: 767px) {
+    .post-row { grid-template-columns: minmax(0, 1fr) auto; gap: 0.6rem 1rem; padding: 1.4rem 0; }
+    .post-row:hover { padding-left: 0; padding-right: 0; background: transparent; }
+    .post-meta { grid-column: 1 / -1; padding-top: 0; }
+    .post-desc { font-size: 0.95rem; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .post-row, .post-arrow, .post-title { transition: none; }
   }
 </style>
 
@@ -828,11 +913,6 @@ function paintAbout() {
 // ─── Stack ───────────────────────────────────────────────────────────────────
 function paintStack() {
   const lang = getLang();
-  const mq = document.getElementById('stackMarquee');
-  if (mq) {
-    const all = [...D.stack.languages, ...D.stack.frameworks, ...D.stack.architectures, ...D.stack.patterns, ...D.stack.databases, ...D.stack.testing, ...D.stack.cloud, ...D.stack.tools];
-    mq.innerHTML = all.map((s) => `<span style="padding:0 2rem;font-family:var(--font-display);font-size:clamp(1.5rem,4vw,3rem);letter-spacing:-0.02em;white-space:nowrap;color:var(--ink)">${s} <span style="color:var(--accent)">/</span></span>`).join('');
-  }
   const grid = document.getElementById('stackGrid');
   if (grid) {
     const groups = [
@@ -880,12 +960,15 @@ function paintExp() {
 
 
 // ─── Projects ─────────────────────────────────────────────────────────────────
+const FEATURED_PROJECTS = 6;
+let projectsExpanded = false;
+
 function paintProjects() {
   const lang = getLang();
   const grid = document.getElementById('projectsGrid');
   if (!grid) return;
-  grid.innerHTML = D.projects.map((p: any) => `
-    <a href="/proyecto/${p.slug}" class="cy-tile proj-card" data-stagger-item style="display:block;text-decoration:none;color:inherit;padding:1.5rem;">
+  grid.innerHTML = D.projects.map((p: any, i: number) => `
+    <a href="/proyecto/${p.slug}" class="cy-tile proj-card${i >= FEATURED_PROJECTS ? ' proj-extra' : ''}"${i >= FEATURED_PROJECTS && !projectsExpanded ? ' hidden' : ''} data-stagger-item style="text-decoration:none;color:inherit;padding:1.5rem;">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;">
         <span class="cy-num" style="font-size:0.72rem;">PRJ_${p.n} · ${p.year}</span>
         <span style="font-family:var(--font-mono);font-size:1rem;color:var(--accent);">↗</span>
@@ -903,89 +986,6 @@ function paintProjects() {
     </a>
   `).join('');
 }
-
-// ─── Touch command deck (móvil — sin teclado) ─────────────────────────────────
-function attachTouchDeck(container: HTMLElement, lang: 'es' | 'en') {
-  const t = (es: string, en: string) => (lang === 'en' ? en : es);
-  const accent = (s: string) => `<span style="color:var(--accent)">${s}</span>`;
-
-  const out = document.createElement('div');
-  out.style.cssText = 'padding:14px 16px;min-height:230px;font-family:var(--font-mono);font-size:0.8rem;color:var(--ink-2);line-height:1.75;word-break:break-word;';
-  const bar = document.createElement('div');
-  bar.style.cssText = 'display:flex;flex-wrap:wrap;gap:8px;padding:12px 16px;border-top:1px solid var(--line);background:var(--bg-2);';
-  container.innerHTML = '';
-  container.appendChild(out);
-  container.appendChild(bar);
-
-  const lineEl = (html: string) => { const d = document.createElement('div'); d.innerHTML = html; return d; };
-
-  const linkEl = (label: string, href: string, text: string) => {
-    const a = document.createElement('a');
-    a.href = href; a.target = '_blank'; a.rel = 'noopener';
-    a.style.cssText = 'display:block;color:var(--ink);text-decoration:none;padding:5px 0;';
-    a.innerHTML = `${accent(label + ':')} ${text} ${accent('↗')}`;
-    return a;
-  };
-
-  const cmds: Record<string, () => (string | HTMLElement)[]> = {
-    whoami: () => [
-      D.identity.name.toLowerCase().replace(' ', '_'),
-      `role:  ${D.identity.title[lang].toLowerCase()}`,
-      `loc:   ${D.identity.location[lang].toLowerCase()} · ${D.identity.timezone.toLowerCase()}`,
-      `avail: ${t('sí — remoto / híbrido', 'yes — remote / hybrid')}`,
-    ],
-    about: () => D.about[lang],
-    stack: () => [
-      `lang:    ${D.stack.languages.join(' · ')}`,
-      `arch:    ${D.stack.architectures.join(' · ')}`,
-      `pattern: ${D.stack.patterns.join(' · ')}`,
-      `testing: ${D.stack.testing.join(' · ')}`,
-      `cloud:   ${D.stack.cloud.join(' · ')}`,
-    ],
-    projects: () => D.projects.map((p: any) => {
-      const a = document.createElement('a');
-      a.href = `/proyecto/${p.slug}`;
-      a.style.cssText = 'display:block;color:var(--ink);text-decoration:none;padding:6px 0;border-bottom:1px solid var(--line);';
-      a.innerHTML = `${accent('[' + p.n + ']')} ${p.name[lang]} <span style="color:var(--ink-3)">— ${p.stack.slice(0, 2).join(' · ')}</span> ${accent('↗')}`;
-      return a;
-    }),
-    contact: () => [
-      linkEl('linkedin', D.identity.contact.linkedin, D.identity.contact.linkedin.replace('https://www.linkedin.com', '').replace(/\/$/, '')),
-      linkEl('github', D.identity.contact.github, '/' + (D.identity.contact.github.split('/').pop() || '')),
-      lineEl(`${accent('since:')} ${D.identity.since}`),
-      lineEl(`${accent('status:')} ● ${t('disponible', 'available')}`),
-    ],
-  };
-
-  function run(cmd: string) {
-    const builder = cmds[cmd];
-    if (!builder) return;
-    out.innerHTML = '';
-    const echo = lineEl(`${accent('$')} ${cmd}`);
-    echo.style.marginBottom = '8px';
-    out.appendChild(echo);
-    const nodes = builder().map((l) => (typeof l === 'string' ? lineEl(l) : l));
-    nodes.forEach((n) => out.appendChild(n));
-    gsap.fromTo(nodes, { opacity: 0, x: -8 }, { opacity: 1, x: 0, duration: 0.3, stagger: 0.05, ease: 'power2.out' });
-  }
-
-  ['about', 'stack', 'projects', 'contact', 'whoami'].forEach((c) => {
-    const b = document.createElement('button');
-    b.type = 'button';
-    b.textContent = c;
-    b.style.cssText = 'font-family:var(--font-mono);font-size:0.78rem;color:var(--ink);background:transparent;border:1px solid var(--line-2);padding:8px 14px;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:border-color .2s,color .2s;';
-    b.addEventListener('click', () => {
-      bar.querySelectorAll('button').forEach((x) => { (x as HTMLElement).style.borderColor = 'var(--line-2)'; (x as HTMLElement).style.color = 'var(--ink)'; });
-      b.style.borderColor = 'var(--accent)';
-      b.style.color = 'var(--accent)';
-      run(c);
-    });
-    bar.appendChild(b);
-  });
-
-  out.appendChild(lineEl(`<span style="color:var(--ink-3)">${t('// toca un comando abajo para empezar', '// tap a command below to start')}</span>`));
-}
-
 
 // ─── Char-level reveal for accent words in section headings ─────────────────
 function initCharReveal() {
@@ -1399,11 +1399,31 @@ async function start() {
       init3DTiles();
       initProjectTilt();
       initStackHover();
-      // Rebuild hero term and game with new lang
+      // Rebuild hero term with new lang
       const heroTerm = document.getElementById('heroTerm');
       if (heroTerm) { heroTerm.innerHTML = ''; paintHero(); }
-      const td = document.getElementById('touchDeck');
-      if (td) attachTouchDeck(td, getLang());
+    });
+  }
+
+  // Projects: destacados primero, el resto bajo demanda (acorta el home)
+  const projToggle = document.getElementById('projectsToggle');
+  if (projToggle) {
+    const extra = projToggle.dataset.extra;
+    const labelEs = projToggle.querySelector<HTMLElement>('[data-label-es]');
+    const labelEn = projToggle.querySelector<HTMLElement>('[data-label-en]');
+    projToggle.addEventListener('click', () => {
+      projectsExpanded = !projectsExpanded;
+      projToggle.setAttribute('aria-expanded', String(projectsExpanded));
+      if (labelEs) labelEs.textContent = projectsExpanded ? 'MOSTRAR MENOS ↑' : `VER ${extra} PROYECTOS MÁS ↓`;
+      if (labelEn) labelEn.textContent = projectsExpanded ? 'SHOW LESS ↑' : `SHOW ${extra} MORE PROJECTS ↓`;
+      const extras = Array.from(document.querySelectorAll<HTMLElement>('.proj-extra'));
+      extras.forEach((el) => { el.hidden = !projectsExpanded; });
+      if (projectsExpanded) {
+        gsap.fromTo(extras, { y: 24, opacity: 0 }, { y: 0, opacity: 1, scale: 1, filter: 'blur(0px)', duration: 0.6, stagger: 0.06, ease: 'expo.out' });
+      } else {
+        document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+      ScrollTrigger.refresh();
     });
   }
 
@@ -1423,10 +1443,6 @@ async function start() {
       });
     });
   }
-
-  // Command deck (click + touch)
-  const td = document.getElementById('touchDeck');
-  if (td) attachTouchDeck(td, getLang());
 
   setTimeout(() => ScrollTrigger.refresh(), 200);
 }
