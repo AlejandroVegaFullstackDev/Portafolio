@@ -9,7 +9,8 @@
     "check": "astro check",
     "test": "vitest run",
     "og": "python3 tools/og-image.py",
-    "verify": "astro check && astro build && vitest run"
+    "verify": "astro check && astro build && vitest run",
+    "spotify-token": "node tools/spotify-token.mjs"
   },
   "dependencies": {
     "@astrojs/react": "^3.6.0",

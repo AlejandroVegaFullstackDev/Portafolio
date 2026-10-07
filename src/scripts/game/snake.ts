@@ -39,7 +39,12 @@ export async function initPlaylistSnake() {
   let tracks: Track[] = [];
   try {
     const res = await fetch('/api/playlist-snake');
-    if (res.ok) tracks = ((await res.json()) as { tracks: Track[] }).tracks ?? [];
+    if (res.ok) {
+      const data = (await res.json()) as { tracks: Track[]; source?: string; status?: unknown };
+      tracks = data.tracks ?? [];
+      // Diagnóstico visible en la consola del navegador (no expone secretos).
+      if (!tracks.length) console.info('[snake] sin canciones de Spotify:', data.status);
+    }
   } catch { /* sin Spotify: comida genérica */ }
   const covers = tracks.map((t) => {
     if (!t.cover) return null;
