@@ -3,10 +3,21 @@
 // Uso (en un PC, una sola vez):
 //   1. En https://developer.spotify.com/dashboard → tu app → Settings → Redirect URIs,
 //      agrega exactamente:  http://127.0.0.1:8888/callback   y guarda.
-//   2. SPOTIFY_CLIENT_ID=xxx SPOTIFY_CLIENT_SECRET=yyy node tools/spotify-token.mjs
+//   2. npx vercel env pull .env.local   (trae las variables de Vercel; .env.local está en .gitignore)
+//      npm run spotify-token
 //   3. Abre el link que imprime, acepta, y copia el refresh token que sale en la terminal.
 //   4. Pégalo en Vercel → Settings → Environment Variables → SPOTIFY_REFRESH_TOKEN y redeploy.
 import http from 'node:http';
+import { existsSync, readFileSync } from 'node:fs';
+
+// También lee .env.local / .env (p. ej. tras `npx vercel env pull .env.local`).
+for (const file of ['.env.local', '.env']) {
+  if (!existsSync(file)) continue;
+  for (const line of readFileSync(file, 'utf8').split(/\r?\n/)) {
+    const m = line.match(/^\s*([A-Z0-9_]+)\s*=\s*"?([^"]*)"?\s*$/);
+    if (m && !process.env[m[1]]) process.env[m[1]] = m[2];
+  }
+}
 
 const { SPOTIFY_CLIENT_ID: id, SPOTIFY_CLIENT_SECRET: secret } = process.env;
 if (!id || !secret) {
