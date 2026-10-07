@@ -7,7 +7,6 @@ export function buildTicker(latestPostTitle?: string) {
   return [
     { icon: '▲', text: `LOC: ${D.identity.location.en.split(',')[0].toUpperCase()} 04°38'N 74°05'W / ${D.identity.timezone}` },
     ...(latestPostTitle ? [{ icon: '✎', text: `NUEVO EN EL BLOG: ${latestPostTitle.toUpperCase()}` }] : []),
-    { icon: '●', text: 'RODA / ACTIVO DESDE JUN 2025' },
     { icon: '▼', text: 'KIKI LATAM: +10.000 GUÍAS EN SEGUNDOS, ANTES HORAS' },
     { icon: '●', text: `STACK: ${topStack}` },
     { icon: '▲', text: 'VEGAREPARACIONES: SEO 100 · A11Y 96 · PERF 90' },

@@ -14,8 +14,8 @@ export const identity = {
   educationSub: { es: "2021–22 · 2025 – en curso", en: "2021–22 · 2025 – ongoing" },
   title: { es: "Desarrollador Full Stack", en: "Full Stack Developer" },
   tagline: {
-    es: "Desarrollo productos web de punta a punta: frontend, backend, automatización, datos y plataformas internas. Hoy en Roda, fintech de movilidad eléctrica.",
-    en: "I build end-to-end web products: frontend, backend, automation, data and internal platforms. Currently at Roda, an electric-mobility fintech.",
+    es: "Me gusta programar, resolver problemas y encontrar patrones, en el código y fuera de él. Full stack: frontend, backend, datos e IA.",
+    en: "I like programming, solving problems and finding patterns, in code and outside of it. Full stack: frontend, backend, data and AI.",
   },
   status: {
     es: "Disponible para incorporación inmediata",
@@ -48,13 +48,13 @@ export const highlights = [
 
 export const about = {
   es: [
-    "Soy desarrollador full stack. Programo desde 2021 y trabajo en la industria desde 2023; hoy en Roda.",
-    "Me gusta programar, resolver problemas y encontrar patrones, dentro y fuera del código. Por eso también tengo proyectos propios: un tutor de IA que vive en un repositorio, un sistema de soporte con LLMs y este blog.",
-    "En el trabajo diseño y llevo funcionalidades de punta a punta, y trabajo cerca de negocio: antes de escribir código busco entender el problema y propongo la forma más simple de resolverlo.",
+    "Programo desde 2021 y trabajo en la industria desde 2023, en fintech, logística y medios digitales.",
+    "Fuera del trabajo también tengo proyectos propios: un tutor de IA que vive en un repositorio, un sistema de soporte con LLMs y este blog.",
+    "Lo que más me importa al construir algo: entender primero el problema de negocio y encontrar la forma más simple de resolverlo.",
   ],
   en: [
-    "I'm a full stack developer. I've been coding since 2021 and working in the industry since 2023; currently at Roda.",
-    "I like programming, solving problems and finding patterns, in code and outside of it. That's why I also have my own projects: an AI tutor that lives in a repository, an LLM-powered support system and this blog.",
-    "At work I design and carry features end to end, and I work close to the business: before writing code I try to understand the problem and propose the simplest way to solve it.",
+    "I've been coding since 2021 and working in the industry since 2023, across fintech, logistics and digital media.",
+    "Outside of work I have my own projects too: an AI tutor that lives in a repository, an LLM-powered support system and this blog.",
+    "What matters most to me when building something: understanding the business problem first and finding the simplest way to solve it.",
   ],
 } as const;

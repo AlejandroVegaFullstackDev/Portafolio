@@ -10,14 +10,14 @@ export const experience = [
       es: [
         "Módulo de mayor volumen funcional de la plataforma administrativa interna: gestión de clientes y seguimiento de cartera.",
         "Portal de Clientes y módulo de logística y rastreo de flota, con la sincronización de dispositivos GPS contra la API del proveedor externo.",
-        "Worker de sincronización GPS: cambié las peticiones HTTP seriales por ejecución concurrente con ThreadPoolExecutor, sesiones con keep-alive y un lock distribuido en Redis que elimina ejecuciones duplicadas entre workers.",
+        "Worker de sincronización GPS: de peticiones HTTP seriales a ejecución concurrente con ThreadPoolExecutor, sesiones con keep-alive y un lock distribuido en Redis que elimina ejecuciones duplicadas entre workers.",
         "Módulo de recuperación de vehículos y créditos, de punta a punta, con dos interfaces administrativas.",
         "Cloud Run Job para monitoreo continuo de dispositivos GPS, backlog automatizado con Python y la API de Trello, y documentación de servicios en Notion segmentada por audiencia.",
       ],
       en: [
         "Largest functional module of the internal admin platform: customer management and portfolio follow-up.",
         "Customer Portal plus the logistics and fleet-tracking module, syncing GPS devices against the external provider's API.",
-        "GPS sync worker: I replaced serial HTTP requests with concurrent execution via ThreadPoolExecutor, keep-alive sessions and a distributed Redis lock that stops workers from duplicating a run.",
+        "GPS sync worker: from serial HTTP requests to concurrent execution via ThreadPoolExecutor, keep-alive sessions and a distributed Redis lock that stops workers from duplicating a run.",
         "End-to-end vehicle and credit recovery module, with two admin interfaces.",
         "Cloud Run Job for continuous GPS device monitoring, backlog automation with Python and the Trello API, and service documentation in Notion split by audience.",
       ],
@@ -50,15 +50,15 @@ export const experience = [
     note: { es: "Logística", en: "Logistics" },
     bullets: {
       es: [
-        "Automaticé la reprogramación de guías con un flujo asistido por IA que detectaba los casos elegibles, actualizaba las entregas y repartía reportes en Excel por Gmail.",
-        "Convertí la generación masiva de guías, que tomaba horas, en un proceso de segundos para más de 10.000 guías, con un stored procedure en PostgreSQL invocado desde NestJS.",
-        "Armé grafos de la arquitectura de microservicios para que el equipo entendiera dependencias y flujos entre servicios.",
+        "Reprogramación de guías automatizada con un flujo asistido por IA: detecta los casos elegibles, actualiza las entregas y reparte reportes en Excel por Gmail.",
+        "Generación masiva de guías: de horas a segundos para más de 10.000 guías, con un stored procedure en PostgreSQL invocado desde NestJS.",
+        "Grafos de la arquitectura de microservicios para que el equipo entendiera dependencias y flujos entre servicios.",
         "Funcionalidades end-to-end de la plataforma logística en React y NestJS, apoyo a la app móvil en Flutter y adopción de Scrum en el equipo de tecnología.",
       ],
       en: [
-        "Automated waybill rescheduling with an AI-assisted flow that spotted eligible cases, updated deliveries and sent Excel reports over Gmail.",
-        "Turned bulk waybill generation, which took hours, into a seconds-long process for 10,000+ waybills, using a PostgreSQL stored procedure called from NestJS.",
-        "Built graphs of the microservice architecture so the team could understand dependencies and flows between services.",
+        "Automated waybill rescheduling with an AI-assisted flow: it spots eligible cases, updates deliveries and sends Excel reports over Gmail.",
+        "Bulk waybill generation: from hours to seconds for 10,000+ waybills, with a PostgreSQL stored procedure called from NestJS.",
+        "Microservice architecture graphs so the team could understand dependencies and flows between services.",
         "End-to-end features for the logistics platform in React and NestJS, support for the Flutter mobile app and Scrum adoption across the tech team.",
       ],
     },
