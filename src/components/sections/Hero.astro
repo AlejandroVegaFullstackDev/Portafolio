@@ -22,8 +22,10 @@ import fondoImg from '../../assets/img/fondo.jpg';
       </p>
       <div class="hero-ctas mt-10 flex flex-wrap gap-4">
         <a href="#contact" class="cy-btn solid" data-magnetic><span class="lang-es">HABLEMOS ↗</span><span class="lang-en">LET'S TALK ↗</span></a>
-        <a href="#blog" class="cy-btn" data-magnetic><span class="lang-es">LEER EL BLOG</span><span class="lang-en">READ THE BLOG</span></a>
+        <a href="/alejandro-vega-cv-es.pdf" download class="cy-btn lang-es" data-magnetic data-track="cv_download" data-track-lang="es">DESCARGAR CV ↓</a>
+        <a href="/alejandro-vega-cv-en.pdf" download class="cy-btn lang-en" data-magnetic data-track="cv_download" data-track-lang="en">DOWNLOAD CV ↓</a>
       </div>
+      <a href="#blog" class="hero-blog"><span class="lang-es">→ o lee el blog</span><span class="lang-en">→ or read the blog</span></a>
       <div class="hero-stats mt-12 lg:mt-16 grid grid-cols-3 gap-2 sm:gap-6 max-w-xl">
         {D.highlights.map((h) => (
           <div class="hero-stat">
@@ -69,6 +71,8 @@ import fondoImg from '../../assets/img/fondo.jpg';
   .hero-name { font-size: clamp(3rem, 9vw, 9rem); letter-spacing: -0.06em; line-height: 0.82; transform-style: preserve-3d; perspective: 800px; }
   .hero-name :global(.hc) { display: inline-block; transform-style: preserve-3d; will-change: transform; }
   .hero-name :global(.reveal-wrap) { overflow: hidden; display: block; }
+  .hero-blog { display: inline-block; margin-top: 1rem; font-family: var(--font-mono); font-size: 0.78rem; letter-spacing: 0.1em; color: var(--ink-3); text-decoration: underline; text-underline-offset: 4px; text-decoration-color: var(--line-2); }
+  .hero-blog:hover, .hero-blog:focus-visible { color: var(--accent); text-decoration-color: var(--accent); }
   .hero-stat { border-top: 1px solid var(--line); padding-top: 14px; min-width: 0; }
   .hero-stat-num { font-size: clamp(1.3rem, 5.6vw, 2.4rem); line-height: 1; white-space: nowrap; font-variant-numeric: tabular-nums; }
   .hero-stat-label { font-family: var(--font-mono); font-size: 0.7rem; color: var(--ink-3); letter-spacing: 0.15em; text-transform: uppercase; margin-top: 6px; line-height: 1.25; }
