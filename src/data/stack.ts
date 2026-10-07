@@ -11,23 +11,16 @@ export const stack = {
   tools: ["Git", "GitHub", "GitLab", "Power Query / Power BI", "Selenium", "Scrum", "Kanban"],
 } as const;
 
-// Stack por nivel de uso: es lo primero que escanea un reclutador.
-export const stackTiers = [
-  {
-    key: 'daily',
-    label: { es: 'Uso a diario', en: 'Daily' },
-    items: ['TypeScript', 'Python', 'NestJS', 'React', 'PostgreSQL'],
-  },
-  {
-    key: 'prod',
-    label: { es: 'En producción', en: 'In production' },
-    items: ['FastAPI', 'Flask', 'Node.js', 'Redis', 'BigQuery', 'GCP (Cloud Run)', 'Docker', 'GitHub Actions', 'Next.js', 'Astro', 'Tailwind CSS'],
-  },
-  {
-    key: 'past',
-    label: { es: 'He trabajado con', en: 'Worked with' },
-    items: ['PHP', 'Laravel', 'Angular', 'MySQL', 'AWS', 'Selenium', 'Power BI'],
-  },
+// Stack por área (lo que escanea un reclutador). `daily` marca lo que uso a diario.
+export const daily = ['TypeScript', 'Python', 'NestJS', 'React', 'PostgreSQL'] as const;
+
+export const stackGroups = [
+  { key: 'frontend', icon: 'Monitor', label: { es: 'Frontend', en: 'Frontend' }, items: ['React', 'TypeScript', 'Next.js', 'Astro', 'Vite', 'Angular', 'Tailwind CSS'] },
+  { key: 'backend', icon: 'Server', label: { es: 'Backend', en: 'Backend' }, items: ['Python', 'NestJS', 'FastAPI', 'Flask', 'Node.js', 'PHP / Laravel', 'REST APIs', 'RabbitMQ'] },
+  { key: 'data', icon: 'Database', label: { es: 'Datos', en: 'Data' }, items: ['PostgreSQL', 'MySQL', 'BigQuery', 'Redis', 'TypeORM', 'GA4', 'Looker Studio'] },
+  { key: 'cloud', icon: 'Cloud', label: { es: 'Cloud y DevOps', en: 'Cloud & DevOps' }, items: ['GCP (Cloud Run)', 'AWS', 'Docker', 'Docker Compose', 'GitHub Actions', 'Vercel', 'Linux'] },
+  { key: 'ai', icon: 'Sparkles', label: { es: 'IA', en: 'AI' }, items: ['Claude API', 'OpenAI API', 'LLM structured output', 'AI coding agents', 'LLM automations'] },
+  { key: 'testing', icon: 'FlaskConical', label: { es: 'Testing y calidad', en: 'Testing & quality' }, items: ['pytest', 'Jest', 'Vitest', 'PHPUnit', 'E2E tests', 'CI'] },
 ] as const;
 
 // Sección del CV que no existía en el sitio.

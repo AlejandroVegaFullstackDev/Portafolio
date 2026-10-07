@@ -48,13 +48,13 @@ export const highlights = [
 
 export const about = {
   es: [
-    "Soy Desarrollador Full Stack. Programo desde 2021 (SENA) y trabajo en la industria desde 2023, construyendo APIs, automatizaciones y plataformas internas.",
-    "Diseño y lidero funcionalidades de punta a punta, desde la arquitectura hasta producción, y trabajo cerca de negocio: propongo alternativas cuando hay una forma más simple o barata de resolver el problema.",
-    "Me gusta resolver fricción operativa: procesos manuales, integraciones rotas, reportes lentos o sistemas que necesitan escalar sin perder claridad.",
+    "Soy desarrollador full stack. Programo desde 2021 y trabajo en la industria desde 2023; hoy en Roda.",
+    "Me gusta programar, resolver problemas y encontrar patrones, dentro y fuera del código. Por eso también tengo proyectos propios: un tutor de IA que vive en un repositorio, un sistema de soporte con LLMs y este blog.",
+    "En el trabajo diseño y llevo funcionalidades de punta a punta, y trabajo cerca de negocio: antes de escribir código busco entender el problema y propongo la forma más simple de resolverlo.",
   ],
   en: [
-    "Full Stack Developer. I've been coding since 2021 (SENA) and working in the industry since 2023, building APIs, automations and internal platforms.",
-    "I design and lead features end to end, from architecture to production, and I work close to the business: I propose alternatives when there is a simpler or cheaper way to solve the problem.",
-    "I like solving operational friction: manual processes, brittle integrations, slow reports or systems that need to scale without losing clarity.",
+    "I'm a full stack developer. I've been coding since 2021 and working in the industry since 2023; currently at Roda.",
+    "I like programming, solving problems and finding patterns, in code and outside of it. That's why I also have my own projects: an AI tutor that lives in a repository, an LLM-powered support system and this blog.",
+    "At work I design and carry features end to end, and I work close to the business: before writing code I try to understand the problem and propose the simplest way to solve it.",
   ],
 } as const;

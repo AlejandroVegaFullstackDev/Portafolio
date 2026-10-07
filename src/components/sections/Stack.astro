@@ -1,15 +1,19 @@
 ---
-// 02 · Stack, pensado para escanearse en segundos: tecnologías por nivel de uso
-// (a diario / en producción / he trabajado con), prácticas y automatización.
-// Datos: src/data/stack.ts.
+// 02 · Stack, pensado para escanearse en segundos: tecnologías por área, con lo que
+// uso a diario resaltado, más prácticas y automatización. Datos: src/data/stack.ts.
+// Íconos genéricos por área (lucide-static, licencia ISC).
+import { Cloud, Database, FlaskConical, Monitor, Server, Sparkles } from 'lucide-static';
 import SectionHeading from '../ui/SectionHeading.astro';
 import { portfolioData as D } from '../../data';
+
+const isDaily = (t: string) => (D.daily as readonly string[]).includes(t);
+const ICONS: Record<string, string> = { Cloud, Database, FlaskConical, Monitor, Server, Sparkles };
+const icon = (name: string) => ICONS[name] ?? '';
 
 const S = D.stack;
 const practices = [
   { es: 'arquitectura', en: 'architecture', items: S.architectures },
   { es: 'patrones', en: 'patterns', items: S.patterns },
-  { es: 'testing / ci', en: 'testing / ci', items: S.testing },
   { es: 'herramientas', en: 'tools', items: S.tools },
 ];
 ---
@@ -18,16 +22,22 @@ const practices = [
     <div class="head">
       <SectionHeading num="02" label={{ es: 'STACK', en: 'STACK' }} es={{ pre: 'Con qué ', accent: 'trabajo', post: '.' }} en={{ pre: 'What I ', accent: 'work', post: ' with.' }} />
       <p class="font-mono text-sm text-[var(--ink-3)] max-w-sm">
-        <span class="lang-es">Agrupado por cuánto lo uso hoy.</span>
-        <span class="lang-en">Grouped by how much I use it today.</span>
+        <span class="legend" aria-hidden="true"></span>
+        <span class="lang-es">Resaltado: lo que uso a diario.</span>
+        <span class="lang-en">Highlighted: what I use daily.</span>
       </p>
     </div>
 
-    <div class="tiers">
-      {D.stackTiers.map((t) => (
-        <div class:list={['tier', `tier--${t.key}`]} data-stagger-item>
-          <h3 class="tier-label"><span class="lang-es">{t.label.es}</span><span class="lang-en">{t.label.en}</span></h3>
-          <ul class="chips">{t.items.map((i) => <li>{i}</li>)}</ul>
+    <div class="groups">
+      {D.stackGroups.map((g) => (
+        <div class="group" data-stagger-item>
+          <h3 class="group-label">
+            <span class="group-icon" aria-hidden="true" set:html={icon(g.icon)}></span>
+            <span class="lang-es">{g.label.es}</span><span class="lang-en">{g.label.en}</span>
+          </h3>
+          <ul class="chips">
+            {g.items.map((i) => <li class:list={{ daily: isDaily(i) }}>{i}</li>)}
+          </ul>
         </div>
       ))}
     </div>
@@ -55,19 +65,17 @@ const practices = [
 <style>
   .head { display: flex; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; gap: 1.5rem; margin-bottom: 2.5rem; }
 
-  .tiers { border-top: 1px solid var(--line); }
-  .tier { display: grid; grid-template-columns: 11rem minmax(0, 1fr); gap: 1.5rem; align-items: baseline; padding: 1.25rem 0; border-bottom: 1px solid var(--line); }
-  .tier-label { margin: 0; font-family: var(--font-mono); font-size: 0.72rem; font-weight: 500; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-3); }
-  .chips { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.5rem 0.6rem; }
-  .chips li { font-family: var(--font-mono); font-size: 0.82rem; color: var(--ink-2); border: 1px solid var(--line-2); padding: 4px 10px; }
+  .legend { display: inline-block; width: 10px; height: 10px; border: 1px solid var(--accent); background: color-mix(in srgb, var(--accent) 25%, transparent); margin-right: 0.4rem; vertical-align: -1px; }
 
-  /* El nivel diario es lo que más pesa: más grande y con acento. */
-  .tier--daily .tier-label { color: var(--accent); }
-  .tier--daily .chips li {
-    font-family: var(--font-display); font-weight: 700; font-size: clamp(1.15rem, 2.2vw, 1.6rem); letter-spacing: -0.02em;
-    color: var(--ink); border-color: var(--accent); padding: 6px 14px;
-  }
-  .tier--past .chips li { color: var(--ink-3); border-style: dashed; }
+  .groups { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 2.5rem; border-top: 1px solid var(--line); }
+  .group { display: grid; grid-template-columns: 10.5rem minmax(0, 1fr); gap: 1.25rem; align-items: start; padding: 1.25rem 0; border-bottom: 1px solid var(--line); }
+  .group-label { margin: 0; display: flex; align-items: center; gap: 0.6rem; font-family: var(--font-mono); font-size: 0.72rem; font-weight: 500; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-2); padding-top: 0.3rem; }
+  .group-icon { display: inline-flex; color: var(--accent); flex-shrink: 0; }
+  .group-icon :global(svg) { width: 18px; height: 18px; stroke-width: 1.75; }
+  .chips { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.45rem; }
+  .chips li { font-family: var(--font-mono); font-size: 0.8rem; color: var(--ink-2); border: 1px solid var(--line-2); padding: 4px 10px; }
+  /* Lo de uso diario pesa más: borde y fondo de acento. */
+  .chips li.daily { color: var(--ink); font-weight: 600; border-color: var(--accent); background: color-mix(in srgb, var(--accent) 14%, transparent); }
 
   .practices { margin: 2.5rem 0 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 2.5rem; }
   .practice { display: grid; grid-template-columns: 8.5rem minmax(0, 1fr); gap: 1rem; padding: 0.7rem 0; border-bottom: 1px solid var(--line); }
@@ -79,12 +87,13 @@ const practices = [
   .auto-list li { color: var(--ink-2); line-height: 1.6; font-size: 0.95rem; }
 
   @media (max-width: 1023px) {
+    .groups { grid-template-columns: 1fr; }
     .practices { grid-template-columns: 1fr; }
     .auto-list { grid-template-columns: 1fr; gap: 1rem; }
   }
   @media (max-width: 767px) {
     .head { margin-bottom: 1.5rem; }
-    .tier { grid-template-columns: 1fr; gap: 0.7rem; padding: 1rem 0; }
+    .group { grid-template-columns: 1fr; gap: 0.7rem; padding: 1rem 0; }
     .practice { grid-template-columns: 1fr; gap: 0.2rem; }
     .auto-box { padding: 1.1rem; margin-top: 2rem; }
   }

@@ -34,9 +34,14 @@ describe('datos del portafolio', () => {
     check(cv, 'cv');
   });
 
-  it('el stack por niveles no repite tecnologías entre niveles', () => {
-    const items = D.stackTiers.flatMap((t) => t.items);
+  it('el stack por áreas no repite tecnologías entre áreas', () => {
+    const items = D.stackGroups.flatMap((g) => g.items);
     expect(new Set(items).size).toBe(items.length);
+  });
+
+  it('todo lo marcado como uso diario aparece en alguna área', () => {
+    const items = new Set<string>(D.stackGroups.flatMap((g) => g.items));
+    D.daily.forEach((t) => expect(items, t).toContain(t));
   });
 });
 
