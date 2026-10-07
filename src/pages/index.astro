@@ -358,27 +358,34 @@ const tickerItems = [
   </div>
 </section>
 
-<!-- BLOG -->
-<section id="blog" class="relative px-6 lg:px-20 py-20 lg:py-28 border-y border-[var(--line)] overflow-hidden">
-  <div class="max-w-[1480px] mx-auto">
-    <div class="blog-head grid lg:grid-cols-12 gap-8 lg:gap-10 items-center mb-10 lg:mb-14">
-      <div class="lg:col-span-7">
-        <div class="cy-eyebrow mb-4" data-scramble>
-          <span class="lang-es">// 04 _ BLOG</span>
-          <span class="lang-en">// 04 _ BLOG</span>
-        </div>
-        <h2 class="cy-headline text-5xl lg:text-7xl" data-reveal="up">
-          <span class="lang-es">Lo que <span class="text-[var(--accent)]">escribo</span>.</span>
-          <span class="lang-en">What I <span class="text-[var(--accent)]">write</span>.</span>
-        </h2>
-        <p class="font-mono text-sm text-[var(--ink-3)] max-w-sm mt-6">
-          <span class="lang-es">Código, IA, aprendizaje y lo que me esté dando vueltas. Sin algoritmos de por medio.</span>
-          <span class="lang-en">Code, AI, learning and whatever is on my mind. Posts are in Spanish.</span>
-        </p>
-      </div>
+<!-- BLOG: scroll horizontal pinneado (bajas → las diapositivas pasan a la derecha) -->
+<section id="blog" class="hs border-y border-[var(--line)]" aria-label="Blog">
+  <div class="hs-viewport" id="hsViewport">
+    <div class="hs-track" id="hsTrack">
 
-      {latestPosts[0] && (
-        <div class="lg:col-span-5">
+      <!-- 01 · Intro -->
+      <div class="hs-slide hs-intro" data-hs-slide>
+        <div class="hs-inner">
+          <div class="hs-intro-copy">
+            <div class="cy-eyebrow mb-4" data-scramble>
+              <span class="lang-es">// 04 _ BLOG</span>
+              <span class="lang-en">// 04 _ BLOG</span>
+            </div>
+            <h2 class="cy-headline text-5xl lg:text-7xl">
+              <span class="lang-es">Lo que <span class="text-[var(--accent)]">escribo</span>.</span>
+              <span class="lang-en">What I <span class="text-[var(--accent)]">write</span>.</span>
+            </h2>
+            <p class="font-mono text-sm text-[var(--ink-3)] max-w-sm mt-6">
+              <span class="lang-es">Código, IA, aprendizaje y lo que me esté dando vueltas. Sin algoritmos de por medio.</span>
+              <span class="lang-en">Code, AI, learning and whatever is on my mind. Posts are in Spanish.</span>
+            </p>
+            <p class="hs-hint" aria-hidden="true">
+              <span class="lang-es">sigue bajando</span><span class="lang-en">keep scrolling</span>
+              <span class="hs-hint-arrow">→</span>
+            </p>
+          </div>
+          {latestPosts[0] && (
+        <div class="hs-intro-stack">
           <a href={`/blog/${latestPosts[0].slug}`} class="paper-stage" id="paperStage" aria-label={`Leer el último post: ${latestPosts[0].data.title}`} data-cursor>
             <span class="paper-float" id="paperFloat">
               <span class="paper-rig" id="paperRig">
@@ -406,36 +413,57 @@ const tickerItems = [
           </a>
         </div>
       )}
+        </div>
+      </div>
+
+      <!-- Posts -->
+      {latestPosts.map((post, i) => (
+        <a href={`/blog/${post.slug}`} class="hs-slide hs-post" data-hs-slide data-cursor>
+          <span class="hs-inner">
+            <span class="hs-media" aria-hidden="true">
+              {post.data.cover
+                ? <img src={post.data.cover} alt="" loading="lazy" decoding="async" />
+                : <span class="hs-bignum">{String(allPosts.length - i).padStart(2, '0')}</span>}
+            </span>
+            <span class="hs-copy">
+              <span class="hs-meta">
+                <time datetime={post.data.date.toISOString()}>{fmtPostDate(post.data.date)}</time>
+                <span aria-hidden="true">·</span>
+                <span>{readingTime(post.body)} min</span>
+                {i === 0 && <span class="hs-new"><span class="lang-es">nuevo</span><span class="lang-en">new</span></span>}
+              </span>
+              <span class="hs-title">{post.data.title}</span>
+              {post.data.description && <span class="hs-desc">{post.data.description}</span>}
+              {post.data.tags.length > 0 && (
+                <span class="hs-tags">{post.data.tags.slice(0, 3).map((t) => <span class="cy-tag">{t}</span>)}</span>
+              )}
+              <span class="hs-cta"><span class="lang-es">Leer post</span><span class="lang-en">Read post</span> <span aria-hidden="true">→</span></span>
+            </span>
+          </span>
+        </a>
+      ))}
+
+      <!-- Final -->
+      <div class="hs-slide hs-end" data-hs-slide>
+        <div class="hs-inner">
+          <p class="hs-end-kicker font-mono"><span class="lang-es">fin del carrete</span><span class="lang-en">end of the reel</span></p>
+          <p class="hs-end-title">
+            <span class="lang-es">¿Quieres leer <span class="text-[var(--accent)]">más</span>?</span>
+            <span class="lang-en">Want to read <span class="text-[var(--accent)]">more</span>?</span>
+          </p>
+          <a href="/blog" class="cy-btn solid">
+            <span class="lang-es">TODOS LOS POSTS ({allPosts.length}) ↗</span>
+            <span class="lang-en">ALL POSTS ({allPosts.length}) ↗</span>
+          </a>
+        </div>
+      </div>
+
     </div>
 
-    <ol class="post-list">
-      {latestPosts.map((post, i) => (
-        <li>
-          <a href={`/blog/${post.slug}`} class="post-row" data-cursor>
-            <span class="post-meta">
-              <time datetime={post.data.date.toISOString()}>{fmtPostDate(post.data.date)}</time>
-              <span aria-hidden="true">·</span>
-              <span>{readingTime(post.body)} min</span>
-              {i === 0 && <span class="post-new"><span class="lang-es">nuevo</span><span class="lang-en">new</span></span>}
-            </span>
-            <span class="post-body">
-              <span class="post-title">{post.data.title}</span>
-              {post.data.description && <span class="post-desc">{post.data.description}</span>}
-              {post.data.tags.length > 0 && (
-                <span class="post-tags">{post.data.tags.slice(0, 3).map((t) => <span class="cy-tag">{t}</span>)}</span>
-              )}
-            </span>
-            <span class="post-arrow" aria-hidden="true">→</span>
-          </a>
-        </li>
-      ))}
-    </ol>
-
-    <div class="mt-10 flex justify-center sm:justify-start">
-      <a href="/blog" class="cy-btn">
-        <span class="lang-es">TODOS LOS POSTS ({allPosts.length}) ↗</span>
-        <span class="lang-en">ALL POSTS ({allPosts.length}) ↗</span>
-      </a>
+    <!-- HUD -->
+    <div class="hs-hud" aria-hidden="true">
+      <span class="hs-count"><span id="hsIndex">01</span> / {String(latestPosts.length + 2).padStart(2, '0')}</span>
+      <span class="hs-bar"><span class="hs-bar-fill" id="hsBar"></span></span>
     </div>
   </div>
 </section>
@@ -567,62 +595,148 @@ const tickerItems = [
     background: rgba(243,241,236,0.7) !important;
   }
 
-  /* ─── Blog en el home: filas editoriales, no tarjetas ─── */
-  .post-list { list-style: none; margin: 0; padding: 0; border-bottom: 1px solid var(--line); }
-  .post-row {
-    display: grid;
-    grid-template-columns: 11rem minmax(0, 1fr) auto;
-    gap: 1rem 2.5rem;
-    align-items: start;
-    padding: 1.75rem 0.25rem;
-    border-top: 1px solid var(--line);
-    color: inherit;
-    text-decoration: none;
-    position: relative;
-    transition: background-color 0.35s cubic-bezier(.16,1,.3,1), padding 0.35s cubic-bezier(.16,1,.3,1);
+  /* ─── Blog: scroll horizontal pinneado ───
+     Sin JS (o con reduced-motion) es un carrusel con swipe nativo + scroll-snap.
+     Con JS, GSAP pinea la sección y traduce el track: bajas → avanza a la derecha. */
+  .hs { position: relative; background: var(--bg); }
+  .hs-viewport {
+    position: relative; height: 100svh; min-height: 560px;
+    overflow-x: auto; overflow-y: hidden;
+    scroll-snap-type: x mandatory; overscroll-behavior-x: contain;
+    perspective: 1400px; perspective-origin: 50% 50%;
+    scrollbar-width: none;
   }
-  .post-row:hover { background: var(--panel); padding-left: 1rem; padding-right: 1rem; }
-  .post-row:focus-visible { outline: 1px solid var(--accent); outline-offset: -1px; }
-  .post-meta {
-    display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem;
-    font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.08em;
-    color: var(--ink-3); text-transform: uppercase; padding-top: 0.55rem;
+  .hs-viewport::-webkit-scrollbar { display: none; }
+  .hs.is-pinned .hs-viewport { overflow: hidden; scroll-snap-type: none; }
+  .hs-track {
+    display: flex; align-items: center; gap: 4vw;
+    height: 100%; width: max-content;
+    padding: 64px 9vw 72px 0;
+    transform-style: preserve-3d; will-change: transform;
+  }
+  .hs-slide {
+    flex: 0 0 auto; scroll-snap-align: center;
+    width: min(78vw, 1080px); height: min(70svh, 640px);
+    transform-style: preserve-3d;
+    color: inherit; text-decoration: none; display: block;
+  }
+  .hs-inner {
+    position: relative; width: 100%; height: 100%;
+    transform-style: preserve-3d; will-change: transform, opacity;
+  }
+
+  /* Intro */
+  .hs-intro { width: 100vw; height: 100%; }
+  .hs-intro .hs-inner {
+    display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    align-items: center; gap: 2.5rem;
+    padding: 0 5rem; max-width: 1480px; margin: 0 auto;
+  }
+  .hs-hint {
+    margin-top: 2.5rem; display: inline-flex; align-items: center; gap: 0.75rem;
+    font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--accent);
+  }
+  .hs-hint-arrow { display: inline-block; animation: hsNudge 1.6s cubic-bezier(.16,1,.3,1) infinite; }
+  @keyframes hsNudge { 0%,100% { transform: translateX(0); } 50% { transform: translateX(10px); } }
+
+  /* Post slide */
+  .hs-post .hs-inner {
+    display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+    background: linear-gradient(150deg, var(--panel), var(--bg-2));
+    border: 1px solid var(--line-2);
+    box-shadow: 0 40px 80px -40px rgba(0,0,0,0.8);
+    overflow: hidden;
+    transition: border-color 0.3s;
+  }
+  .hs-post:hover .hs-inner, .hs-post:focus-visible .hs-inner { border-color: var(--accent); }
+  .hs-post:focus-visible { outline: none; }
+  .hs-media {
+    position: relative; display: flex; align-items: center; justify-content: center;
+    overflow: hidden; border-right: 1px solid var(--line); background: var(--bg-2);
+  }
+  .hs-media img {
+    width: 100%; height: 100%; object-fit: cover;
+    filter: saturate(0.85) contrast(1.05);
+    transform: scale(1.12); will-change: transform;
+  }
+  .hs-bignum {
+    font-family: var(--font-display); font-weight: 700; line-height: 0.8;
+    font-size: clamp(8rem, 22vw, 18rem); letter-spacing: -0.06em;
+    color: transparent; -webkit-text-stroke: 1px var(--accent);
     font-variant-numeric: tabular-nums;
   }
-  .post-new {
-    color: var(--accent); border: 1px solid var(--accent);
-    padding: 1px 6px; margin-left: 0.25rem; letter-spacing: 0.14em;
+  .hs-copy {
+    display: flex; flex-direction: column; justify-content: center; gap: 1.1rem;
+    padding: clamp(1.5rem, 4vw, 3.5rem); min-width: 0;
   }
-  .post-body { display: flex; flex-direction: column; gap: 0.6rem; min-width: 0; }
-  .post-title {
+  .hs-meta {
+    display: flex; flex-wrap: wrap; align-items: center; gap: 0.45rem;
+    font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--ink-3); font-variant-numeric: tabular-nums;
+  }
+  .hs-new { color: var(--accent); border: 1px solid var(--accent); padding: 1px 6px; letter-spacing: 0.14em; }
+  .hs-title {
     font-family: var(--font-display); font-weight: 700;
-    font-size: clamp(1.5rem, 3vw, 2.4rem); line-height: 1.02; letter-spacing: -0.03em;
-    text-wrap: balance; transition: color 0.25s;
+    font-size: clamp(1.9rem, 4.2vw, 3.8rem); line-height: 0.98; letter-spacing: -0.035em;
+    color: var(--ink); text-wrap: balance;
   }
-  .post-row:hover .post-title { color: var(--accent); }
-  .post-desc { color: var(--ink-2); font-size: 1rem; line-height: 1.6; max-width: 65ch; }
-  .post-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 0.25rem; }
-  .post-arrow {
-    font-family: var(--font-mono); font-size: 1.4rem; color: var(--accent);
-    padding-top: 0.4rem; transition: transform 0.35s cubic-bezier(.16,1,.3,1);
+  .hs-desc { color: var(--ink-2); font-size: 1.02rem; line-height: 1.6; max-width: 46ch; }
+  .hs-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .hs-cta {
+    margin-top: 0.5rem; font-family: var(--font-mono); font-size: 0.78rem;
+    letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent);
   }
-  .post-row:hover .post-arrow { transform: translateX(6px); }
 
-  @media (max-width: 767px) {
-    .post-row { grid-template-columns: minmax(0, 1fr) auto; gap: 0.6rem 1rem; padding: 1.4rem 0; }
-    .post-row:hover { padding-left: 0; padding-right: 0; background: transparent; }
-    .post-meta { grid-column: 1 / -1; padding-top: 0; }
-    .post-desc { font-size: 0.95rem; }
+  /* Final */
+  .hs-end { width: min(70vw, 900px); }
+  .hs-end .hs-inner {
+    display: flex; flex-direction: column; justify-content: center; align-items: flex-start; gap: 1.75rem;
+    padding: 0 1rem;
   }
-  @media (prefers-reduced-motion: reduce) {
-    .post-row, .post-arrow, .post-title { transition: none; }
+  .hs-end-kicker { font-size: 0.74rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink-3); }
+  .hs-end-title {
+    font-family: var(--font-display); font-weight: 700;
+    font-size: clamp(2.6rem, 7vw, 6rem); line-height: 0.92; letter-spacing: -0.04em;
+  }
+
+  /* HUD */
+  .hs-hud {
+    position: absolute; left: 50%; bottom: 26px; transform: translateX(-50%);
+    width: min(84vw, 520px);
+    display: flex; align-items: center; gap: 14px;
+    font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.14em;
+    color: var(--ink-3); font-variant-numeric: tabular-nums; pointer-events: none;
+  }
+  .hs-count { flex-shrink: 0; }
+  .hs-count #hsIndex { color: var(--accent); }
+  .hs-bar { flex: 1; height: 1px; background: var(--line-2); position: relative; overflow: hidden; }
+  .hs-bar-fill { position: absolute; inset: 0; background: var(--accent); transform: scaleX(0); transform-origin: left; }
+
+  @media (max-width: 1023px) {
+    .hs-intro .hs-inner { grid-template-columns: 1fr; padding: 0 1.5rem; gap: 1rem; align-content: center; }
+    .hs-intro .cy-headline { font-size: clamp(2.4rem, 11vw, 4rem) !important; margin-bottom: 0 !important; }
+    .hs-intro .hs-hint { margin-top: 1rem; }
+    .hs-slide { width: 84vw; height: min(72svh, 620px); }
+    .hs-intro { width: 100vw; height: 100%; }
+    .hs-post .hs-inner { grid-template-columns: 1fr; grid-template-rows: 38% 1fr; }
+    .hs-media { border-right: 0; border-bottom: 1px solid var(--line); }
+    .hs-copy { justify-content: flex-start; gap: 0.75rem; padding: 1.25rem; }
+    .hs-desc { font-size: 0.92rem; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+    .hs-bignum { font-size: 7rem; }
+    .hs-end { width: 84vw; }
+  }
+  @media (max-width: 1023px) {
+    .hs-track { padding: 56px 8vw 64px 0; }
+    .hs-intro .paper-stage { --pw: 160px; --ph: 210px; height: calc(var(--ph) + 50px); }
+  }
+  @media (max-width: 1023px) and (max-height: 720px) {
+    .hs-intro .paper-stage { --pw: 132px; --ph: 172px; }
+    .hs-intro .paper-title { font-size: 0.92rem; }
+    .hs-intro-copy > p.font-mono { display: none; }
   }
 
   /* ─── Pila de páginas 3D (CSS 3D + GSAP) ─── */
-  .post-list { perspective: 1400px; }
-  .post-list li { transform-style: preserve-3d; }
-  .post-row { transform-style: preserve-3d; will-change: transform; }
-
   .paper-stage {
     --pw: 230px; --ph: 300px;
     position: relative; display: block;
@@ -1493,7 +1607,7 @@ function initBlog3D() {
 
       // El scroll levanta la pila y abre las hojas (scrub = ligado al dedo/rueda).
       const tl = gsap.timeline({
-        scrollTrigger: { trigger: stage, start: 'top 90%', end: 'center 45%', scrub: 0.9 },
+        scrollTrigger: { trigger: '#blog', start: 'top 85%', end: 'top top', scrub: 0.9 },
         defaults: { ease: 'none' },
       });
       tl.to(rig, fanned.rig, 0);
@@ -1531,34 +1645,116 @@ function initBlog3D() {
 
   if (reduced) return;
 
-  // Filas de posts (home): entran volteándose como hojas.
-  const rows = gsap.utils.toArray<HTMLElement>('#blog .post-row');
-  if (rows.length) {
-    gsap.set(rows, { rotationX: -78, y: 30, opacity: 0, transformOrigin: '50% 0%' });
-    ScrollTrigger.batch(rows, {
-      start: 'top 92%',
-      once: true,
-      onEnter: (batch) => gsap.to(batch, { rotationX: 0, y: 0, opacity: 1, duration: 1.1, stagger: 0.12, ease: 'expo.out' }),
-    });
+  // ── Scroll horizontal pinneado ────────────────────────────────────────────
+  // Bajas → la sección se queda fija y el track avanza a la derecha.
+  // Cada diapositiva hace coverflow 3D: entra girada desde el fondo, se planta
+  // de frente en el centro y sale girando hacia el otro lado.
+  const section = document.getElementById('blog');
+  const viewport = document.getElementById('hsViewport');
+  const track = document.getElementById('hsTrack');
+  const bar = document.getElementById('hsBar');
+  const idx = document.getElementById('hsIndex');
+  const slides = gsap.utils.toArray<HTMLElement>('#hsTrack [data-hs-slide]');
+  if (!section || !viewport || !track || slides.length < 2) return;
 
-    // Tilt 3D al pasar el cursor; el título se despega del fondo.
-    if (finePointer) {
-      rows.forEach((row) => {
-        const title = row.querySelector<HTMLElement>('[class*="post-title"]');
-        row.addEventListener('pointermove', (e) => {
-          const r = row.getBoundingClientRect();
-          const nx = (e.clientX - r.left) / r.width - 0.5;
-          const ny = (e.clientY - r.top) / r.height - 0.5;
-          gsap.to(row, { rotationY: nx * 6, rotationX: -ny * 8, duration: 0.5, ease: 'power3.out', overwrite: 'auto' });
-          if (title) gsap.to(title, { z: 36, x: nx * 10, duration: 0.5, ease: 'power3.out', overwrite: 'auto' });
-        });
-        row.addEventListener('pointerleave', () => {
-          gsap.to(row, { rotationY: 0, rotationX: 0, duration: 0.9, ease: 'elastic.out(1,0.45)', overwrite: 'auto' });
-          if (title) gsap.to(title, { z: 0, x: 0, duration: 0.6, ease: 'expo.out', overwrite: 'auto' });
-        });
+  ScrollTrigger.config({ ignoreMobileResize: true });
+  section.classList.add('is-pinned');
+  viewport.scrollLeft = 0;
+
+  const distance = () => Math.max(0, track.scrollWidth - viewport.clientWidth);
+  const pad = (n: number) => String(n).padStart(2, '0');
+  // El blur en pantallas táctiles cuesta FPS: solo en desktop.
+  const soft = (px: number) => (finePointer ? { filter: `blur(${px}px)` } : {});
+
+  const scrollTween = gsap.to(track, {
+    x: () => -distance(),
+    ease: 'none',
+    scrollTrigger: {
+      trigger: section,
+      start: 'top top',
+      end: () => '+=' + distance(),
+      pin: true,
+      scrub: 1,
+      anticipatePin: 1,
+      invalidateOnRefresh: true,
+      refreshPriority: 1,
+      onUpdate: (self) => {
+        if (bar) gsap.set(bar, { scaleX: self.progress });
+        if (idx) idx.textContent = pad(Math.min(slides.length, Math.round(self.progress * (slides.length - 1)) + 1));
+      },
+    },
+  });
+
+  const along = (slide: HTMLElement, start: string, end: string) => ({
+    trigger: slide, containerAnimation: scrollTween, start, end, scrub: true,
+  });
+
+  slides.forEach((slide, i) => {
+    const inner = slide.querySelector<HTMLElement>('.hs-inner');
+    if (!inner) return;
+    const isLast = i === slides.length - 1;
+
+    if (i === 0) {
+      // Intro: se hunde en profundidad mientras entra el primer post.
+      gsap.to(inner, {
+        rotationY: -32, z: -340, opacity: 0.1, ...soft(4), ease: 'none', transformOrigin: '0% 50%',
+        scrollTrigger: along(slide, 'left left', 'right left'),
+      });
+      return;
+    }
+
+    // Entrada
+    gsap.fromTo(inner,
+      { rotationY: 46, z: -380, opacity: 0.15, ...soft(6), transformOrigin: '50% 50%' },
+      { rotationY: 0, z: 0, opacity: 1, ...soft(0), ease: 'none',
+        scrollTrigger: along(slide, 'left right', isLast ? 'right 95%' : 'center center') });
+
+    // Salida
+    if (!isLast) {
+      gsap.to(inner, {
+        rotationY: -46, z: -380, opacity: 0.15, ...soft(6), ease: 'none', immediateRender: false,
+        scrollTrigger: along(slide, 'center center', 'right left'),
       });
     }
-  }
+
+    // Parallax interno: la portada se desliza más lento que la tarjeta.
+    const media = slide.querySelector<HTMLElement>('.hs-media img, .hs-bignum');
+    if (media) {
+      gsap.fromTo(media, { xPercent: -9 }, { xPercent: 9, ease: 'none', scrollTrigger: along(slide, 'left right', 'right left') });
+    }
+
+    // El texto llega un poco después que la tarjeta (profundidad por capas).
+    const copy = slide.querySelectorAll<HTMLElement>('.hs-meta, .hs-title, .hs-desc, .hs-tags, .hs-cta, .hs-end-kicker, .hs-end-title, .hs-end .cy-btn');
+    if (copy.length) {
+      gsap.fromTo(copy, { x: 80, opacity: 0 }, {
+        x: 0, opacity: 1, stagger: 0.08, ease: 'none',
+        scrollTrigger: along(slide, 'left 85%', isLast ? 'right 95%' : 'center 55%'),
+      });
+    }
+
+    // Desktop: tilt sobre la diapositiva (no choca con el scrub del inner).
+    if (finePointer && slide.classList.contains('hs-post')) {
+      slide.addEventListener('pointermove', (e) => {
+        const r = slide.getBoundingClientRect();
+        const nx = (e.clientX - r.left) / r.width - 0.5;
+        const ny = (e.clientY - r.top) / r.height - 0.5;
+        gsap.to(slide, { rotationY: nx * 7, rotationX: -ny * 6, duration: 0.5, ease: 'power3.out', overwrite: 'auto' });
+      });
+      slide.addEventListener('pointerleave', () => {
+        gsap.to(slide, { rotationY: 0, rotationX: 0, duration: 0.9, ease: 'elastic.out(1,0.45)', overwrite: 'auto' });
+      });
+    }
+  });
+
+  // Teclado: si el foco cae en una diapositiva, se lleva el scroll hasta ella.
+  slides.forEach((slide, i) => {
+    slide.addEventListener('focusin', () => {
+      const st = scrollTween.scrollTrigger;
+      if (!st) return;
+      const y = st.start + (st.end - st.start) * (i / (slides.length - 1));
+      window.scrollTo({ top: y, behavior: 'smooth' });
+    });
+  });
 }
 
 // ─── Main ─────────────────────────────────────────────────────────────────────

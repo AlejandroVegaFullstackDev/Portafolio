@@ -582,7 +582,7 @@ img, pre, canvas, iframe { max-width: 100%; }
 /* ─── MOBILE REDESIGN (< 768px) ──────────────────────────────────────────── */
 @media (max-width: 767px) {
   /* 1. Section padding */
-  #about, #stack, #projects, #blog, #services, #exp, #contact {
+  #about, #stack, #projects, #services, #exp, #contact {
     padding-top: 3.5rem !important;
     padding-bottom: 3.5rem !important;
   }
