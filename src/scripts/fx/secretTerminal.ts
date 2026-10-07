@@ -35,7 +35,7 @@ export function initSecretTerminal() {
   };
 
   const commands: Record<string, (args: string[]) => void> = {
-    help: () => print('comandos: <b>whoami</b> · <b>stack</b> · <b>projects</b> · <b>open &lt;n&gt;</b> · <b>blog</b> · <b>contact</b> · <b>hire</b> · <b>clear</b> · <b>exit</b>'),
+    help: () => print('comandos: <b>whoami</b> · <b>stack</b> · <b>projects</b> · <b>open &lt;n&gt;</b> · <b>blog</b> · <b>contact</b> · <b>hire</b> · <b>snake</b> · <b>clear</b> · <b>exit</b>'),
     whoami: () => print(`${esc(data.name)} — ${esc(data.title[getLang()])}`),
     stack: () => print(esc(data.stack.join(' · '))),
     projects: () => data.projects.forEach((p) => print(`[${p.n}] ${esc(p.name[getLang()])}`)),
@@ -55,6 +55,7 @@ export function initSecretTerminal() {
       print('buena decisión. escríbeme por linkedin y hablamos 🤝', 'st-dim');
     },
     sudo: (args) => (args.length ? run(args.join(' ')) : print('sudo: ya eres root aquí 😎', 'st-dim')),
+    snake: () => { print('cargando playlist…', 'st-dim'); close(); document.getElementById('snake')?.scrollIntoView({ behavior: 'smooth' }); },
     clear: () => { out.innerHTML = ''; },
     exit: () => close(),
     'rm': () => print('rm: buen intento. este portafolio tiene backups 🙃', 'st-err'),

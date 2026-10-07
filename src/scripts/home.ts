@@ -26,6 +26,7 @@ import { initNowBand } from './sections/nowBand';
 import { initPaperStack } from './sections/blog';
 import { initExperience } from './sections/experience';
 import { initContact } from './sections/contact';
+import { initPlaylistSnake } from './game/snake';
 
 gsap.registerPlugin(ScrollTrigger);
 ScrollTrigger.config({ ignoreMobileResize: true });
@@ -49,6 +50,7 @@ async function start() {
   initPaperStack();
   coverflow('blog');
   initExperience();
+  initPlaylistSnake();
   initContact();
 
   // Efectos transversales (leen atributos data-* en todo el documento).

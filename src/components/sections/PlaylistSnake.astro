@@ -1,0 +1,131 @@
+---
+// 06 · "Cómete mi playlist": Snake donde la comida son las carátulas de lo último que
+// escuché en Spotify. Lógica: scripts/game/snake.ts (+ snakeEngine.ts, spotifyEmbed.ts).
+import SectionHeading from '../ui/SectionHeading.astro';
+const dirs = [
+  { d: 'up', label: '↑', es: 'arriba', en: 'up' },
+  { d: 'left', label: '←', es: 'izquierda', en: 'left' },
+  { d: 'down', label: '↓', es: 'abajo', en: 'down' },
+  { d: 'right', label: '→', es: 'derecha', en: 'right' },
+];
+---
+<section id="snake" class="relative px-6 lg:px-20 py-20 lg:py-28 overflow-hidden" data-wipe>
+  <div class="max-w-[1480px] mx-auto">
+    <div class="head">
+      <SectionHeading num="06" label={{ es: 'RECESO', en: 'BREAK' }} es={{ pre: 'Cómete mi ', accent: 'playlist', post: '.' }} en={{ pre: 'Eat my ', accent: 'playlist', post: '.' }} />
+      <p class="font-mono text-sm text-[var(--ink-3)] max-w-md">
+        <span class="lang-es">Cada carátula es una canción que escuché hace poco en Spotify. Cómetelas y se arman en la serpiente.</span>
+        <span class="lang-en">Each cover is a song I listened to recently on Spotify. Eat them and they become the snake.</span>
+      </p>
+    </div>
+
+    <div class="game">
+      <div class="board-card">
+        <div class="board">
+          <canvas data-snake-canvas tabindex="0" aria-label="Juego Snake: usa las flechas, WASD o desliza"></canvas>
+          <div class="overlay" data-snake-overlay>
+            <p class="ov-title" data-snake-overlay-title
+              data-over-es="Te comiste {n} canciones" data-over-en="You ate {n} songs"
+              data-pause-es="En pausa" data-pause-en="Paused">
+              <span class="lang-es">¿Listo?</span><span class="lang-en">Ready?</span>
+            </p>
+            <button type="button" class="cy-btn solid" data-snake-start
+              data-again-es="OTRA VEZ ↻" data-again-en="PLAY AGAIN ↻" data-resume-es="SEGUIR ▶" data-resume-en="RESUME ▶">
+              <span class="lang-es">JUGAR ▶</span><span class="lang-en">PLAY ▶</span>
+            </button>
+            <p class="ov-hint">
+              <span class="lang-es hint-desk">Flechas o WASD · espacio para pausar</span><span class="lang-en hint-desk">Arrows or WASD · space to pause</span>
+              <span class="lang-es hint-touch">Desliza sobre el tablero o usa la cruceta</span><span class="lang-en hint-touch">Swipe on the board or use the pad</span>
+            </p>
+          </div>
+        </div>
+        <div class="pad" aria-label="Controles">
+          {dirs.map((b) => (
+            <button type="button" class={`pad-${b.d}`} data-snake-dir={b.d} aria-label={b.es}>{b.label}</button>
+          ))}
+        </div>
+      </div>
+
+      <aside class="side">
+        <dl class="stats">
+          <div><dt><span class="lang-es">Puntaje</span><span class="lang-en">Score</span></dt><dd data-snake-score>0</dd></div>
+          <div><dt><span class="lang-es">Récord</span><span class="lang-en">Best</span></dt><dd data-snake-best>0</dd></div>
+        </dl>
+        <button type="button" class="sound" data-snake-sound aria-pressed="false">
+          <span class="sound-off"><span class="lang-es">🔇 Activar sonido</span><span class="lang-en">🔇 Turn sound on</span></span>
+          <span class="sound-on-label"><span class="lang-es">🔊 Sonido activado</span><span class="lang-en">🔊 Sound on</span></span>
+        </button>
+        <div class="player" data-snake-player></div>
+        <p class="side-label"><span class="lang-es">Te comiste</span><span class="lang-en">You ate</span></p>
+        <ol class="eaten" data-snake-list></ol>
+        <p class="note no-music"><span class="lang-es">Spotify no respondió: hoy se juega sin carátulas.</span><span class="lang-en">Spotify didn't answer: no covers today.</span></p>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<style>
+  .head { display: flex; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; gap: 1.5rem; margin-bottom: 2.5rem; }
+  .game { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 2rem; align-items: start; }
+  .board-card { border: 1px solid var(--line-2); background: var(--bg-2); padding: clamp(0.75rem, 2vw, 1.25rem); }
+  .board { position: relative; width: 100%; aspect-ratio: 1; display: grid; place-items: center; }
+  canvas { display: block; touch-action: none; outline: none; background: var(--bg); }
+  canvas:focus-visible { box-shadow: 0 0 0 1px var(--accent); }
+  .overlay {
+    position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1rem; text-align: center; padding: 1rem;
+    background: color-mix(in srgb, var(--bg) 78%, transparent); backdrop-filter: blur(2px);
+  }
+  .overlay[hidden] { display: none; }
+  .ov-title { font-family: var(--font-display); font-weight: 700; font-size: clamp(1.6rem, 4vw, 2.6rem); letter-spacing: -0.03em; margin: 0; }
+  .ov-hint { font-family: var(--font-mono); font-size: 0.72rem; color: var(--ink-3); margin: 0; letter-spacing: 0.08em; }
+  .hint-touch { display: none; }
+  @media (hover: none) { .hint-desk { display: none; } .hint-touch { display: inline; } }
+
+  .pad { display: none; grid-template-columns: repeat(3, 3.25rem); grid-template-rows: repeat(2, 3.25rem); gap: 0.4rem; justify-content: center; margin-top: 1rem; }
+  .pad button {
+    font-family: var(--font-mono); font-size: 1.2rem; color: var(--ink); background: var(--panel); border: 1px solid var(--line-2);
+    touch-action: manipulation; -webkit-tap-highlight-color: transparent; user-select: none;
+  }
+  .pad button:active { border-color: var(--accent); color: var(--accent); }
+  .pad-up { grid-column: 2; grid-row: 1; }
+  .pad-left { grid-column: 1; grid-row: 2; }
+  .pad-down { grid-column: 2; grid-row: 2; }
+  .pad-right { grid-column: 3; grid-row: 2; }
+  @media (hover: none) { .pad { display: grid; } }
+
+  .stats { margin: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .stats div { border: 1px solid var(--line); padding: 1rem; background: var(--panel); }
+  .stats dt { font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-3); }
+  .stats dd { margin: 0.3rem 0 0; font-family: var(--font-display); font-weight: 700; font-size: 2.2rem; line-height: 1; font-variant-numeric: tabular-nums; }
+  .sound {
+    margin-top: 1rem; width: 100%; padding: 0.75rem 1rem; text-align: left; cursor: pointer;
+    font-family: var(--font-mono); font-size: 0.78rem; letter-spacing: 0.1em; color: var(--ink-2);
+    background: none; border: 1px dashed var(--line-2);
+  }
+  .sound:hover, .sound:focus-visible { border-color: var(--accent); color: var(--accent); }
+  .sound-on-label { display: none; }
+  :global(#snake.sound-on) .sound { border-style: solid; border-color: var(--accent); color: var(--accent); }
+  :global(#snake.sound-on) .sound-off { display: none; }
+  :global(#snake.sound-on) .sound-on-label { display: inline; }
+  .player { margin-top: 0.75rem; }
+  .player:empty { display: none; }
+  .side-label { margin: 1.5rem 0 0.75rem; font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent); }
+  .eaten { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.5rem; max-height: 320px; overflow-y: auto; }
+  .eaten:empty::before { content: '—'; color: var(--ink-3); font-family: var(--font-mono); }
+  .eaten :global(li) { display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 0.75rem; align-items: center; animation: eatIn 0.35s cubic-bezier(.16,1,.3,1); }
+  .eaten :global(img), .eaten :global(.ph) { width: 40px; height: 40px; object-fit: cover; background: var(--panel); border: 1px solid var(--line); display: block; }
+  .eaten :global(.meta) { display: flex; flex-direction: column; min-width: 0; font-size: 0.85rem; }
+  .eaten :global(.meta a) { color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .eaten :global(.meta a:hover) { color: var(--accent); }
+  .eaten :global(.meta span) { color: var(--ink-3); font-size: 0.75rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  @keyframes eatIn { from { opacity: 0; transform: translateX(-8px); } }
+  .note { margin-top: 1rem; font-family: var(--font-mono); font-size: 0.72rem; color: var(--ink-3); }
+  :global(#snake.has-music) .no-music { display: none; }
+  :global(#snake.has-music) .sound { display: block; }
+
+  @media (max-width: 1023px) {
+    .game { grid-template-columns: 1fr; }
+    .eaten { max-height: 220px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .eaten :global(li) { animation: none; } }
+</style>
