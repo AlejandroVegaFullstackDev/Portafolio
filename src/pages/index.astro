@@ -361,6 +361,12 @@ const tickerItems = [
 <!-- BLOG: scroll horizontal pinneado (bajas → las diapositivas pasan a la derecha) -->
 <section id="blog" class="hs border-y border-[var(--line)]" aria-label="Blog">
   <div class="hs-viewport" id="hsViewport">
+    <!-- Fondo vivo: dos capas a distinta velocidad -->
+    <div class="hs-bg" aria-hidden="true">
+      <div class="hs-bg-row hs-bg-row--a" id="hsBgA">BLOG · NOTAS · CÓDIGO · IA · BLOG · NOTAS · CÓDIGO · IA ·</div>
+      <div class="hs-bg-row hs-bg-row--b" id="hsBgB">ESCRIBIR ES PENSAR DOS VECES · ESCRIBIR ES PENSAR DOS VECES ·</div>
+      <div class="hs-speedlines" id="hsSpeed"></div>
+    </div>
     <div class="hs-track" id="hsTrack">
 
       <!-- 01 · Intro -->
@@ -465,6 +471,9 @@ const tickerItems = [
       <span class="hs-count"><span id="hsIndex">01</span> / {String(latestPosts.length + 2).padStart(2, '0')}</span>
       <span class="hs-bar"><span class="hs-bar-fill" id="hsBar"></span></span>
     </div>
+    <button type="button" class="hs-gyro" id="hsGyro" hidden>
+      <span class="lang-es">activar inclinación</span><span class="lang-en">enable tilt</span>
+    </button>
   </div>
 </section>
 
@@ -603,7 +612,8 @@ const tickerItems = [
     position: relative; height: 100svh; min-height: 560px;
     overflow-x: auto; overflow-y: hidden;
     scroll-snap-type: x mandatory; overscroll-behavior-x: contain;
-    perspective: 1400px; perspective-origin: 50% 50%;
+    perspective: 1400px;
+    perspective-origin: calc(var(--po-x, 50) * 1%) calc(var(--po-y, 50) * 1%);
     scrollbar-width: none;
   }
   .hs-viewport::-webkit-scrollbar { display: none; }
@@ -735,6 +745,39 @@ const tickerItems = [
     .hs-intro .paper-title { font-size: 0.92rem; }
     .hs-intro-copy > p.font-mono { display: none; }
   }
+
+
+  /* ─── Fondo vivo ─── */
+  .hs-bg { position: absolute; inset: 0; pointer-events: none; overflow: hidden; z-index: 0; }
+  .hs-track, .hs-hud, .hs-gyro { position: relative; z-index: 1; }
+  .hs-hud { position: absolute; }
+  .hs-bg-row {
+    position: absolute; left: 0; white-space: nowrap;
+    font-family: var(--font-display); font-weight: 700; letter-spacing: -0.04em; line-height: 1;
+    color: transparent; will-change: transform;
+  }
+  .hs-bg-row--a { top: 8%; font-size: clamp(6rem, 18vw, 16rem); -webkit-text-stroke: 1px var(--line-2); }
+  .hs-bg-row--b { bottom: 12%; font-size: clamp(3rem, 8vw, 7rem); -webkit-text-stroke: 1px rgba(255,0,60,0.28); }
+  .hs-speedlines {
+    position: absolute; inset: 0; opacity: 0;
+    background: repeating-linear-gradient(0deg, transparent 0 22px, rgba(255,0,60,0.16) 22px 23px);
+    -webkit-mask: linear-gradient(90deg, transparent, #000 20%, #000 80%, transparent);
+            mask: linear-gradient(90deg, transparent, #000 20%, #000 80%, transparent);
+  }
+
+  /* ─── Títulos partidos en letras ─── */
+  .hs-word { display: inline-block; white-space: nowrap; }
+  .hs-char { display: inline-block; will-change: transform, opacity; transform-origin: 50% 100%; }
+  .hs-media { will-change: clip-path; }
+
+  /* ─── Botón de giroscopio (solo iPhone, que pide permiso) ─── */
+  .hs-gyro {
+    position: absolute; right: 16px; top: 16px; z-index: 2;
+    font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--accent); background: var(--bg); border: 1px solid var(--accent);
+    padding: 8px 12px; cursor: pointer;
+  }
+  .hs-gyro[hidden] { display: none; }
 
   /* ─── Pila de páginas 3D (CSS 3D + GSAP) ─── */
   .paper-stage {
@@ -1654,6 +1697,9 @@ function initBlog3D() {
   const track = document.getElementById('hsTrack');
   const bar = document.getElementById('hsBar');
   const idx = document.getElementById('hsIndex');
+  const bgA = document.getElementById('hsBgA');
+  const bgB = document.getElementById('hsBgB');
+  const speed = document.getElementById('hsSpeed');
   const slides = gsap.utils.toArray<HTMLElement>('#hsTrack [data-hs-slide]');
   if (!section || !viewport || !track || slides.length < 2) return;
 
@@ -1665,6 +1711,25 @@ function initBlog3D() {
   const pad = (n: number) => String(n).padStart(2, '0');
   // El blur en pantallas táctiles cuesta FPS: solo en desktop.
   const soft = (px: number) => (finePointer ? { filter: `blur(${px}px)` } : {});
+
+  // Progreso (0..1) en el que cada diapositiva queda centrada. Sirve para el
+  // snap magnético y para el contador. Se recalcula en cada refresh.
+  let stops: number[] = [];
+  const computeStops = () => {
+    const d = distance() || 1;
+    stops = slides.map((sl) => gsap.utils.clamp(0, 1, (sl.offsetLeft + sl.offsetWidth / 2 - viewport.clientWidth / 2) / d));
+  };
+  const nearest = (v: number) => stops.reduce((best, s, i) => (Math.abs(s - v) < Math.abs(stops[best] - v) ? i : best), 0);
+
+  // Háptica corta al cambiar de diapositiva (Android; iOS la ignora).
+  let lastIndex = 0;
+  const haptic = () => {
+    try { if (!finePointer && 'vibrate' in navigator) navigator.vibrate(12); } catch { /* sin háptica */ }
+  };
+
+  // Fondo vivo: skew por velocidad + líneas de velocidad.
+  const skewTo = gsap.quickTo(track, 'skewX', { duration: 0.5, ease: 'power3.out' });
+  const speedTo = speed ? gsap.quickTo(speed, 'opacity', { duration: 0.4, ease: 'power2.out' }) : null;
 
   const scrollTween = gsap.to(track, {
     x: () => -distance(),
@@ -1678,16 +1743,55 @@ function initBlog3D() {
       anticipatePin: 1,
       invalidateOnRefresh: true,
       refreshPriority: 1,
+      onRefresh: computeStops,
+      snap: {
+        snapTo: (v: number) => (stops.length ? stops[nearest(v)] : v),
+        duration: { min: 0.25, max: 0.7 },
+        delay: 0.08,
+        ease: 'power3.inOut',
+      },
       onUpdate: (self) => {
         if (bar) gsap.set(bar, { scaleX: self.progress });
-        if (idx) idx.textContent = pad(Math.min(slides.length, Math.round(self.progress * (slides.length - 1)) + 1));
+        const i = nearest(self.progress);
+        if (idx) idx.textContent = pad(i + 1);
+        if (i !== lastIndex) { lastIndex = i; haptic(); }
+        const v = self.getVelocity();
+        skewTo(gsap.utils.clamp(-7, 7, v / -280));
+        if (speedTo) speedTo(gsap.utils.clamp(0, 1, Math.abs(v) / 2200));
+        clearTimeout((self as any)._settle);
+        (self as any)._settle = setTimeout(() => { skewTo(0); speedTo?.(0); }, 120);
       },
     },
   });
+  computeStops();
 
-  const along = (slide: HTMLElement, start: string, end: string) => ({
-    trigger: slide, containerAnimation: scrollTween, start, end, scrub: true,
+  // Parallax del fondo: capa A lenta hacia la izquierda, capa B en contra.
+  const bgTrigger = () => ({ trigger: section, start: 'top top', end: () => '+=' + distance(), scrub: 1.2, invalidateOnRefresh: true });
+  if (bgA) gsap.fromTo(bgA, { xPercent: 0 }, { xPercent: -28, ease: 'none', scrollTrigger: bgTrigger() });
+  if (bgB) gsap.fromTo(bgB, { xPercent: -30 }, { xPercent: 0, ease: 'none', scrollTrigger: bgTrigger() });
+
+  const along = (slide: HTMLElement, start: string, end: string, extra: object = {}) => ({
+    trigger: slide, containerAnimation: scrollTween, start, end, scrub: true, ...extra,
   });
+
+  // Parte un título en palabras → letras (las palabras no se cortan al envolver).
+  const splitChars = (el: HTMLElement) => {
+    const text = el.textContent || '';
+    el.setAttribute('aria-label', text);
+    el.innerHTML = text.split(' ').map((w) =>
+      `<span class="hs-word" aria-hidden="true">${[...w].map((c) => `<span class="hs-char">${c}</span>`).join('')}</span>`
+    ).join(' ');
+    return el.querySelectorAll<HTMLElement>('.hs-char');
+  };
+
+  // Glitch RGB corto: se dispara al cruzar el centro.
+  const glitch = (el: HTMLElement) => {
+    gsap.timeline()
+      .to(el, { x: -7, textShadow: '4px 0 rgba(255,0,60,0.9), -4px 0 rgba(0,210,255,0.85)', duration: 0.05, ease: 'none' })
+      .to(el, { x: 5, skewX: -6, duration: 0.05, ease: 'none' })
+      .to(el, { x: -2, skewX: 3, textShadow: '-3px 0 rgba(255,0,60,0.9), 3px 0 rgba(0,210,255,0.85)', duration: 0.05, ease: 'none' })
+      .to(el, { x: 0, skewX: 0, textShadow: '0 0 0 rgba(0,0,0,0)', duration: 0.3, ease: 'expo.out' });
+  };
 
   slides.forEach((slide, i) => {
     const inner = slide.querySelector<HTMLElement>('.hs-inner');
@@ -1703,13 +1807,14 @@ function initBlog3D() {
       return;
     }
 
-    // Entrada
+    const enterEnd = isLast ? 'right 95%' : 'center center';
+
+    // Coverflow: entrada
     gsap.fromTo(inner,
       { rotationY: 46, z: -380, opacity: 0.15, ...soft(6), transformOrigin: '50% 50%' },
-      { rotationY: 0, z: 0, opacity: 1, ...soft(0), ease: 'none',
-        scrollTrigger: along(slide, 'left right', isLast ? 'right 95%' : 'center center') });
+      { rotationY: 0, z: 0, opacity: 1, ...soft(0), ease: 'none', scrollTrigger: along(slide, 'left right', enterEnd) });
 
-    // Salida
+    // Coverflow: salida
     if (!isLast) {
       gsap.to(inner, {
         rotationY: -46, z: -380, opacity: 0.15, ...soft(6), ease: 'none', immediateRender: false,
@@ -1717,18 +1822,44 @@ function initBlog3D() {
       });
     }
 
-    // Parallax interno: la portada se desliza más lento que la tarjeta.
+    // Wipe de la portada + parallax interno
+    const mediaBox = slide.querySelector<HTMLElement>('.hs-media');
+    if (mediaBox) {
+      gsap.fromTo(mediaBox, { clipPath: 'inset(0% 0% 0% 100%)' }, { clipPath: 'inset(0% 0% 0% 0%)', ease: 'none', scrollTrigger: along(slide, 'left 95%', 'center 62%') });
+    }
     const media = slide.querySelector<HTMLElement>('.hs-media img, .hs-bignum');
     if (media) {
-      gsap.fromTo(media, { xPercent: -9 }, { xPercent: 9, ease: 'none', scrollTrigger: along(slide, 'left right', 'right left') });
+      gsap.fromTo(media, { xPercent: -9, scale: 1.2 }, { xPercent: 9, scale: 1.08, ease: 'none', scrollTrigger: along(slide, 'left right', 'right left') });
     }
 
-    // El texto llega un poco después que la tarjeta (profundidad por capas).
-    const copy = slide.querySelectorAll<HTMLElement>('.hs-meta, .hs-title, .hs-desc, .hs-tags, .hs-cta, .hs-end-kicker, .hs-end-title, .hs-end .cy-btn');
+    // Título: se arma letra por letra en 3D
+    const title = slide.querySelector<HTMLElement>('.hs-title, .hs-end-title');
+    if (title && !title.querySelector('.text-\\[var\\(--accent\\)\\]')) {
+      const chars = splitChars(title);
+      gsap.fromTo(chars,
+        { rotationX: -95, y: 36, z: -60, opacity: 0 },
+        { rotationX: 0, y: 0, z: 0, opacity: 1, stagger: 0.03, ease: 'none', scrollTrigger: along(slide, 'left 80%', isLast ? 'right 95%' : 'center 58%') });
+    } else if (title) {
+      gsap.fromTo(title, { rotationX: -70, y: 40, opacity: 0, transformOrigin: '50% 100%' },
+        { rotationX: 0, y: 0, opacity: 1, ease: 'none', scrollTrigger: along(slide, 'left 85%', 'right 95%') });
+    }
+
+    // Resto del texto: llega en capas, un poco después que la tarjeta
+    const copy = slide.querySelectorAll<HTMLElement>('.hs-meta, .hs-desc, .hs-tags, .hs-cta, .hs-end-kicker, .hs-end .cy-btn');
     if (copy.length) {
       gsap.fromTo(copy, { x: 80, opacity: 0 }, {
         x: 0, opacity: 1, stagger: 0.08, ease: 'none',
         scrollTrigger: along(slide, 'left 85%', isLast ? 'right 95%' : 'center 55%'),
+      });
+    }
+
+    // Glitch al cruzar el centro (ida y vuelta)
+    if (title) {
+      ScrollTrigger.create({
+        ...along(slide, 'center 55%', 'center 45%'),
+        scrub: false,
+        onEnter: () => glitch(title),
+        onEnterBack: () => glitch(title),
       });
     }
 
@@ -1751,10 +1882,49 @@ function initBlog3D() {
     slide.addEventListener('focusin', () => {
       const st = scrollTween.scrollTrigger;
       if (!st) return;
-      const y = st.start + (st.end - st.start) * (i / (slides.length - 1));
-      window.scrollTo({ top: y, behavior: 'smooth' });
+      window.scrollTo({ top: st.start + (st.end - st.start) * (stops[i] ?? 0), behavior: 'smooth' });
     });
   });
+
+  // ── Giroscopio (móvil) ───────────────────────────────────────────────────
+  // Inclinar el cel mueve el punto de fuga de todo el 3D y gira la pila.
+  if (!finePointer && 'DeviceOrientationEvent' in window) {
+    const originX = gsap.quickTo(viewport, '--po-x', { duration: 0.6, ease: 'power3.out' });
+    const originY = gsap.quickTo(viewport, '--po-y', { duration: 0.6, ease: 'power3.out' });
+    gsap.set(viewport, { '--po-x': 50, '--po-y': 50 });
+    const pRx = tilt ? gsap.quickTo(tilt, 'rotationX', { duration: 0.6, ease: 'power3.out' }) : null;
+    const pRy = tilt ? gsap.quickTo(tilt, 'rotationY', { duration: 0.6, ease: 'power3.out' }) : null;
+    let beta0: number | null = null;
+
+    const onTilt = (e: DeviceOrientationEvent) => {
+      if (e.gamma == null || e.beta == null) return;
+      if (beta0 === null) beta0 = e.beta;          // la primera lectura es "derecho"
+      const nx = gsap.utils.clamp(-1, 1, e.gamma / 25);
+      const ny = gsap.utils.clamp(-1, 1, (e.beta - beta0) / 25);
+      originX(50 - nx * 30);
+      originY(50 - ny * 25);
+      pRy?.(nx * 22);
+      pRx?.(-ny * 16);
+    };
+    const listen = () => window.addEventListener('deviceorientation', onTilt, { passive: true });
+
+    const DOE = DeviceOrientationEvent as unknown as { requestPermission?: () => Promise<'granted' | 'denied'> };
+    const gyroBtn = document.getElementById('hsGyro');
+    if (typeof DOE.requestPermission === 'function') {
+      // iOS: el permiso solo se puede pedir con un toque del usuario.
+      if (gyroBtn) {
+        gyroBtn.hidden = false;
+        gyroBtn.addEventListener('click', async () => {
+          try {
+            if ((await DOE.requestPermission!()) === 'granted') listen();
+          } catch { /* sin permiso: queda sin giroscopio */ }
+          gyroBtn.hidden = true;
+        });
+      }
+    } else {
+      listen();
+    }
+  }
 }
 
 // ─── Main ─────────────────────────────────────────────────────────────────────
