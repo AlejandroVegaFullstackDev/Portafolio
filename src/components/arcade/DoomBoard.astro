@@ -1,0 +1,52 @@
+---
+// Doom (shareware, 1993) en la consola (lógica: scripts/game/doom/doom.ts).
+// Motor: id Software, GPL-2.0 · binario WebAssembly del paquete wasm-doom.
+import { Music2, Play } from 'lucide-static';
+---
+<div class="board gm-board gm-doom" data-game-board="doom" hidden>
+  <div class="doom-screen">
+    <canvas data-doom-canvas tabindex="0" aria-label="Doom"></canvas>
+  </div>
+  <!-- Controles táctiles (solo en pantallas táctiles). Los números son códigos de tecla de Doom. -->
+  <div class="doom-pad" aria-hidden="true">
+    <div class="dpad">
+      <button type="button" data-k="173" class="up">▲</button>
+      <button type="button" data-k="172" class="left">◀</button>
+      <button type="button" data-k="174" class="right">▶</button>
+      <button type="button" data-k="175" class="down">▼</button>
+    </div>
+    <div class="dbtns">
+      <button type="button" data-k="157" class="fire">FIRE</button>
+      <button type="button" data-k="32">USE</button>
+      <button type="button" data-doom-weapon>ARMA</button>
+      <button type="button" data-k="13">⏎</button>
+      <button type="button" data-k="27">ESC</button>
+    </div>
+  </div>
+  <div class="overlay" data-doom-overlay data-state="ready">
+    <div class="ov ov-ready">
+      <p class="ov-title">DOOM</p>
+      <p class="ov-sub"><span class="lang-es">El original de 1993, episodio shareware. Se descarga al jugar (6,8 MB). Sin sonido propio: de fondo, mi playlist.</span><span class="lang-en">The 1993 original, shareware episode. Downloads when you play (6.8 MB). No game audio: my playlist plays instead.</span></p>
+      <div class="ov-actions">
+        <button type="button" class="cy-btn solid with-music" data-doom-play="music"><span set:html={Music2} /><span class="lang-es">Jugar con mi playlist</span><span class="lang-en">Play with my playlist</span></button>
+        <button type="button" class="cy-btn solid no-music" data-doom-play="silent"><span set:html={Play} /><span class="lang-es">Jugar</span><span class="lang-en">Play</span></button>
+        <button type="button" class="ov-link with-music" data-doom-play="silent"><span class="lang-es">o en silencio</span><span class="lang-en">or silent</span></button>
+      </div>
+      <p class="ov-hint"><span class="hint-desk"><span class="lang-es">Flechas moverse · Ctrl disparar · Espacio abrir · Enter menú · 1–7 armas</span><span class="lang-en">Arrows move · Ctrl fire · Space open · Enter menu · 1–7 weapons</span></span><span class="hint-touch"><span class="lang-es">Controles en pantalla abajo</span><span class="lang-en">On-screen controls below</span></span></p>
+    </div>
+    <div class="ov ov-loading">
+      <p class="ov-title"><span class="lang-es">Cargando Doom</span><span class="lang-en">Loading Doom</span></p>
+      <p class="ov-rank" data-doom-loading></p>
+    </div>
+    <div class="ov ov-error">
+      <p class="ov-title"><span class="lang-es">No cargó</span><span class="lang-en">Didn't load</span></p>
+      <p class="ov-sub"><span class="lang-es">Revisa tu conexión y vuelve a intentarlo.</span><span class="lang-en">Check your connection and try again.</span></p>
+      <div class="ov-actions"><button type="button" class="cy-btn solid" data-doom-play="silent"><span class="lang-es">Reintentar</span><span class="lang-en">Retry</span></button></div>
+    </div>
+    <div class="ov ov-paused">
+      <p class="ov-title"><span class="lang-es">En pausa</span><span class="lang-en">Paused</span></p>
+      <div class="ov-actions"><button type="button" class="cy-btn solid" data-doom-resume><span set:html={Play} /><span class="lang-es">Seguir</span><span class="lang-en">Resume</span></button></div>
+    </div>
+  </div>
+  <p class="doom-credit"><span class="lang-es">Doom © id Software · motor libre (GPL-2.0) ·</span><span class="lang-en">Doom © id Software · free engine (GPL-2.0) ·</span> <a href="https://github.com/id-Software/DOOM" target="_blank" rel="noopener">código fuente</a></p>
+</div>

@@ -1,9 +1,11 @@
 ---
-// 06 · "Cómete mi playlist": Snake donde la comida son carátulas de mi playlist de Spotify.
+// 06 · Receso: consola con tres juegos (Snake con carátulas de mi playlist, bloques y Doom).
 // Una consola (barra de estado + tablero con sus estados) y un panel que gira en 3D entre
 // "Sonando" y "Ranking". Lógica: scripts/game/snake.ts · estilos: styles/snake.css.
 import { Pause, Play, RotateCcw, Trophy, Music2, Volume2, VolumeX } from 'lucide-static';
 import SectionHeading from '../ui/SectionHeading.astro';
+import BlocksBoard from '../arcade/BlocksBoard.astro';
+import DoomBoard from '../arcade/DoomBoard.astro';
 import '../../styles/snake.css';
 ---
 <section id="snake" class="relative px-6 lg:px-20 py-20 lg:py-28 overflow-hidden" data-wipe>
@@ -19,6 +21,11 @@ import '../../styles/snake.css';
     <div class="sn-arcade">
       <!-- Consola -->
       <div class="sn-console" data-snake-pad>
+        <div class="gm-tabs" role="tablist" aria-label="Juegos">
+          <button type="button" role="tab" data-game-tab="snake" aria-selected="true">Snake</button>
+          <button type="button" role="tab" data-game-tab="blocks" aria-selected="false"><span class="lang-es">Bloques</span><span class="lang-en">Blocks</span></button>
+          <button type="button" role="tab" data-game-tab="doom" aria-selected="false">Doom</button>
+        </div>
         <div class="sn-hud">
           <div class="sn-num"><span class="sn-k"><span class="lang-es">Puntos</span><span class="lang-en">Score</span></span><b data-snake-score>0</b></div>
           <div class="sn-num is-best"><span class="sn-k"><span class="lang-es">Récord</span><span class="lang-en">Best</span></span><b data-snake-best>0</b></div>
@@ -31,7 +38,7 @@ import '../../styles/snake.css';
           </div>
         </div>
 
-        <div class="board">
+        <div class="board" data-game-board="snake">
           <canvas data-snake-canvas tabindex="0" aria-label="Snake"></canvas>
           <div class="overlay" data-snake-overlay data-state="ready">
             <!-- Antes de jugar -->
@@ -74,6 +81,8 @@ import '../../styles/snake.css';
             </div>
           </div>
         </div>
+        <BlocksBoard />
+        <DoomBoard />
       </div>
 
       <!-- Panel que gira -->

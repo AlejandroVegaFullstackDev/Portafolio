@@ -27,6 +27,7 @@ import { initPaperStack } from './sections/blog';
 import { initExperience } from './sections/experience';
 import { initContact } from './sections/contact';
 import { initPlaylistSnake } from './game/snake';
+import { initArcade } from './game/arcade';
 
 gsap.registerPlugin(ScrollTrigger);
 ScrollTrigger.config({ ignoreMobileResize: true });
@@ -50,7 +51,7 @@ async function start() {
   coverflow('projects', 0.5); // 3 destacados: corto, sin pantallas vacías
   initPaperStack();
   coverflow('blog', 0.5); // pocos posts: el carrusel se recorre en la mitad del scroll
-  initPlaylistSnake();
+  initPlaylistSnake().then((shared) => shared && initArcade(shared));
   initContact();
 
   // Efectos transversales (leen atributos data-* en todo el documento).

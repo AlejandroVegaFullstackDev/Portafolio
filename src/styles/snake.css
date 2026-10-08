@@ -203,3 +203,34 @@ html.snake-focus .sn-backdrop { opacity: .96; visibility: visible; transition: o
 @media (prefers-reduced-motion: reduce) {
   .sn-bd-glow, .sn-bd-floor, #snake .sn-console::before { animation: none !important; }
 }
+
+/* ── Pestañas de juegos (scripts/game/arcade.ts) ── */
+#snake .gm-tabs { display: grid; grid-template-columns: repeat(3, 1fr); border-bottom: 1px solid var(--line); }
+#snake .gm-tabs button { padding: 0.7rem 0.5rem; font: 600 0.72rem var(--font-mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-3); background: none; border: 0; border-bottom: 2px solid transparent; cursor: pointer; transition: color .2s, background .2s; }
+#snake .gm-tabs button:hover { color: var(--ink); background: color-mix(in srgb, var(--accent) 6%, transparent); }
+#snake .gm-tabs button[aria-selected='true'] { color: var(--ink); border-bottom-color: var(--accent); text-shadow: 0 0 12px var(--accent-glow); }
+#snake.is-playing .gm-tabs { pointer-events: none; opacity: .4; }
+#snake .board[hidden] { display: none; }
+#snake .ov-sub { margin: 0; max-width: 34ch; font-size: 0.88rem; line-height: 1.5; color: var(--ink-2); }
+#snake .overlay[data-state='loading'] .ov-loading, #snake .overlay[data-state='error'] .ov-error { display: flex; animation: snIn .55s cubic-bezier(.16,1,.3,1); }
+#snake .board[data-game-board='blocks'] canvas { background: var(--bg); }
+
+/* Doom: pantalla 16:10 con píxeles nítidos y controles táctiles debajo. */
+#snake .gm-doom { aspect-ratio: auto; display: block; }
+#snake .doom-screen { position: relative; width: 100%; aspect-ratio: 16 / 10; background: #000; }
+#snake .doom-screen canvas { width: 100%; height: 100%; image-rendering: pixelated; background: #000; }
+#snake .doom-pad { display: none; justify-content: space-between; align-items: center; gap: 1rem; padding: 0.9rem 0.25rem 0.25rem; touch-action: none; -webkit-user-select: none; user-select: none; }
+@media (hover: none) { #snake .doom-pad { display: flex; } }
+#snake .doom-pad button { font: 700 0.72rem var(--font-mono); letter-spacing: 0.08em; color: var(--ink); background: var(--panel); border: 1px solid var(--line-2); touch-action: none; -webkit-tap-highlight-color: transparent; }
+#snake .doom-pad button.on { background: var(--accent); color: #000; border-color: var(--accent); }
+#snake .dpad { display: grid; grid-template-columns: repeat(3, 46px); grid-template-rows: repeat(3, 46px); gap: 4px; }
+#snake .dpad .up { grid-area: 1 / 2; } #snake .dpad .left { grid-area: 2 / 1; } #snake .dpad .right { grid-area: 2 / 3; } #snake .dpad .down { grid-area: 3 / 2; }
+#snake .dbtns { display: grid; grid-template-columns: repeat(2, 64px); gap: 6px; }
+#snake .dbtns button { height: 42px; }
+#snake .dbtns .fire { grid-column: 1 / -1; height: 56px; background: color-mix(in srgb, var(--accent) 25%, var(--panel)); border-color: var(--accent); }
+#snake .doom-credit { margin: 0.6rem 0 0; font-family: var(--font-mono); font-size: 0.62rem; color: var(--ink-3); }
+#snake .doom-credit a { color: var(--ink-2); text-decoration: underline; }
+/* Doom no tiene puntaje: la barra muestra guiones. */
+#snake[data-game='doom'] .sn-num b { color: var(--ink-3); }
+/* El cuadro de inicio/pausa de Doom cubre pantalla + controles (en cel no cabe en la pantallita 16:10). */
+#snake .gm-doom { position: relative; min-height: 18rem; }

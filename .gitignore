@@ -20,3 +20,4 @@ Thumbs.db
 # Claude Code (config local)
 .claude/
 dump.rdb
+public/games/doom.wasm

@@ -1,0 +1,36 @@
+---
+// Tablero del juego de bloques (lógica: scripts/game/blocks/blocks.ts).
+import { Music2, Play, RotateCcw } from 'lucide-static';
+---
+<div class="board gm-board" data-game-board="blocks" hidden>
+  <canvas data-blocks-canvas tabindex="0" aria-label="Bloques"></canvas>
+  <div class="overlay" data-blocks-overlay data-state="ready">
+    <div class="ov ov-ready">
+      <p class="ov-title"><span class="lang-es">Apila la playlist</span><span class="lang-en">Stack the playlist</span></p>
+      <p class="ov-sub"><span class="lang-es">Cada línea que borras cambia la canción.</span><span class="lang-en">Every line you clear changes the song.</span></p>
+      <div class="ov-actions">
+        <button type="button" class="cy-btn solid with-music" data-blocks-play="music"><span set:html={Music2} /><span class="lang-es">Jugar con música</span><span class="lang-en">Play with music</span></button>
+        <button type="button" class="cy-btn solid no-music" data-blocks-play="silent"><span set:html={Play} /><span class="lang-es">Jugar</span><span class="lang-en">Play</span></button>
+        <button type="button" class="ov-link with-music" data-blocks-play="silent"><span class="lang-es">o sin sonido</span><span class="lang-en">or muted</span></button>
+      </div>
+      <p class="ov-hint">
+        <span class="hint-desk"><span class="lang-es">← → mover · ↑ girar · ↓ bajar · espacio soltar</span><span class="lang-en">← → move · ↑ rotate · ↓ drop · space slam</span></span>
+        <span class="hint-touch"><span class="lang-es">Arrastra para mover · toca para girar · desliza abajo para soltar</span><span class="lang-en">Drag to move · tap to rotate · swipe down to slam</span></span>
+      </p>
+    </div>
+    <div class="ov ov-paused">
+      <p class="ov-title"><span class="lang-es">En pausa</span><span class="lang-en">Paused</span></p>
+      <div class="ov-actions">
+        <button type="button" class="cy-btn solid" data-blocks-resume><span set:html={Play} /><span class="lang-es">Seguir</span><span class="lang-en">Resume</span></button>
+        <button type="button" class="ov-link" data-blocks-restart><span class="lang-es">Empezar de nuevo</span><span class="lang-en">Start over</span></button>
+      </div>
+    </div>
+    <div class="ov ov-over">
+      <p class="ov-title" data-blocks-over-title></p>
+      <p class="ov-rank" data-blocks-over-result></p>
+      <div class="ov-actions">
+        <button type="button" class="cy-btn solid" data-blocks-again><span set:html={RotateCcw} /><span class="lang-es">Otra vez</span><span class="lang-en">Again</span></button>
+      </div>
+    </div>
+  </div>
+</div>

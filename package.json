@@ -10,7 +10,9 @@
     "test": "vitest run",
     "og": "python3 tools/og-image.py",
     "verify": "astro check && astro build && vitest run",
-    "spotify-token": "node tools/spotify-token.mjs"
+    "spotify-token": "node tools/spotify-token.mjs",
+    "predev": "node tools/copy-doom.mjs",
+    "prebuild": "node tools/copy-doom.mjs"
   },
   "dependencies": {
     "@astrojs/react": "^3.6.0",
@@ -24,7 +26,8 @@
     "lucide-static": "^1.52.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "redis": "^4.7.1"
+    "redis": "^4.7.1",
+    "wasm-doom": "^1.2.0"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.10",

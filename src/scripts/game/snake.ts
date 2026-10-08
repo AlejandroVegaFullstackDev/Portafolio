@@ -16,7 +16,7 @@ import { bindControls } from './snakeInput';
 import { SnakeFocus } from './snakeFocus';
 import type { Move } from './replay';
 
-interface Track { id: string; title: string; artist: string; cover: string | null; art?: string | null; uri: string; url: string; preview: string | null }
+export interface Track { id: string; title: string; artist: string; cover: string | null; art?: string | null; uri: string; url: string; preview: string | null }
 
 const BEST_KEY = 'av_snake_best';
 const SIZE = 16;
@@ -25,11 +25,27 @@ const store = {
   set: (v: number) => { try { localStorage.setItem(BEST_KEY, String(v)); } catch { /* sin storage */ } },
 };
 
-export async function initPlaylistSnake() {
+/** Lo que el Snake comparte con los otros juegos de la consola (arcade.ts). */
+export interface ArcadeShared {
+  root: HTMLElement;
+  tracks: Track[];
+  player: PreviewPlayer;
+  deck: VinylDeck;
+  focus: SnakeFocus;
+  consoleEl: HTMLElement;
+  setSound: (on: boolean) => void;
+  soundOn: () => boolean;
+  /** Pausa el Snake si está corriendo. */
+  pauseSnake: () => void;
+  /** Vuelve a poner en la barra los puntos y el récord del Snake. */
+  snakeHud: () => void;
+}
+
+export async function initPlaylistSnake(): Promise<ArcadeShared | null> {
   const root = document.getElementById('snake');
   const canvas = root?.querySelector<HTMLCanvasElement>('[data-snake-canvas]');
   const ctx = canvas?.getContext('2d');
-  if (!root || !canvas || !ctx) return;
+  if (!root || !canvas || !ctx) return null;
   const $ = <T extends HTMLElement>(sel: string) => root.querySelector<T>(sel)!;
 
   const ui = new SnakeUi(root);
@@ -255,7 +271,7 @@ export async function initPlaylistSnake() {
     }
     last = now;
     if (flash > 0) flash--;
-    draw();
+    if (!board.hidden) draw();
     requestAnimationFrame(frame);
   }
 
@@ -309,4 +325,11 @@ export async function initPlaylistSnake() {
   ui.state('ready');
   resize();
   requestAnimationFrame(frame);
+
+  return {
+    root, tracks, player, deck, focus, consoleEl, setSound,
+    soundOn: () => soundOn,
+    pauseSnake: pause,
+    snakeHud: () => { scoreEl.textContent = String(game.score); bestEl.textContent = String(best); },
+  };
 }
