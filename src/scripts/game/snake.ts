@@ -1,13 +1,16 @@
 // "Cómete mi playlist": renderer y controles del Snake (motor en snakeEngine.ts).
-// La comida son carátulas de lo último que escuché en Spotify; el cuerpo se arma
-// con las que te comes. Funciona sin Spotify (comida genérica) y sin sonido.
+// La comida son carátulas de mi playlist de Spotify; el cuerpo se arma con las que
+// te comes. Dibujo: snakeRender.ts · efectos 3D: snakeFx.ts · vinilo: vinylDeck.ts. Funciona sin Spotify (comida genérica) y sin sonido.
 import { createGame, step, tickMs, turn, type Dir, type SnakeState } from './snakeEngine';
 import { PreviewPlayer } from './previewPlayer';
 import { Ranking } from './ranking';
 import { mulberry32 } from './prng';
+import { drawBoard, readPalette, type Palette } from './snakeRender';
+import { SnakeFx } from './snakeFx';
+import { VinylDeck } from './vinylDeck';
 import type { Move } from './replay';
 
-interface Track { id: string; title: string; artist: string; cover: string | null; uri: string; url: string; preview: string | null }
+interface Track { id: string; title: string; artist: string; cover: string | null; art?: string | null; uri: string; url: string; preview: string | null }
 
 const BEST_KEY = 'av_snake_best';
 const SIZE = 16;
@@ -47,7 +50,7 @@ export async function initPlaylistSnake() {
       const data = (await res.json()) as { tracks: Track[]; source?: string; status?: unknown };
       tracks = data.tracks ?? [];
       // Diagnóstico visible en la consola del navegador (no expone secretos).
-      if (!tracks.length) console.info('[snake] sin canciones de Spotify:', data.status);
+      console.info('[snake] fuente:', data.source, data.status);
     }
   } catch { /* sin Spotify: comida genérica */ }
   const covers = tracks.map((t) => {
@@ -58,6 +61,15 @@ export async function initPlaylistSnake() {
     return img;
   });
   root.classList.toggle('has-music', tracks.length > 0);
+  // Carátulas grandes (para el salto 3D y el vinilo): se precargan de a una, la de la comida actual.
+  const arts = new Map<number, HTMLImageElement>();
+  const preloadArt = (i: number) => {
+    const src = tracks[i]?.art;
+    if (!src || arts.has(i)) return;
+    const img = new Image(); img.decoding = 'async'; img.src = src; arts.set(i, img);
+  };
+  const fx = new SnakeFx(root, $('[data-snake-pad]')!, $('.board')!, canvas);
+  const deck = new VinylDeck($('[data-deck]')!);
 
   // ── Estado ──
   let game: SnakeState = createGame(SIZE, tracks.length);
@@ -70,7 +82,7 @@ export async function initPlaylistSnake() {
   const form = $<HTMLFormElement>('[data-lb-form]')!;
   const nameInput = $<HTMLInputElement>('[data-lb-name]')!;
   const lbMsg = $('[data-lb-msg]')!;
-  const doTurn = (d: Dir) => { if (!running) return; moves.push([ticks, d]); turn(game, d); };
+  const doTurn = (d: Dir) => { if (!running) return; moves.push([ticks, d]); turn(game, d); fx.lean(d); };
   let running = false;
   let paused = false;
   let best = store.get();
@@ -96,64 +108,24 @@ export async function initPlaylistSnake() {
   };
 
   // ── Dibujo ──
-  const css = (v: string) => getComputedStyle(root).getPropertyValue(v).trim();
-  function tile(img: HTMLImageElement | null | undefined, x: number, y: number, pad: number, fallback: string) {
-    const px = x * cell + pad, py = y * cell + pad, s = cell - pad * 2;
-    if (img && img.complete && img.naturalWidth) ctx!.drawImage(img, px, py, s, s);
-    else { ctx!.fillStyle = fallback; ctx!.fillRect(px, py, s, s); }
-  }
-  function draw() {
-    const accent = css('--accent') || '#ff003c';
-    const line = css('--line') || '#1c1c24';
-    const panel = css('--panel') || '#0f0f14';
-    const size = cell * SIZE;
-    ctx!.clearRect(0, 0, size, size);
-    ctx!.strokeStyle = line;
-    ctx!.lineWidth = 1;
-    for (let i = 1; i < SIZE; i++) {
-      ctx!.beginPath(); ctx!.moveTo(i * cell + 0.5, 0); ctx!.lineTo(i * cell + 0.5, size); ctx!.stroke();
-      ctx!.beginPath(); ctx!.moveTo(0, i * cell + 0.5); ctx!.lineTo(size, i * cell + 0.5); ctx!.stroke();
-    }
-    // Comida: la carátula de la siguiente canción, con un pulso de acento.
-    const f = game.food;
-    const pulse = 1 + Math.sin(performance.now() / 180) * 1.5;
-    ctx!.strokeStyle = accent;
-    ctx!.lineWidth = 2;
-    ctx!.strokeRect(f.x * cell + 1 - pulse, f.y * cell + 1 - pulse, cell - 2 + pulse * 2, cell - 2 + pulse * 2);
-    tile(covers[f.item], f.x, f.y, 2, accent);
-    // Cuerpo: carátulas comidas (la más reciente pegada a la cabeza).
-    game.snake.forEach((c, i) => {
-      if (i === 0) return;
-      const eatenIdx = game.eaten[game.eaten.length - i];
-      tile(eatenIdx !== undefined ? covers[eatenIdx] : null, c.x, c.y, 1, panel);
-      ctx!.strokeStyle = accent;
-      ctx!.lineWidth = 1;
-      ctx!.strokeRect(c.x * cell + 1.5, c.y * cell + 1.5, cell - 3, cell - 3);
-    });
-    // Cabeza
-    const h = game.snake[0];
-    ctx!.fillStyle = flash > 0 ? '#ffffff' : accent;
-    ctx!.fillRect(h.x * cell + 1, h.y * cell + 1, cell - 2, cell - 2);
-    ctx!.fillStyle = '#000';
-    const e = Math.max(2, cell / 7);
-    const ex = game.dir === 'left' ? 0.28 : game.dir === 'right' ? 0.72 : 0.3;
-    const ey = game.dir === 'up' ? 0.28 : game.dir === 'down' ? 0.72 : 0.3;
-    if (game.dir === 'up' || game.dir === 'down') {
-      ctx!.fillRect(h.x * cell + cell * 0.3 - e / 2, h.y * cell + cell * ey - e / 2, e, e);
-      ctx!.fillRect(h.x * cell + cell * 0.7 - e / 2, h.y * cell + cell * ey - e / 2, e, e);
-    } else {
-      ctx!.fillRect(h.x * cell + cell * ex - e / 2, h.y * cell + cell * 0.3 - e / 2, e, e);
-      ctx!.fillRect(h.x * cell + cell * ex - e / 2, h.y * cell + cell * 0.7 - e / 2, e, e);
-    }
-  }
+  let palette: Palette = readPalette(root);
+  new MutationObserver(() => { palette = readPalette(root); }).observe(document.documentElement, { attributes: true });
+  const draw = () => drawBoard(ctx, game, covers, cell, SIZE, flash, palette);
 
   // ── Eventos del juego ──
   function onEat() {
     flash = 3;
     scoreEl.textContent = String(game.score);
+    fx.bump(scoreEl);
     try { if ('vibrate' in navigator) navigator.vibrate(15); } catch { /* sin háptica */ }
-    const t = tracks[game.eaten[game.eaten.length - 1]];
+    const idx = game.eaten[game.eaten.length - 1];
+    const t = tracks[idx];
+    const head = game.snake[0];
+    const big = arts.get(idx);
+    fx.pop(big?.complete && big.naturalWidth ? big.src : t?.cover ?? null, head.x, head.y, cell);
+    preloadArt(game.food.item);
     if (!t) return;
+    deck.show(t);
     const li = document.createElement('li');
     li.innerHTML = `${t.cover ? `<img src="${esc(t.cover)}" alt="" width="40" height="40" loading="lazy" />` : '<span class="ph"></span>'}
       <span class="meta"><a href="${esc(t.url)}" target="_blank" rel="noopener">${esc(t.title)}</a><span>${esc(t.artist)}</span></span>`;
@@ -167,8 +139,11 @@ export async function initPlaylistSnake() {
   function onOver() {
     running = false;
     root.classList.remove('is-playing');
-    if (game.score > best) { best = game.score; store.set(best); bestEl.textContent = String(best); }
-    overlayTitle.textContent = overlayTitle.dataset[document.documentElement.getAttribute('data-lang') === 'en' ? 'overEn' : 'overEs']!.replace('{n}', String(game.score));
+    fx.hit();
+    fx.idle();
+    if (game.score > best) { best = game.score; store.set(best); bestEl.textContent = String(best); fx.bump(bestEl); }
+    const en = document.documentElement.getAttribute('data-lang') === 'en';
+    overlayTitle.textContent = game.score === 1 ? overlayTitle.dataset[en ? 'oneEn' : 'oneEs']! : overlayTitle.dataset[en ? 'overEn' : 'overEs']!.replace('{n}', String(game.score));
     overlayBtn.textContent = overlayBtn.dataset[document.documentElement.getAttribute('data-lang') === 'en' ? 'againEn' : 'againEs']!;
     overlay.hidden = false;
     ranking.recordLocal(game.score);
@@ -190,11 +165,14 @@ export async function initPlaylistSnake() {
     form.hidden = true;
     game = createGame(SIZE, tracks.length, rand);
     list.replaceChildren();
+    deck.reset();
+    preloadArt(game.food.item);
     scoreEl.textContent = '0';
     overlay.hidden = true;
     running = true;
     paused = false;
     root.classList.add('is-playing');
+    fx.play();
     if (soundOn) player.preload(tracks[game.food.item]);
     acc = 0;
     last = performance.now();
@@ -206,6 +184,7 @@ export async function initPlaylistSnake() {
     running = false;
     paused = true;
     root.classList.remove('is-playing');
+    fx.idle();
     overlayTitle.textContent = overlayTitle.dataset[document.documentElement.getAttribute('data-lang') === 'en' ? 'pauseEn' : 'pauseEs']!;
     overlayBtn.textContent = overlayBtn.dataset[document.documentElement.getAttribute('data-lang') === 'en' ? 'resumeEn' : 'resumeEs']!;
     overlay.hidden = false;
@@ -232,7 +211,7 @@ export async function initPlaylistSnake() {
 
   // ── Controles ──
   overlayBtn.addEventListener('click', () => {
-    if (paused) { paused = false; running = true; root.classList.add('is-playing'); overlay.hidden = true; last = performance.now(); canvas.focus({ preventScroll: true }); return; }
+    if (paused) { paused = false; running = true; root.classList.add('is-playing'); fx.play(); overlay.hidden = true; last = performance.now(); canvas.focus({ preventScroll: true }); return; }
     start();
   });
   // Teclado: solo mientras se juega, para no robarle el scroll a la página.

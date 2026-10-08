@@ -1,6 +1,6 @@
 ---
-// 06 · "Cómete mi playlist": Snake donde la comida son las carátulas de lo último que
-// escuché en Spotify. Lógica: scripts/game/snake.ts (+ snakeEngine.ts, previewPlayer.ts).
+// 06 · "Cómete mi playlist": Snake donde la comida son las carátulas de mi playlist
+// de Spotify. Lógica: scripts/game/snake.ts (+ snakeEngine.ts, previewPlayer.ts).
 import SectionHeading from '../ui/SectionHeading.astro';
 import SnakeRanking from './SnakeRanking.astro';
 ---
@@ -9,8 +9,8 @@ import SnakeRanking from './SnakeRanking.astro';
     <div class="head">
       <SectionHeading num="06" label={{ es: 'RECESO', en: 'BREAK' }} es={{ pre: 'Cómete mi ', accent: 'playlist', post: '.' }} en={{ pre: 'Eat my ', accent: 'playlist', post: '.' }} />
       <p class="font-mono text-sm text-[var(--ink-3)] max-w-md">
-        <span class="lang-es">Cada carátula es una canción que escuché hace poco en Spotify. Cómetelas y se arman en la serpiente.</span>
-        <span class="lang-en">Each cover is a song I listened to recently on Spotify. Eat them and they become the snake.</span>
+        <span class="lang-es">Cada carátula es una canción de mi playlist. Cómetelas y se arman en la serpiente.</span>
+        <span class="lang-en">Each cover is a song from my playlist. Eat them and they become the snake.</span>
       </p>
     </div>
 
@@ -21,6 +21,7 @@ import SnakeRanking from './SnakeRanking.astro';
           <div class="overlay" data-snake-overlay>
             <p class="ov-title" data-snake-overlay-title
               data-over-es="Te comiste {n} canciones" data-over-en="You ate {n} songs"
+              data-one-es="Te comiste 1 canción" data-one-en="You ate 1 song"
               data-pause-es="En pausa" data-pause-en="Paused">
               <span class="lang-es">¿Listo?</span><span class="lang-en">Ready?</span>
             </p>
@@ -50,6 +51,17 @@ import SnakeRanking from './SnakeRanking.astro';
           <div><dt><span class="lang-es">Puntaje</span><span class="lang-en">Score</span></dt><dd data-snake-score>0</dd></div>
           <div><dt><span class="lang-es">Récord</span><span class="lang-en">Best</span></dt><dd data-snake-best>0</dd></div>
         </dl>
+        <div class="deck" data-deck>
+          <div class="deck-stage" aria-hidden="true">
+            <div class="disc-wrap"><div class="disc"><span class="disc-label" data-deck-label></span></div></div>
+            <div class="sleeve" data-deck-sleeve><img data-deck-art alt="" width="300" height="300" hidden /></div>
+          </div>
+          <div class="deck-meta">
+            <p class="deck-k"><span class="lang-es">Última que te comiste</span><span class="lang-en">Last one you ate</span></p>
+            <a class="deck-t" data-deck-title target="_blank" rel="noopener">—</a>
+            <p class="deck-a" data-deck-artist></p>
+          </div>
+        </div>
         <button type="button" class="sound" data-snake-sound aria-pressed="false">
           <span class="sound-off"><span class="lang-es">🔇 Activar sonido</span><span class="lang-en">🔇 Turn sound on</span></span>
           <span class="sound-on-label"><span class="lang-es">🔊 Sonido activado</span><span class="lang-en">🔊 Sound on</span></span>
@@ -131,14 +143,70 @@ import SnakeRanking from './SnakeRanking.astro';
   .eaten :global(.meta a) { color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .eaten :global(.meta a:hover) { color: var(--accent); }
   .eaten :global(.meta span) { color: var(--ink-3); font-size: 0.75rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  @keyframes eatIn { from { opacity: 0; transform: translateX(-8px); } }
+  @keyframes eatIn { from { opacity: 0; transform: rotateX(-85deg) translateY(-6px); } }
+  .eaten :global(li) { transform-origin: top center; }
   .note { margin-top: 1rem; font-family: var(--font-mono); font-size: 0.72rem; color: var(--ink-3); }
   :global(#snake.has-music) .no-music { display: none; }
   :global(#snake.has-music) .sound { display: block; }
+
+
+  /* ── 3D: la card es una consola que se inclina (vars --rx/--ry desde snakeFx.ts) ── */
+  .game { perspective: 1600px; }
+  .board-card {
+    --rx: 0deg; --ry: 0deg;
+    position: relative; transform-style: preserve-3d;
+    transform: rotateX(var(--rx)) rotateY(var(--ry));
+    transition: transform 0.7s cubic-bezier(.16,1,.3,1), box-shadow 0.5s;
+    box-shadow: 0 1px 0 var(--line-2), 0 2px 0 #0b0b10, 0 3px 0 var(--line), 0 4px 0 #0b0b10, 0 5px 0 var(--line), 0 30px 60px -25px rgba(0,0,0,.8);
+  }
+  .board-card.is-hover { transition-duration: 0.18s; }
+  :global(#snake.is-playing) .board-card { box-shadow: 0 1px 0 var(--line-2), 0 2px 0 #0b0b10, 0 3px 0 var(--line), 0 4px 0 #0b0b10, 0 5px 0 var(--line), 0 40px 80px -30px color-mix(in srgb, var(--accent) 45%, transparent); }
+  .board-card::after { content: ''; position: absolute; inset: 0; pointer-events: none; background: radial-gradient(circle at 50% 50%, transparent 55%, color-mix(in srgb, var(--accent) 55%, transparent)); opacity: 0; transition: opacity .15s; }
+  :global(#snake.is-hit) .board-card::after { opacity: 1; }
+  .board :global(.fx-ring), .board :global(.fx-pop) { position: absolute; pointer-events: none; z-index: 2; }
+  .board :global(.fx-ring) { border: 2px solid var(--accent); border-radius: 50%; }
+  .board :global(.fx-pop) { object-fit: cover; box-shadow: 0 10px 30px rgba(0,0,0,.6); backface-visibility: visible; }
+  .overlay:not([hidden]) .ov-title { animation: ovIn 0.6s cubic-bezier(.16,1,.3,1); }
+  @keyframes ovIn { from { opacity: 0; transform: perspective(500px) rotateX(-70deg) translateY(-10px); } }
+
+  /* ── Tocadiscos ── */
+  .deck { margin-top: 1rem; display: grid; grid-template-columns: 150px minmax(0, 1fr); gap: 1rem; align-items: center; border: 1px solid var(--line); background: var(--panel); padding: 0.9rem 1rem; }
+  .deck-stage { position: relative; width: 104px; height: 104px; perspective: 600px; }
+  .sleeve { position: absolute; inset: 0; z-index: 1; transform: rotateY(-18deg); transform-origin: left center; background: linear-gradient(135deg, var(--bg-2), var(--bg)); border: 1px solid var(--line-2); box-shadow: 8px 10px 20px rgba(0,0,0,.55); overflow: hidden; }
+  .sleeve::before { content: '♪'; position: absolute; inset: 0; display: grid; place-items: center; font-size: 2rem; color: var(--line-2); }
+  .deck.has-track .sleeve::before { content: none; }
+  .sleeve img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .sleeve img[hidden] { display: none; }
+  .sleeve::after { content: ''; position: absolute; inset: 0; background: linear-gradient(115deg, rgba(255,255,255,.14), transparent 40%); }
+  .disc-wrap { position: absolute; inset: 4px; transform: translateX(14%); transition: transform 0.9s cubic-bezier(.16,1,.3,1); }
+  .deck.has-track .disc-wrap { transform: translateX(42%); }
+  .deck.slide .disc-wrap { animation: discOut 0.9s cubic-bezier(.16,1,.3,1); }
+  @keyframes discOut { from { transform: translateX(0); } }
+  .disc { position: relative; width: 100%; height: 100%; border-radius: 50%; display: grid; place-items: center;
+    background: radial-gradient(circle, transparent 0 30%, #111 31%), repeating-radial-gradient(circle, #0a0a0a 0 2px, #1a1a1f 3px 4px);
+    box-shadow: 0 0 0 1px #000, 4px 6px 14px rgba(0,0,0,.6); animation: spin 2.2s linear infinite; animation-play-state: paused; }
+  .disc::before { content: ''; position: absolute; inset: 0; border-radius: 50%; background: conic-gradient(from 30deg, transparent 0 20%, rgba(255,255,255,.09) 25%, transparent 32% 70%, rgba(255,255,255,.06) 75%, transparent 82%); }
+  .disc-label { width: 36%; height: 36%; border-radius: 50%; background: var(--accent) center / cover; box-shadow: 0 0 0 2px #000; position: relative; }
+  .disc-label::after { content: ''; position: absolute; inset: 44%; border-radius: 50%; background: var(--bg); }
+  :global(#snake.is-playing) .disc, :global(#snake.sound-on) .deck.has-track .disc { animation-play-state: running; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .deck-meta { min-width: 0; display: grid; gap: 0.2rem; }
+  .deck-k { margin: 0; font-family: var(--font-mono); font-size: 0.62rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent); }
+  .deck-t { font-family: var(--font-display); font-weight: 700; font-size: 1.05rem; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  a.deck-t[href]:hover { color: var(--accent); }
+  .deck-a { margin: 0; font-size: 0.8rem; color: var(--ink-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+  /* La lista cae como fichas que se voltean */
+  .eaten { perspective: 700px; }
 
   @media (max-width: 1023px) {
     .game { grid-template-columns: 1fr; }
     .eaten { max-height: 220px; }
   }
-  @media (prefers-reduced-motion: reduce) { .eaten :global(li), .now-eq i { animation: none; } }
+  @media (max-width: 520px) { .deck { grid-template-columns: 130px minmax(0, 1fr); } .deck-stage { width: 88px; height: 88px; } }
+  @media (prefers-reduced-motion: reduce) {
+    .eaten :global(li), .now-eq i, .disc, .deck.slide .disc-wrap, .overlay:not([hidden]) .ov-title { animation: none; }
+    .board-card { transform: none; transition: none; }
+  }
+  :global([data-tweak-anim='off']) .board-card { transform: none; }
 </style>

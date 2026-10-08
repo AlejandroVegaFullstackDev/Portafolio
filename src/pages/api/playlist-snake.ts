@@ -1,6 +1,6 @@
 // Canciones para el Snake, con su vista previa ya resuelta (así no hay espera al comer).
-// Fuente: la playlist del sitio (SPOTIFY_SNAKE_PLAYLIST o la de abajo); si falla, lo
-// último escuchado → top tracks. Solo cachea respuestas con canciones.
+// Fuente: la playlist del sitio (SPOTIFY_SNAKE_PLAYLIST o la de abajo); si no se puede
+// leer, lo último escuchado → top tracks. Solo cachea respuestas con canciones.
 // `source` y `status` sirven para diagnosticar y no exponen secretos.
 import { coverUrl, credentials, getAccessToken, json, spotifyGet, type SpotifyTrack } from '../../lib/spotify';
 import { findPreviews } from '../../lib/deezer';
@@ -13,7 +13,8 @@ const MAX = 40;
 const CACHE_OK = 'public, max-age=0, s-maxage=1800, stale-while-revalidate=600';
 const NO_CACHE = 'no-store, max-age=0';
 
-export interface SnakeTrack { id: string; title: string; artist: string; cover: string | null; uri: string; url: string; preview: string | null }
+export interface SnakeTrack { id: string; title: string; artist: string; cover: string | null; art: string | null; uri: string; url: string; preview: string | null }
+type PlaylistRow = { item?: SpotifyTrack | null; track?: SpotifyTrack | null };
 
 const unique = (list: (SpotifyTrack | null | undefined)[]) => {
   const seen = new Set<string>();
@@ -27,10 +28,23 @@ export async function GET() {
     if (!token) return json({ tracks: [], source: 'none', status: 'token-refresh-failed' }, NO_CACHE);
     const statuses: Record<string, number> = {};
 
-    const pl = await spotifyGet<{ items?: { track: SpotifyTrack | null }[] }>(
-      `https://api.spotify.com/v1/playlists/${PLAYLIST_ID}/tracks?limit=100&fields=items(track(id,name,uri,artists(name),external_urls,album(images),duration_ms))`, token);
+    // Desde feb-2026 Spotify movió /tracks → /items (y `track` → `item`), y solo devuelve
+    // el contenido de playlists que el dueño del token creó o en las que colabora.
+    const pl = await spotifyGet<{ items?: PlaylistRow[]; next?: string | null }>(
+      `https://api.spotify.com/v1/playlists/${PLAYLIST_ID}/items?limit=50&additional_types=track`, token);
     statuses.playlist = pl.status;
-    let list = unique((pl.data?.items ?? []).map((i) => i.track));
+    let rows = pl.data?.items ?? [];
+    if (pl.data?.next) {
+      const more = await spotifyGet<{ items?: PlaylistRow[] }>(pl.data.next, token);
+      rows = rows.concat(more.data?.items ?? []);
+    }
+    if (!rows.length) {
+      // Compatibilidad con el endpoint viejo, por si la app aún lo tiene.
+      const old = await spotifyGet<{ items?: PlaylistRow[] }>(`https://api.spotify.com/v1/playlists/${PLAYLIST_ID}/tracks?limit=100`, token);
+      statuses.playlistLegacy = old.status;
+      rows = old.data?.items ?? [];
+    }
+    let list = unique(rows.map((r) => r.item ?? r.track).filter((t) => !!t?.album));
     let source = 'playlist';
 
     if (!list.length) {
@@ -53,6 +67,7 @@ export async function GET() {
       title: t.name,
       artist: t.artists.map((a) => a.name).join(', '),
       cover: coverUrl(t, 64),
+      art: coverUrl(t, 300), // carátula grande para el vinilo
       uri: t.uri,
       url: t.external_urls.spotify,
     }));
