@@ -2,7 +2,7 @@
 // La comida son carátulas de lo último que escuché en Spotify; el cuerpo se arma
 // con las que te comes. Funciona sin Spotify (comida genérica) y sin sonido.
 import { createGame, step, tickMs, turn, type Dir, type SnakeState } from './snakeEngine';
-import { SpotifyPlayer } from './spotifyEmbed';
+import { PreviewPlayer } from './previewPlayer';
 
 interface Track { id: string; title: string; artist: string; cover: string | null; uri: string; url: string }
 
@@ -33,7 +33,8 @@ export async function initPlaylistSnake() {
   const bestEl = $('[data-snake-best]')!;
   const list = $('[data-snake-list]')!;
   const soundBtn = $<HTMLButtonElement>('[data-snake-sound]')!;
-  const playerHost = $('[data-snake-player]')!;
+  const nowEl = $('[data-snake-now]')!;
+  const nowTitle = $('[data-snake-now-title]')!;
 
   // ── Datos ──
   let tracks: Track[] = [];
@@ -64,7 +65,8 @@ export async function initPlaylistSnake() {
   let last = 0;
   let flash = 0;
   let soundOn = false;
-  const player = new SpotifyPlayer(playerHost);
+  const player = new PreviewPlayer();
+  player.onChange = (title) => { nowEl.hidden = !title; nowTitle.textContent = title ?? ''; };
   bestEl.textContent = String(best);
 
   // ── Tamaño (nítido en pantallas retina) ──
@@ -143,7 +145,7 @@ export async function initPlaylistSnake() {
     li.innerHTML = `${t.cover ? `<img src="${esc(t.cover)}" alt="" width="40" height="40" loading="lazy" />` : '<span class="ph"></span>'}
       <span class="meta"><a href="${esc(t.url)}" target="_blank" rel="noopener">${esc(t.title)}</a><span>${esc(t.artist)}</span></span>`;
     list.prepend(li);
-    if (soundOn) player.play(t.uri);
+    if (soundOn) player.play(t.artist, t.title);
   }
 
   function onOver() {
@@ -218,15 +220,14 @@ export async function initPlaylistSnake() {
     b.addEventListener('pointerdown', (e) => { e.preventDefault(); if (running) turn(game, b.dataset.snakeDir as Dir); });
   });
   // Sonido opcional (el reproductor se crea con el toque del usuario).
-  soundBtn.addEventListener('click', async () => {
+  soundBtn.addEventListener('click', () => {
     soundOn = !soundOn;
     soundBtn.setAttribute('aria-pressed', String(soundOn));
     root.classList.toggle('sound-on', soundOn);
-    if (soundOn && tracks[0]) {
-      const lastEaten = tracks[game.eaten[game.eaten.length - 1] ?? 0];
-      try { await player.init(lastEaten.uri); } catch { soundOn = false; root.classList.remove('sound-on'); }
-    } else player.pause();
+    if (soundOn) player.unlock(); // dentro del toque: habilita el audio en iOS/Safari
+    else player.stop();
   });
+  $('[data-snake-stop]')?.addEventListener('click', () => player.stop());
   // Pausa si cambias de pestaña o sales de la sección.
   document.addEventListener('visibilitychange', () => { if (document.hidden) pause(); });
   if ('IntersectionObserver' in window) {

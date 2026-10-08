@@ -1,6 +1,6 @@
 ---
 // 06 · "Cómete mi playlist": Snake donde la comida son las carátulas de lo último que
-// escuché en Spotify. Lógica: scripts/game/snake.ts (+ snakeEngine.ts, spotifyEmbed.ts).
+// escuché en Spotify. Lógica: scripts/game/snake.ts (+ snakeEngine.ts, previewPlayer.ts).
 import SectionHeading from '../ui/SectionHeading.astro';
 const dirs = [
   { d: 'up', label: '↑', es: 'arriba', en: 'up' },
@@ -55,7 +55,12 @@ const dirs = [
           <span class="sound-off"><span class="lang-es">🔇 Activar sonido</span><span class="lang-en">🔇 Turn sound on</span></span>
           <span class="sound-on-label"><span class="lang-es">🔊 Sonido activado</span><span class="lang-en">🔊 Sound on</span></span>
         </button>
-        <div class="player" data-snake-player></div>
+        <p class="now" data-snake-now hidden>
+          <span class="now-eq" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span class="now-title" data-snake-now-title></span>
+          <button type="button" class="now-stop" data-snake-stop><span class="lang-es">parar</span><span class="lang-en">stop</span></button>
+        </p>
+        <p class="credit"><span class="lang-es">Vistas previas de 30 s vía Deezer.</span><span class="lang-en">30 s previews via Deezer.</span></p>
         <p class="side-label"><span class="lang-es">Te comiste</span><span class="lang-en">You ate</span></p>
         <ol class="eaten" data-snake-list></ol>
         <p class="note no-music"><span class="lang-es">Spotify no respondió: hoy se juega sin carátulas.</span><span class="lang-en">Spotify didn't answer: no covers today.</span></p>
@@ -107,8 +112,17 @@ const dirs = [
   :global(#snake.sound-on) .sound { border-style: solid; border-color: var(--accent); color: var(--accent); }
   :global(#snake.sound-on) .sound-off { display: none; }
   :global(#snake.sound-on) .sound-on-label { display: inline; }
-  .player { margin-top: 0.75rem; }
-  .player:empty { display: none; }
+  .now { margin: 0.75rem 0 0; display: flex; align-items: center; gap: 0.6rem; font-family: var(--font-mono); font-size: 0.78rem; color: var(--ink); }
+  .now[hidden] { display: none; }
+  .now-title { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .now-stop { font: inherit; color: var(--ink-3); background: none; border: 1px solid var(--line-2); padding: 2px 8px; cursor: pointer; }
+  .now-stop:hover, .now-stop:focus-visible { color: var(--accent); border-color: var(--accent); }
+  .now-eq { display: inline-flex; align-items: flex-end; gap: 2px; height: 12px; }
+  .now-eq i { width: 3px; background: var(--accent); animation: eq 0.9s ease-in-out infinite alternate; }
+  .now-eq i:nth-child(2) { animation-delay: 0.2s; } .now-eq i:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes eq { from { height: 3px; } to { height: 12px; } }
+  .credit { margin: 0.5rem 0 0; font-family: var(--font-mono); font-size: 0.65rem; color: var(--ink-3); display: none; }
+  :global(#snake.sound-on) .credit { display: block; }
   .side-label { margin: 1.5rem 0 0.75rem; font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent); }
   .eaten { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.5rem; max-height: 320px; overflow-y: auto; }
   .eaten:empty::before { content: '—'; color: var(--ink-3); font-family: var(--font-mono); }
@@ -127,5 +141,5 @@ const dirs = [
     .game { grid-template-columns: 1fr; }
     .eaten { max-height: 220px; }
   }
-  @media (prefers-reduced-motion: reduce) { .eaten :global(li) { animation: none; } }
+  @media (prefers-reduced-motion: reduce) { .eaten :global(li), .now-eq i { animation: none; } }
 </style>
