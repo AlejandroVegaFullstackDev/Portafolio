@@ -6,8 +6,8 @@
 import { canAffordHeavy, canAnimate, isFinePointer } from '../fx/env';
 import type { Dir } from './snakeEngine';
 
-const LEAN: Record<Dir, [number, number]> = { up: [5, 0], down: [-3, 0], left: [0, -5], right: [0, 5] };
-const BASE_X = 7; // inclinación de "consola sobre la mesa" mientras se juega
+const LEAN: Record<Dir, [number, number]> = { up: [3, 0], down: [-2, 0], left: [0, -3], right: [0, 3] };
+const BASE_X = 4; // inclinación de "consola sobre la mesa" mientras se juega
 
 export class SnakeFx {
   private playing = false;

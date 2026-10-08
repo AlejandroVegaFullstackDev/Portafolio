@@ -19,6 +19,8 @@ function silentWav(): string {
   return 'data:audio/wav;base64,' + btoa(bin);
 }
 
+const VOLUME = 0.6;
+
 export interface Song { title: string; artist: string; preview: string | null }
 
 export class PreviewPlayer {
@@ -31,7 +33,7 @@ export class PreviewPlayer {
   constructor() {
     this.decks.forEach((a) => {
       a.preload = 'auto';
-      a.volume = 0.6;
+      a.volume = VOLUME;
       a.addEventListener('ended', () => { if (a === this.decks[this.active]) this.onChange(null); });
     });
   }
@@ -70,8 +72,12 @@ export class PreviewPlayer {
     this.decks[idle].load();
   }
 
+  private gen = 0; // si se para mientras se resolvía la URL, no arranca tarde
+
   async play(song: Song) {
+    const g = ++this.gen;
     const u = await this.url(song);
+    if (g !== this.gen) return;
     if (!u) { this.onChange(null); return; }
     const idle = 1 - this.active;
     // Si ya estaba precargada en el deck libre, se usa ese (arranque inmediato).
@@ -80,18 +86,40 @@ export class PreviewPlayer {
     this.decks[other].pause();
     const a = this.decks[deck];
     if (this.loaded[deck] !== u) { a.src = u; this.loaded[deck] = u; }
+    cancelAnimationFrame(this.fading);
+    a.volume = VOLUME;
     a.currentTime = 0;
     this.active = deck;
     try {
       await a.play();
+      if (g !== this.gen) { a.pause(); return; }
       this.onChange(song.title);
     } catch {
       this.onChange(null);
     }
   }
 
+  private fading = 0;
+
   stop() {
-    this.decks.forEach((a) => a.pause());
+    this.gen++;
+    cancelAnimationFrame(this.fading);
+    this.decks.forEach((a) => { a.pause(); a.volume = VOLUME; });
     this.onChange(null);
+  }
+
+  /** Baja el volumen hasta cero y para (al perder). */
+  fadeOut(ms = 1200) {
+    const a = this.decks[this.active];
+    if (a.paused) return this.stop();
+    const from = a.volume, t0 = performance.now();
+    cancelAnimationFrame(this.fading);
+    const tick = (t: number) => {
+      const k = Math.min(1, (t - t0) / ms);
+      a.volume = from * (1 - k);
+      if (k < 1) this.fading = requestAnimationFrame(tick);
+      else this.stop();
+    };
+    this.fading = requestAnimationFrame(tick);
   }
 }
