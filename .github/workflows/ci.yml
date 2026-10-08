@@ -1,5 +1,6 @@
 # CI: cada push y PR pasa por tipos, build y tests. Lighthouse corre aparte y
 # solo informa (no bloquea): el presupuesto se ajusta con datos reales.
+# Ubuntu fijo (24.04) para que los cambios de imagen de GitHub no rompan el CI sin aviso.
 name: CI
 
 on:
@@ -14,10 +15,10 @@ concurrency:
 jobs:
   verify:
     name: Tipos, build y tests
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: 22
           cache: npm
@@ -28,7 +29,7 @@ jobs:
         run: npm run build
       - name: Tests (datos, CV, smoke del home)
         run: npm test
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: site
           path: dist/client
@@ -37,11 +38,11 @@ jobs:
   lighthouse:
     name: Lighthouse (informativo)
     needs: verify
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     continue-on-error: true
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
+      - uses: actions/checkout@v7
+      - uses: actions/download-artifact@v7
         with:
           name: site
           path: dist/client
