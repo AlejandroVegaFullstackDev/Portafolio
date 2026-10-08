@@ -3,6 +3,9 @@
 // con las que te comes. Funciona sin Spotify (comida genérica) y sin sonido.
 import { createGame, step, tickMs, turn, type Dir, type SnakeState } from './snakeEngine';
 import { PreviewPlayer } from './previewPlayer';
+import { Ranking } from './ranking';
+import { mulberry32 } from './prng';
+import type { Move } from './replay';
 
 interface Track { id: string; title: string; artist: string; cover: string | null; uri: string; url: string; preview: string | null }
 
@@ -58,6 +61,16 @@ export async function initPlaylistSnake() {
 
   // ── Estado ──
   let game: SnakeState = createGame(SIZE, tracks.length);
+  // Ranking: semilla del servidor + registro de giros para que pueda repetir la partida.
+  let rand: () => number = Math.random;
+  let moves: Move[] = [];
+  let ticks = 0;
+  const ranking = new Ranking($('[data-lb-global]')!, $('[data-lb-local]')!, $('[data-lb-off]')!);
+  ranking.load();
+  const form = $<HTMLFormElement>('[data-lb-form]')!;
+  const nameInput = $<HTMLInputElement>('[data-lb-name]')!;
+  const lbMsg = $('[data-lb-msg]')!;
+  const doTurn = (d: Dir) => { if (!running) return; moves.push([ticks, d]); turn(game, d); };
   let running = false;
   let paused = false;
   let best = store.get();
@@ -158,11 +171,24 @@ export async function initPlaylistSnake() {
     overlayTitle.textContent = overlayTitle.dataset[document.documentElement.getAttribute('data-lang') === 'en' ? 'overEn' : 'overEs']!.replace('{n}', String(game.score));
     overlayBtn.textContent = overlayBtn.dataset[document.documentElement.getAttribute('data-lang') === 'en' ? 'againEn' : 'againEs']!;
     overlay.hidden = false;
-    overlayBtn.focus({ preventScroll: true });
+    ranking.recordLocal(game.score);
+    if (ranking.ranked && game.score > 0) {
+      form.hidden = false;
+      lbMsg.textContent = '';
+      nameInput.value = ranking.savedName;
+      nameInput.focus({ preventScroll: true });
+    } else overlayBtn.focus({ preventScroll: true });
   }
 
-  function start() {
-    game = createGame(SIZE, tracks.length);
+  async function start() {
+    overlayBtn.disabled = true;
+    const seed = await ranking.begin();
+    overlayBtn.disabled = false;
+    rand = seed === null ? Math.random : mulberry32(seed);
+    moves = [];
+    ticks = 0;
+    form.hidden = true;
+    game = createGame(SIZE, tracks.length, rand);
     list.replaceChildren();
     scoreEl.textContent = '0';
     overlay.hidden = true;
@@ -192,7 +218,8 @@ export async function initPlaylistSnake() {
       const ms = tickMs(game.score);
       while (acc >= ms && running) {
         acc -= ms;
-        const r = step(game);
+        ticks++;
+        const r = step(game, rand);
         if (r === 'ate') onEat();
         else if (r === 'over') onOver();
       }
@@ -213,7 +240,7 @@ export async function initPlaylistSnake() {
     if (!running) return;
     if (e.key === ' ' || e.key === 'Escape') { e.preventDefault(); pause(); return; }
     const d = KEYS[e.key];
-    if (d) { e.preventDefault(); turn(game, d); }
+    if (d) { e.preventDefault(); doTurn(d); }
   });
   // Swipe en toda la card: gira apenas el dedo recorre ~22 px (sin esperar a soltar) y
   // se pueden encadenar giros en el mismo gesto. Mientras se juega, la página no
@@ -231,7 +258,7 @@ export async function initPlaylistSnake() {
     const t = e.touches[0];
     const dx = t.clientX - sx, dy = t.clientY - sy;
     if (Math.max(Math.abs(dx), Math.abs(dy)) < SWIPE) return;
-    turn(game, Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 'right' : 'left') : (dy > 0 ? 'down' : 'up'));
+    doTurn(Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 'right' : 'left') : (dy > 0 ? 'down' : 'up'));
     sx = t.clientX; sy = t.clientY;
   }, { passive: false });
   pad.addEventListener('touchend', () => { tracking = false; });
@@ -241,7 +268,7 @@ export async function initPlaylistSnake() {
     if (e.pointerType !== 'mouse' || !running) return;
     const dx = e.clientX - sx, dy = e.clientY - sy;
     if (Math.max(Math.abs(dx), Math.abs(dy)) < SWIPE) return;
-    turn(game, Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 'right' : 'left') : (dy > 0 ? 'down' : 'up'));
+    doTurn(Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 'right' : 'left') : (dy > 0 ? 'down' : 'up'));
   });
   // Sonido opcional (el reproductor se crea con el toque del usuario).
   soundBtn.addEventListener('click', () => {
@@ -254,6 +281,18 @@ export async function initPlaylistSnake() {
     } else player.stop();
   });
   $('[data-snake-stop]')?.addEventListener('click', () => player.stop());
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = form.querySelector('button')!;
+    btn.disabled = true;
+    const res = await ranking.submit(nameInput.value.trim(), moves, ticks);
+    btn.disabled = false;
+    const en = document.documentElement.getAttribute('data-lang') === 'en';
+    if (res === 'name') { lbMsg.textContent = en ? 'Use 2–16 letters or numbers.' : 'Usa de 2 a 16 letras o números.'; return; }
+    form.hidden = true;
+    overlayTitle.textContent += res.startsWith('#') ? ` · ${en ? 'global' : 'puesto'} ${res}` : '';
+    if (res === 'error') overlayTitle.textContent += en ? ' · not saved' : ' · no se guardó';
+  });
   // Pausa si cambias de pestaña o sales de la sección.
   document.addEventListener('visibilitychange', () => { if (document.hidden) pause(); });
   if ('IntersectionObserver' in window) {

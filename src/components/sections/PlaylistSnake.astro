@@ -2,6 +2,7 @@
 // 06 · "Cómete mi playlist": Snake donde la comida son las carátulas de lo último que
 // escuché en Spotify. Lógica: scripts/game/snake.ts (+ snakeEngine.ts, previewPlayer.ts).
 import SectionHeading from '../ui/SectionHeading.astro';
+import SnakeRanking from './SnakeRanking.astro';
 ---
 <section id="snake" class="relative px-6 lg:px-20 py-20 lg:py-28 overflow-hidden" data-wipe>
   <div class="max-w-[1480px] mx-auto">
@@ -27,6 +28,14 @@ import SectionHeading from '../ui/SectionHeading.astro';
               data-again-es="OTRA VEZ ↻" data-again-en="PLAY AGAIN ↻" data-resume-es="SEGUIR ▶" data-resume-en="RESUME ▶">
               <span class="lang-es">JUGAR ▶</span><span class="lang-en">PLAY ▶</span>
             </button>
+            <form class="lb-form" data-lb-form hidden>
+              <label for="lbName"><span class="lang-es">Tu nombre para el ranking global</span><span class="lang-en">Your name for the global ranking</span></label>
+              <div class="lb-row">
+                <input id="lbName" data-lb-name type="text" maxlength="16" minlength="2" autocomplete="nickname" enterkeyhint="send" required />
+                <button type="submit" class="cy-btn"><span class="lang-es">GUARDAR</span><span class="lang-en">SAVE</span></button>
+              </div>
+              <p class="lb-msg" data-lb-msg aria-live="polite"></p>
+            </form>
             <p class="ov-hint">
               <span class="lang-es hint-desk">Flechas o WASD · espacio para pausar</span><span class="lang-en hint-desk">Arrows or WASD · space to pause</span>
               <span class="lang-es hint-touch">Desliza el dedo sobre el tablero para girar</span><span class="lang-en hint-touch">Swipe on the board to turn</span>
@@ -51,6 +60,7 @@ import SectionHeading from '../ui/SectionHeading.astro';
           <button type="button" class="now-stop" data-snake-stop><span class="lang-es">parar</span><span class="lang-en">stop</span></button>
         </p>
         <p class="credit"><span class="lang-es">Vistas previas de 30 s vía Deezer.</span><span class="lang-en">30 s previews via Deezer.</span></p>
+        <SnakeRanking />
         <p class="side-label"><span class="lang-es">Te comiste</span><span class="lang-en">You ate</span></p>
         <ol class="eaten" data-snake-list></ol>
         <p class="note no-music"><span class="lang-es">Spotify no respondió: hoy se juega sin carátulas.</span><span class="lang-en">Spotify didn't answer: no covers today.</span></p>
@@ -74,6 +84,13 @@ import SectionHeading from '../ui/SectionHeading.astro';
   .ov-title { font-family: var(--font-display); font-weight: 700; font-size: clamp(1.6rem, 4vw, 2.6rem); letter-spacing: -0.03em; margin: 0; }
   .ov-hint { font-family: var(--font-mono); font-size: 0.72rem; color: var(--ink-3); margin: 0; letter-spacing: 0.08em; }
   .hint-touch { display: none; }
+  .lb-form { display: grid; gap: 0.4rem; width: min(320px, 100%); text-align: left; }
+  .lb-form[hidden] { display: none; }
+  .lb-form label { font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-3); }
+  .lb-row { display: flex; gap: 0.5rem; }
+  .lb-row input { flex: 1; min-width: 0; font: 1rem var(--font-mono); color: var(--ink); background: var(--bg); border: 1px solid var(--line-2); padding: 0.55rem 0.7rem; }
+  .lb-row input:focus { outline: none; border-color: var(--accent); }
+  .lb-msg { margin: 0; min-height: 1em; font-family: var(--font-mono); font-size: 0.72rem; color: var(--accent); }
   @media (hover: none) { .hint-desk { display: none; } .hint-touch { display: inline; } }
 
   /* Mientras se juega, deslizar sobre la card mueve la serpiente y no la página. */
