@@ -150,6 +150,7 @@ export async function initPlaylistSnake() {
 
   function onOver() {
     running = false;
+    root.classList.remove('is-playing');
     if (game.score > best) { best = game.score; store.set(best); bestEl.textContent = String(best); }
     overlayTitle.textContent = overlayTitle.dataset[document.documentElement.getAttribute('data-lang') === 'en' ? 'overEn' : 'overEs']!.replace('{n}', String(game.score));
     overlayBtn.textContent = overlayBtn.dataset[document.documentElement.getAttribute('data-lang') === 'en' ? 'againEn' : 'againEs']!;
@@ -164,6 +165,7 @@ export async function initPlaylistSnake() {
     overlay.hidden = true;
     running = true;
     paused = false;
+    root.classList.add('is-playing');
     acc = 0;
     last = performance.now();
     canvas.focus({ preventScroll: true });
@@ -173,6 +175,7 @@ export async function initPlaylistSnake() {
     if (!running) return;
     running = false;
     paused = true;
+    root.classList.remove('is-playing');
     overlayTitle.textContent = overlayTitle.dataset[document.documentElement.getAttribute('data-lang') === 'en' ? 'pauseEn' : 'pauseEs']!;
     overlayBtn.textContent = overlayBtn.dataset[document.documentElement.getAttribute('data-lang') === 'en' ? 'resumeEn' : 'resumeEs']!;
     overlay.hidden = false;
@@ -198,7 +201,7 @@ export async function initPlaylistSnake() {
 
   // ── Controles ──
   overlayBtn.addEventListener('click', () => {
-    if (paused) { paused = false; running = true; overlay.hidden = true; last = performance.now(); canvas.focus({ preventScroll: true }); return; }
+    if (paused) { paused = false; running = true; root.classList.add('is-playing'); overlay.hidden = true; last = performance.now(); canvas.focus({ preventScroll: true }); return; }
     start();
   });
   // Teclado: solo mientras se juega, para no robarle el scroll a la página.
@@ -208,16 +211,33 @@ export async function initPlaylistSnake() {
     const d = KEYS[e.key];
     if (d) { e.preventDefault(); turn(game, d); }
   });
-  // Swipe sobre el tablero
-  let sx = 0, sy = 0;
-  canvas.addEventListener('pointerdown', (e) => { sx = e.clientX; sy = e.clientY; });
-  canvas.addEventListener('pointerup', (e) => {
-    const dx = e.clientX - sx, dy = e.clientY - sy;
-    if (Math.max(Math.abs(dx), Math.abs(dy)) < 18) return;
+  // Swipe en toda la card: gira apenas el dedo recorre ~22 px (sin esperar a soltar) y
+  // se pueden encadenar giros en el mismo gesto. Mientras se juega, la página no
+  // hace scroll al deslizar sobre el tablero (por eso passive: false).
+  const pad = root.querySelector<HTMLElement>('[data-snake-pad]') ?? canvas;
+  const SWIPE = 22;
+  let sx = 0, sy = 0, tracking = false;
+  pad.addEventListener('touchstart', (e) => {
+    const t = e.touches[0];
+    sx = t.clientX; sy = t.clientY; tracking = true;
+  }, { passive: true });
+  pad.addEventListener('touchmove', (e) => {
+    if (!running || !tracking) return;
+    e.preventDefault();
+    const t = e.touches[0];
+    const dx = t.clientX - sx, dy = t.clientY - sy;
+    if (Math.max(Math.abs(dx), Math.abs(dy)) < SWIPE) return;
     turn(game, Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 'right' : 'left') : (dy > 0 ? 'down' : 'up'));
-  });
-  root.querySelectorAll<HTMLButtonElement>('[data-snake-dir]').forEach((b) => {
-    b.addEventListener('pointerdown', (e) => { e.preventDefault(); if (running) turn(game, b.dataset.snakeDir as Dir); });
+    sx = t.clientX; sy = t.clientY;
+  }, { passive: false });
+  pad.addEventListener('touchend', () => { tracking = false; });
+  // Mouse: arrastrar también sirve (útil para probar en desktop).
+  canvas.addEventListener('pointerdown', (e) => { if (e.pointerType === 'mouse') { sx = e.clientX; sy = e.clientY; } });
+  canvas.addEventListener('pointerup', (e) => {
+    if (e.pointerType !== 'mouse' || !running) return;
+    const dx = e.clientX - sx, dy = e.clientY - sy;
+    if (Math.max(Math.abs(dx), Math.abs(dy)) < SWIPE) return;
+    turn(game, Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 'right' : 'left') : (dy > 0 ? 'down' : 'up'));
   });
   // Sonido opcional (el reproductor se crea con el toque del usuario).
   soundBtn.addEventListener('click', () => {
@@ -232,6 +252,9 @@ export async function initPlaylistSnake() {
   document.addEventListener('visibilitychange', () => { if (document.hidden) pause(); });
   if ('IntersectionObserver' in window) {
     new IntersectionObserver(([e]) => { if (!e.isIntersecting) pause(); }, { threshold: 0.25 }).observe(canvas);
+    // El widget flotante de Spotify tapaba los controles en el cel.
+    const widget = document.getElementById('spWidget');
+    if (widget) new IntersectionObserver(([e]) => widget.classList.toggle('sp-away', e.isIntersecting), { threshold: 0.05 }).observe(root);
   }
   if (typeof ResizeObserver !== 'undefined') new ResizeObserver(resize).observe(canvas.parentElement!);
   else addEventListener('resize', resize);
