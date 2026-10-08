@@ -47,6 +47,7 @@ async function start() {
   initHero();
   initNowBand();
   initExperience();
+  coverflow('projects', 0.5); // 3 destacados: corto, sin pantallas vacías
   initPaperStack();
   coverflow('blog', 0.5); // pocos posts: el carrusel se recorre en la mitad del scroll
   initPlaylistSnake();

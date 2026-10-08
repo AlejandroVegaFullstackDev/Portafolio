@@ -70,13 +70,19 @@ export async function submitScore(ip: string, body: { token?: unknown; name?: un
 }
 
 export async function topScores(limit = 10) {
-  const [flat] = await redis<[string[]]>(['ZREVRANGE', BOARD_KEY, 0, limit - 1, 'WITHSCORES']);
+  // Se piden de más por si hay que descartar nombres que el filtro actual ya no acepta.
+  const [flat] = await redis<[string[]]>(['ZREVRANGE', BOARD_KEY, 0, limit * 2 - 1, 'WITHSCORES']);
   if (!flat?.length) return [];
   const members = flat.filter((_, i) => i % 2 === 0);
   const [blobs] = await redis<[(string | null)[]]>(['HMGET', ENTRY_KEY, ...members]);
-  const rows = await Promise.all(members.map(async (m, i) => {
+  const rows: { name: string; score: number }[] = [];
+  const purge: string[] = [];
+  for (let i = 0; i < members.length; i++) {
     const e = blobs[i] ? await decrypt<Entry>(blobs[i]!) : null;
-    return { name: e?.name ?? '???', score: Number(flat[i * 2 + 1]) };
-  }));
-  return rows;
+    if (!e || !cleanName(e.name)) { purge.push(members[i]); continue; }
+    rows.push({ name: e.name, score: Number(flat[i * 2 + 1]) });
+  }
+  // Registros con nombres que ya no pasan el filtro (o ilegibles) salen del ranking.
+  if (purge.length) await redis(['ZREM', BOARD_KEY, ...purge], ['HDEL', ENTRY_KEY, ...purge]).catch(() => {});
+  return rows.slice(0, limit);
 }

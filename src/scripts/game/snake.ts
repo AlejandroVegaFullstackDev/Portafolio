@@ -13,6 +13,7 @@ import { SnakeFx } from './snakeFx';
 import { VinylDeck } from './vinylDeck';
 import { SnakeUi, tr } from './snakeUi';
 import { bindControls } from './snakeInput';
+import { SnakeFocus } from './snakeFocus';
 import type { Move } from './replay';
 
 interface Track { id: string; title: string; artist: string; cover: string | null; art?: string | null; uri: string; url: string; preview: string | null }
@@ -34,6 +35,8 @@ export async function initPlaylistSnake() {
   const ui = new SnakeUi(root);
   const fx = new SnakeFx(root, $('[data-snake-pad]'), $('.board'), canvas);
   const deck = new VinylDeck($('[data-deck]'));
+  const focus = new SnakeFocus(root);
+  const consoleEl = $('[data-snake-pad]');
   const player = new PreviewPlayer();
   const scoreEl = $('[data-snake-score]');
   const bestEl = $('[data-snake-best]');
@@ -97,10 +100,21 @@ export async function initPlaylistSnake() {
     root!.classList.toggle('sound-on', soundOn);
     if (soundOn) {
       player.unlock(); // dentro del toque: habilita el audio en iOS/Safari
-      setTimeout(() => player.preload(tracks[game.food.item]), 150);
+      setTimeout(() => player.preload(onBoard()), 150);
     } else player.stop();
   }
   setSound(false);
+
+  // Suena la canción de la carátula que está en el tablero; la siguiente queda precargada.
+  const onBoard = () => tracks[game.food.item];
+  const upNext = () => (tracks.length ? tracks[(game.score + 1) % tracks.length] : undefined);
+  function playBoard() {
+    const t = onBoard();
+    if (t) deck.show(t);
+    if (!soundOn || !t) return;
+    player.play(t);
+    player.preload(upNext());
+  }
 
   // ── Tamaño (nítido en retina) ──
   let cell = 20;
@@ -136,20 +150,19 @@ export async function initPlaylistSnake() {
     deck.reset();
     ui.face('now');
     preloadArt(game.food.item);
-    if (soundOn) player.preload(tracks[game.food.item]);
     resume();
   }
 
   function resume() {
     ui.state('none');
+    focus.enter(consoleEl); // centra la consola y bloquea el scroll mientras se juega
     running = true;
     root!.classList.add('is-playing');
     fx.play();
     acc = 0;
     last = performance.now();
     canvas!.focus({ preventScroll: true });
-    const lastIdx = game.eaten[game.eaten.length - 1];
-    if (soundOn && lastIdx !== undefined) player.play(tracks[lastIdx]);
+    playBoard();
   }
 
   function pause() {
@@ -157,6 +170,7 @@ export async function initPlaylistSnake() {
     running = false;
     root!.classList.remove('is-playing');
     fx.idle();
+    focus.exit();
     player.stop(); // el juego se detiene y la música también
     ui.state('paused');
   }
@@ -173,14 +187,11 @@ export async function initPlaylistSnake() {
     const head = game.snake[0];
     const big = arts.get(idx);
     fx.pop(big?.complete && big.naturalWidth ? big.src : t?.cover ?? null, head.x, head.y, cell);
+    const cr = canvas.getBoundingClientRect();
+    focus.burst(cr.left + (head.x + 0.5) * cell, cr.top + (head.y + 0.5) * cell);
     preloadArt(game.food.item);
     ui.ate(t, game.score);
-    if (!t) return;
-    deck.show(t);
-    if (soundOn) {
-      player.play(t);
-      player.preload(tracks[game.food.item]); // la siguiente ya queda descargándose
-    }
+    playBoard(); // pasa a la canción de la nueva carátula
   }
 
   async function onOver() {
@@ -188,6 +199,7 @@ export async function initPlaylistSnake() {
     root!.classList.remove('is-playing');
     fx.hit();
     fx.idle();
+    focus.exit();
     player.fadeOut(1200);
     ui.overActions.hidden = false;
     const newBest = game.score > best;
@@ -259,9 +271,8 @@ export async function initPlaylistSnake() {
   });
   soundBtn.addEventListener('click', () => {
     setSound(!soundOn);
-    // Si se activa a mitad de partida, suena la última que te comiste.
-    const lastIdx = game.eaten[game.eaten.length - 1];
-    if (soundOn && running && lastIdx !== undefined) player.play(tracks[lastIdx]);
+    // Si se activa a mitad de partida, suena la de la carátula en pantalla.
+    if (soundOn && running) playBoard();
   });
   form.addEventListener('submit', (e) => {
     e.preventDefault();

@@ -33,6 +33,7 @@ export class PreviewPlayer {
   constructor() {
     this.decks.forEach((a) => {
       a.preload = 'auto';
+      a.loop = true; // la preview se repite mientras la carátula siga en pantalla
       a.volume = VOLUME;
       a.addEventListener('ended', () => { if (a === this.decks[this.active]) this.onChange(null); });
     });

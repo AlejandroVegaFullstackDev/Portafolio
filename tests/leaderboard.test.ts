@@ -113,4 +113,10 @@ describe('nombres', () => {
     expect(cleanName('Admin')).toBeNull();
     expect(cleanName(42)).toBeNull();
   });
+  it('detecta groserías disfrazadas (letras cambiadas, leet, repetidas)', () => {
+    for (const bad of ['XPvssyDestroyerX', 'H1jueput4', 'fuuuuck', 'p.u.t.a', 'M13rd4', 'Malparido99', 'B1tch']) expect(cleanName(bad)).toBeNull();
+  });
+  it('no bloquea nombres normales', () => {
+    for (const ok of ['HyDRA', 'Valeria', 'Nico', 'Sara_07', 'Ñandú', 'Kaseo', 'Rapero', 'Alejo', 'No']) expect(cleanName(ok)).toBe(ok);
+  });
 });

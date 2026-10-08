@@ -38,8 +38,8 @@ describe.skipIf(!hasBuild)('home (smoke)', () => {
       const { d, w, errors } = await boot(pointer);
       expect(errors).toEqual([]);
       expect(d.querySelectorAll('#heroName .hc').length).toBeGreaterThan(5);
-      expect(d.getElementById('blog')?.classList.contains('is-pinned')).toBe(true);
-      expect(d.querySelectorAll('#projects .pj-card').length).toBe(3);
+      ['projects', 'blog'].forEach((id) => expect(d.getElementById(id)?.classList.contains('is-pinned')).toBe(true));
+      expect(d.querySelectorAll('#projects .hs-card').length).toBe(3);
       // Orden pensado para reclutadores: experiencia antes que proyectos.
       const ids = [...d.querySelectorAll('main > section[id]')].map((s) => s.id);
       expect(ids.indexOf('exp')).toBeLessThan(ids.indexOf('projects'));

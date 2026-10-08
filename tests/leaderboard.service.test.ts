@@ -22,6 +22,8 @@ function exec(cmd: (string | number)[]): unknown {
     case 'ZREVRANGE': return ranked().slice(Number(a[0]), Number(a[1]) + 1).flatMap(([m, s]) => [m, String(s)]);
     case 'HSET': { const h = hashes.get(key) ?? new Map(); h.set(a[0], a[1]); hashes.set(key, h); return 1; }
     case 'HMGET': return a.map((f) => hashes.get(key)?.get(f) ?? null);
+    case 'ZREM': a.forEach((m) => z().delete(m)); return a.length;
+    case 'HDEL': a.forEach((f) => hashes.get(key)?.delete(f)); return a.length;
     default: throw new Error(op);
   }
 }
