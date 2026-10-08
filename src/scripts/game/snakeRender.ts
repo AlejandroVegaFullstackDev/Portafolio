@@ -1,6 +1,7 @@
 // Dibujo del tablero del Snake en canvas. Da profundidad sin WebGL: cada carátula
-// proyecta sombra (parece una ficha levantada), la comida flota y la cabeza brilla.
+// proyecta sombra (parece una ficha levantada), la comida flota y la serpiente es un diablito.
 import type { SnakeState } from './snakeEngine';
+import { drawDevilHead, drawDevilTail } from './devil';
 
 export interface Palette { accent: string; line: string; panel: string }
 
@@ -63,19 +64,8 @@ export function drawBoard(ctx: CanvasRenderingContext2D, game: SnakeState, cover
     ctx.strokeRect(c.x * cell + 1.5, c.y * cell + 1.5, cell - 3, cell - 3);
   });
 
-  // Cabeza con resplandor
-  const h = game.snake[0];
-  ctx.save();
-  ctx.shadowColor = p.accent;
-  ctx.shadowBlur = cell * (flash > 0 ? 1.2 : 0.6);
-  ctx.fillStyle = flash > 0 ? '#ffffff' : p.accent;
-  ctx.fillRect(h.x * cell + 1, h.y * cell + 1, cell - 2, cell - 2);
-  ctx.restore();
-  ctx.fillStyle = '#000';
-  const e = Math.max(2, cell / 7);
-  const ex = game.dir === 'left' ? 0.28 : game.dir === 'right' ? 0.72 : 0.3;
-  const ey = game.dir === 'up' ? 0.28 : game.dir === 'down' ? 0.72 : 0.3;
-  const eye = (fx: number, fy: number) => ctx.fillRect(h.x * cell + cell * fx - e / 2, h.y * cell + cell * fy - e / 2, e, e);
-  if (game.dir === 'up' || game.dir === 'down') { eye(0.3, ey); eye(0.7, ey); }
-  else { eye(ex, 0.3); eye(ex, 0.7); }
+  // Cola de diablo y cabeza de diablito (devil.ts).
+  const n = game.snake.length;
+  if (n > 1) drawDevilTail(ctx, game.snake[n - 1], game.snake[n - 2], cell, p.accent);
+  drawDevilHead(ctx, game.snake[0], cell, game.dir, p.accent, flash > 0);
 }
