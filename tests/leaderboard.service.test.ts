@@ -48,6 +48,17 @@ function play(seed: number) {
 
 let S: typeof import('../src/lib/leaderboard/service');
 
+/** Sesión cuya partida (con el bot de prueba) suma al menos un punto: la semilla es al azar
+ *  y una partida de 0 puntos el servidor la rechaza a propósito ('zero'). */
+async function scoringSession(ip: string, dev: string) {
+  for (let i = 0; i < 50; i++) {
+    const s = await S.startSession(ip, dev);
+    const g = play(s.seed);
+    if (g.score > 0) return { ...s, g };
+  }
+  throw new Error('no se encontró una semilla con puntos');
+}
+
 beforeAll(async () => {
   const env = import.meta.env as Record<string, string>;
   env.LEADERBOARD_SECRET = 'service-test-secret-'.padEnd(48, 'y');
@@ -63,8 +74,7 @@ beforeEach(() => { counters.clear(); });
 
 describe('servicio del ranking', () => {
   it('acepta una partida real y la muestra en el top con su nombre (descifrado)', async () => {
-    const { seed, token } = await S.startSession('1.1.1.1', 'device-a');
-    const g = play(seed);
+    const { token, g } = await scoringSession('1.1.1.1', 'device-a');
     const later = Date.now() + 10 * 60_000;
     const res = await S.submitScore('1.1.1.1', { token, name: 'Alejo', moves: g.moves, ticks: g.ticks }, later);
     expect(res.score).toBe(g.score);
@@ -75,16 +85,14 @@ describe('servicio del ranking', () => {
   });
 
   it('no deja reutilizar el mismo token (ataque de repetición)', async () => {
-    const { seed, token } = await S.startSession('2.2.2.2', 'device-b');
-    const g = play(seed);
+    const { token, g } = await scoringSession('2.2.2.2', 'device-b');
     const later = Date.now() + 10 * 60_000;
     await S.submitScore('2.2.2.2', { token, name: 'Uno', moves: g.moves, ticks: g.ticks }, later);
     await expect(S.submitScore('2.2.2.2', { token, name: 'Uno', moves: g.moves, ticks: g.ticks }, later)).rejects.toMatchObject({ code: 'replayed' });
   });
 
   it('rechaza envíos más rápidos de lo que el juego permite', async () => {
-    const { seed, token } = await S.startSession('3.3.3.3', 'device-c');
-    const g = play(seed);
+    const { token, g } = await scoringSession('3.3.3.3', 'device-c');
     await expect(S.submitScore('3.3.3.3', { token, name: 'Rápido', moves: g.moves, ticks: g.ticks }, Date.now())).rejects.toMatchObject({ code: 'too-fast' });
   });
 
