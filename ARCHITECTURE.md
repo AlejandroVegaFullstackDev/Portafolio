@@ -46,11 +46,10 @@ tools/og-image.py         Genera public/og.png.
 | Archivo            | Qué hace                                                                 | Se activa con          |
 |--------------------|--------------------------------------------------------------------------|------------------------|
 | `env.ts`           | Política de movimiento: `off` / `lite` / `full`. Modo ahorro automático.  | —                      |
-| `coverflow.ts`     | Carrusel horizontal pinneado en 3D (Proyectos y Blog).                   | `[data-coverflow]`     |
+| `coverflow.ts`     | Carrusel horizontal pinneado en 3D (Blog).                               | `[data-coverflow]`     |
 | `typewriter.ts`    | Titulares que se tipean con cursor.                                      | `[data-type]`          |
 | `scramble.ts`      | Etiquetas `// 0N _ X` que se descifran.                                  | `[data-scramble]`      |
 | `wipe.ts`          | Revelado diagonal de sección + cascada de ítems.                         | `[data-wipe]`, `[data-stagger-item]` |
-| `odometer.ts`      | Cifras como contador mecánico 3D.                                        | `[data-counter]`       |
 | `crt.ts`           | Imagen que se enciende como monitor viejo.                               | `[data-crt]`           |
 | `gyro.ts`          | Giroscopio compartido (pide permiso en iOS).                             | `[data-gyro-btn]`      |
 | `lens.ts`          | Cursor lente + botones magnéticos (solo mouse).                          | `[data-lens]`, `[data-magnetic]` |

@@ -30,22 +30,6 @@ export const identity = {
   },
 } as const;
 
-// Cifras reales, todas trazables a un proyecto concreto.
-export const highlights = [
-  {
-    value: 10000, prefix: "+", suffix: "",
-    label: { es: "guías de envío en segundos, antes horas", en: "shipping labels in seconds, used to take hours" },
-  },
-  {
-    value: 500, prefix: "~", suffix: "",
-    label: { es: "vehículos de la flota con rastreo GPS", en: "fleet vehicles with GPS tracking" },
-  },
-  {
-    value: 20, prefix: "5–", suffix: " h",
-    label: { es: "por semana ahorradas con automatizaciones", en: "per week saved through automations" },
-  },
-] as const;
-
 export const about = {
   es: [
     "Programo desde 2021 y trabajo en la industria desde 2023, en fintech, logística y medios digitales.",

@@ -35,13 +35,6 @@
 .cy-lens.is-active .cy-lens-label { opacity: 1; }
 @media (hover: none) { .cy-lens { display: none; } }
 
-/* fx/odometer.ts — rodillos de dígitos */
-.odo { display: inline-flex; align-items: flex-end; perspective: 400px; }
-.odo-win { display: inline-block; height: 1em; overflow: hidden; line-height: 1; }
-.odo-reel { display: flex; flex-direction: column; transform-style: preserve-3d; will-change: transform; }
-.odo-reel > span { display: block; height: 1em; line-height: 1; text-align: center; }
-.odo-sep { display: inline-block; line-height: 1; }
-
 /* fx/typewriter.ts — cursor de terminal en titulares */
 .tw-cursor {
   display: inline-block; width: 0.08em; min-width: 3px; height: 0.82em;

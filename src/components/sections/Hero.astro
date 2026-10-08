@@ -1,5 +1,5 @@
 ---
-// Hero: nombre, propuesta, CTAs y cifras (odómetro). Capas con [data-depth] para el
+// Hero: nombre, propuesta y dos acciones. Capas con [data-depth] para el
 // parallax de mouse/giroscopio. Animación en scripts/sections/hero.ts.
 import { portfolioData as D } from '../../data';
 import { Image } from 'astro:assets';
@@ -21,32 +21,14 @@ import fondoImg from '../../assets/img/fondo.jpg';
         <span class="lang-es">{D.identity.tagline.es}</span>
         <span class="lang-en">{D.identity.tagline.en}</span>
       </p>
-      <div class="hero-ctas mt-10 flex flex-wrap gap-4">
+      <div class="hero-ctas mt-10 flex flex-wrap items-center gap-4">
         <a href="#contact" class="cy-btn solid" data-magnetic><span class="lang-es">HABLEMOS ↗</span><span class="lang-en">LET'S TALK ↗</span></a>
         <a href="/alejandro-vega-cv-es.pdf" download class="cy-btn lang-es" data-magnetic>DESCARGAR CV ↓</a>
         <a href="/alejandro-vega-cv-en.pdf" download class="cy-btn lang-en" data-magnetic>DOWNLOAD CV ↓</a>
         <a href="#blog" class="hero-blog"><span class="lang-es">o lee el blog →</span><span class="lang-en">or read the blog →</span></a>
       </div>
-      <div class="hero-stats mt-12 lg:mt-16 grid grid-cols-3 gap-2 sm:gap-6 max-w-xl">
-        {D.highlights.map((h) => (
-          <div class="hero-stat">
-            <div class="hero-stat-num font-display font-bold" data-counter={h.value} data-counter-prefix={h.prefix} data-counter-suffix={h.suffix}>{h.prefix}{h.value.toLocaleString('es-CO')}{h.suffix}</div>
-            <div class="hero-stat-label"><span class="lang-es">{h.label.es}</span><span class="lang-en">{h.label.en}</span></div>
-          </div>
-        ))}
-      </div>
     </div>
 
-    <div class="hidden lg:block lg:col-span-5 relative" data-depth="1.4">
-      <div class="relative border border-[var(--line)] bg-[var(--panel)] overflow-hidden">
-        <div class="cy-term-bar">
-          <span class="dot r"></span><span class="dot"></span><span class="dot"></span>
-          <span>~/alejandro@4ledmt</span><span class="label">tty/01</span>
-        </div>
-        <div class="cy-term-body min-h-[280px] font-mono text-sm" id="heroTerm"></div>
-      </div>
-      <div class="hero-stamp" aria-hidden="true"><div>BOGOTÁ<br />·<br />04°N</div></div>
-    </div>
   </div>
 
   <pre class="hero-ascii" aria-hidden="true" data-depth="0.4">
@@ -74,14 +56,6 @@ import fondoImg from '../../assets/img/fondo.jpg';
   .hero-name :global(.reveal-wrap) { overflow: hidden; display: block; }
   .hero-blog { align-self: center; padding: 0.5rem 0.25rem; font-family: var(--font-mono); font-size: 0.78rem; letter-spacing: 0.1em; color: var(--ink-3); text-decoration: underline; text-underline-offset: 4px; text-decoration-color: var(--line-2); }
   .hero-blog:hover, .hero-blog:focus-visible { color: var(--accent); text-decoration-color: var(--accent); }
-  .hero-stat { border-top: 1px solid var(--line); padding-top: 14px; min-width: 0; }
-  .hero-stat-num { font-size: clamp(1.3rem, 5.6vw, 2.4rem); line-height: 1; white-space: nowrap; font-variant-numeric: tabular-nums; }
-  .hero-stat-label { font-family: var(--font-mono); font-size: 0.7rem; color: var(--ink-3); letter-spacing: 0.15em; text-transform: uppercase; margin-top: 6px; line-height: 1.25; }
-  .hero-stamp {
-    position: absolute; top: -4.5rem; right: -1rem; width: 6rem; height: 6rem; background: var(--bg);
-    border: 1px solid var(--accent); display: flex; align-items: center; justify-content: center; text-align: center;
-    font-family: var(--font-mono); font-size: 0.75rem; line-height: 1.2; color: var(--accent); letter-spacing: 0.1em; transform: rotate(12deg);
-  }
   .hero-ascii {
     position: absolute; right: -2.5rem; bottom: 0; display: none;
     font-family: var(--font-mono); font-weight: 700; font-size: 0.75rem; line-height: 0.98; white-space: pre;

@@ -1,5 +1,5 @@
 ---
-// 05 · Experiencia: cada empresa llega desde el fondo (eje Z) y la línea de tiempo
+// 03 · Experiencia: cada empresa llega desde el fondo (eje Z) y la línea de tiempo
 // se dibuja con el scroll. Animación: scripts/sections/experience.ts.
 import SectionHeading from '../ui/SectionHeading.astro';
 import { portfolioData as D } from '../../data';
@@ -7,7 +7,7 @@ const total = D.experience.length;
 ---
 <section id="exp" class="relative px-6 lg:px-20 py-20 lg:py-28 bg-[var(--bg-2)] border-y border-[var(--line)] cy-scanlines overflow-hidden" data-wipe>
   <div class="max-w-[1480px] mx-auto">
-    <SectionHeading num="05" label={{ es: 'EXPERIENCIA', en: 'EXPERIENCE' }} es={{ pre: 'Historial de ', accent: 'commits', post: '.' }} en={{ pre: 'Commit ', accent: 'history', post: '.' }} />
+    <SectionHeading num="03" label={{ es: 'EXPERIENCIA', en: 'EXPERIENCE' }} es={{ pre: 'Historial de ', accent: 'commits', post: '.' }} en={{ pre: 'Commit ', accent: 'history', post: '.' }} />
 
     <div class="tunnel" id="expTunnel">
       <span class="rail" aria-hidden="true"><span class="rail-fill" id="expRail"></span></span>

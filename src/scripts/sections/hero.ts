@@ -1,11 +1,8 @@
-// Hero: nombre letra por letra, terminal que se tipea, cifras en odómetro y capas
+// Hero: nombre letra por letra y capas
 // [data-depth] que se mueven con el mouse (desktop) o el giroscopio (móvil).
 import gsap from 'gsap';
-import { portfolioData as D } from '../../data';
 import { canAffordHeavy, canAnimate, isFinePointer } from '../fx/env';
 import { onTilt } from '../fx/gyro';
-import { initOdometers } from '../fx/odometer';
-import { getLang, onLangChange } from '../core/i18n';
 
 function paintName() {
   const el = document.getElementById('heroName');
@@ -13,34 +10,6 @@ function paintName() {
   const line = (text: string, tail = '') =>
     `<span class="reveal-wrap" aria-hidden="true"><span class="inline-block">${[...text].map((c) => `<span class="hc">${c}</span>`).join('')}${tail}</span></span>`;
   el.innerHTML = line('ALEJANDRO_') + line('VEGA', '<span class="hc" style="color:var(--accent)">.</span>');
-}
-
-function paintTerm() {
-  const term = document.getElementById('heroTerm');
-  if (!term) return;
-  const lang = getLang();
-  const S = D.stack;
-  const lines: [string, string][] = [
-    ['whoami', 'ps1'],
-    [`${D.identity.name.toLowerCase().replace(' ', '_')} — ${D.identity.title[lang].toLowerCase()}`, 'ok'],
-    ['cat .stack', 'ps1'],
-    [`frontend: ${[S.frameworks[2], S.frameworks[4], 'tailwind'].join(' · ').toLowerCase()}`, ''],
-    [`backend: ${[S.languages[0], S.languages[1], S.frameworks[0], S.frameworks[1]].join(' · ').toLowerCase()}`, ''],
-    [`data: ${[S.databases[0], S.databases[2], S.languages[4]].join(' · ').toLowerCase()}`, ''],
-    ['status', 'ps1'],
-    [`● online · ${D.identity.status[lang].toLowerCase()}`, 'ok'],
-    ['_', 'ps1'],
-  ];
-  term.innerHTML = '';
-  lines.forEach(([text, cls], i) => {
-    setTimeout(() => {
-      const div = document.createElement('div');
-      div.className = 'cy-term-line' + (cls && cls !== 'ps1' ? ` ${cls}` : cls ? '' : ' com');
-      if (cls === 'ps1') div.innerHTML = `<span class="ps1">▸</span><span>${text}</span>`;
-      else div.textContent = text;
-      term.appendChild(div);
-    }, canAnimate() ? i * 220 : 0);
-  });
 }
 
 function animateIn() {
@@ -96,9 +65,6 @@ function initDepth() {
 
 export function initHero() {
   paintName();
-  paintTerm();
   animateIn();
-  initOdometers(1.1);
   initDepth();
-  onLangChange(paintTerm);
 }

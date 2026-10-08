@@ -1,113 +1,112 @@
 ---
-// 03 · Proyectos: mismo carrusel que el blog. Seis destacados como diapositivas
-// y el resto en la diapositiva final. Datos: src/data/projects.ts.
-import Coverflow from '../ui/Coverflow.astro';
+// 04 · Proyectos: tres destacados en tarjetas y el resto en una lista corta.
+// Cada uno abre su caso en /proyecto/[slug]. Datos: src/data/projects.ts.
 import SectionHeading from '../ui/SectionHeading.astro';
 import { portfolioData as D } from '../../data';
 
-const FEATURED = 6;
-const featured = D.projects.slice(0, FEATURED);
-const rest = D.projects.slice(FEATURED);
+const FEATURED = ['support-triage', 'worker-gps', 'recuperacion-cartera'];
+const featured = FEATURED.map((s) => D.projects.find((p) => p.slug === s)!).filter(Boolean);
+const rest = D.projects.filter((p) => !FEATURED.includes(p.slug));
 ---
-<Coverflow id="projects" label="Proyectos" total={featured.length + 2} bgA="PROYECTOS · PRODUCCIÓN · OPEN SOURCE" bgB="NESTJS · PYTHON · REACT · POSTGRESQL">
-  <div class="hs-slide hs-intro" data-hs-slide data-hs-intro>
-    <div class="hs-inner">
-      <div>
-        <SectionHeading num="03" label={{ es: 'PROYECTOS', en: 'PROJECTS' }} es={{ pre: 'Lo que he ', accent: 'construido', post: '.' }} en={{ pre: 'What I have ', accent: 'built', post: '.' }} />
-        <p class="font-mono text-sm text-[var(--ink-3)] max-w-sm mt-6">
-          <span class="lang-es">{D.projects.length} proyectos entre trabajo en producción y open source. Aquí van {FEATURED}; el resto está al final.</span>
-          <span class="lang-en">{D.projects.length} projects across production work and open source. Here are {FEATURED}; the rest are at the end.</span>
-        </p>
-        <p class="hs-hint" aria-hidden="true">
-          <span class="lang-es">sigue bajando</span><span class="lang-en">keep scrolling</span>
-          <span class="hs-hint-arrow">→</span>
-        </p>
-      </div>
-      <ol class="toc" aria-label="Índice de proyectos destacados">
-        {featured.map((p) => (
-          <li>
-            <a href={`/proyecto/${p.slug}`}>
-              <span class="toc-n">{p.n}</span>
-              <span class="toc-name"><span class="lang-es">{p.name.es}</span><span class="lang-en">{p.name.en}</span></span>
-              <span class="toc-year">{p.year}</span>
-            </a>
-          </li>
-        ))}
-      </ol>
+<section id="projects" class="relative px-6 lg:px-20 py-20 lg:py-28 border-y border-[var(--line)]" data-wipe>
+  <div class="max-w-[1480px] mx-auto">
+    <div class="pj-head">
+      <SectionHeading num="04" label={{ es: 'PROYECTOS', en: 'PROJECTS' }} es={{ pre: 'Lo que he ', accent: 'construido', post: '.' }} en={{ pre: 'What I have ', accent: 'built', post: '.' }} />
+      <p class="pj-lede">
+        <span class="lang-es">Tres para empezar. Cada uno tiene su caso: el problema, qué hice y qué cambió.</span>
+        <span class="lang-en">Three to start with. Each one has its case: the problem, what I did and what changed.</span>
+      </p>
     </div>
-  </div>
 
-  {featured.map((p) => (
-    <a href={`/proyecto/${p.slug}`} class="hs-slide hs-card" data-hs-slide data-lens="ver">
-      <span class="hs-inner">
-        <span class="hs-media" aria-hidden="true">
-          <span class="hs-bignum">{p.n}</span>
-          <span class="media-kicker"><span class="lang-es">{p.kicker.es}</span><span class="lang-en">{p.kicker.en}</span></span>
-        </span>
-        <span class="hs-copy">
-          <span class="hs-meta">
-            <span>{p.year}</span><span aria-hidden="true">·</span>
-            <span><span class="lang-es">{p.role.es}</span><span class="lang-en">{p.role.en}</span></span>
-            {'company' in p && p.company && (<><span aria-hidden="true">·</span><span>{p.company}</span></>)}
+    <div class="pj-grid">
+      {featured.map((p, i) => (
+        <a href={`/proyecto/${p.slug}`} class="pj-card" data-lens="ver">
+          <span class="pj-media" aria-hidden="true">
+            <span class="pj-num">{String(i + 1).padStart(2, '0')}</span>
+            <span class="pj-stackbg">{p.stack.join(' · ')}</span>
+            <span class="pj-kicker"><span class="lang-es">{p.kicker.es}</span><span class="lang-en">{p.kicker.en}</span></span>
           </span>
-          <span class="hs-title"><span class="lang-es">{p.name.es}</span><span class="lang-en">{p.name.en}</span></span>
-          <span class="hs-desc"><span class="lang-es">{p.plain.es}</span><span class="lang-en">{p.plain.en}</span></span>
-          {p.metrics && (
-            <span class="metrics">
-              {p.metrics.slice(0, 3).map((m) => (
-                <span class="metric"><span class="metric-v">{m.v}</span><span class="metric-k"><span class="lang-es">{m.k.es}</span><span class="lang-en">{m.k.en}</span></span></span>
-              ))}
-            </span>
-          )}
-          <span class="hs-tags">{p.stack.slice(0, 4).map((s) => <span class="cy-tag">{s}</span>)}</span>
-          <span class="hs-cta"><span class="lang-es">Ver caso</span><span class="lang-en">Open case</span> <span aria-hidden="true">→</span></span>
-        </span>
-      </span>
-    </a>
-  ))}
+          <span class="pj-body">
+            <span class="pj-meta">{p.year}{'company' in p && p.company ? ` · ${p.company}` : ''}</span>
+            <span class="pj-title"><span class="lang-es">{p.name.es}</span><span class="lang-en">{p.name.en}</span></span>
+            <span class="pj-desc"><span class="lang-es">{p.plain.es}</span><span class="lang-en">{p.plain.en}</span></span>
+            <span class="pj-tags">{p.stack.slice(0, 3).map((s) => <span class="cy-tag">{s}</span>)}</span>
+            <span class="pj-cta"><span class="lang-es">Ver caso</span><span class="lang-en">Open case</span> <span aria-hidden="true">→</span></span>
+          </span>
+        </a>
+      ))}
+    </div>
 
-  <div class="hs-slide hs-end" data-hs-slide>
-    <div class="hs-inner">
-      <p class="hs-end-kicker"><span class="lang-es">y {rest.length} más</span><span class="lang-en">and {rest.length} more</span></p>
-      <ul class="hs-end-list">
+    <div class="pj-more">
+      <p class="pj-more-k"><span class="lang-es">Más proyectos</span><span class="lang-en">More projects</span> <span>({rest.length})</span></p>
+      <ul class="pj-list">
         {rest.map((p) => (
           <li><a href={`/proyecto/${p.slug}`} data-lens="ver">
-            <span class="toc-n">{p.n}</span>
-            <span class="toc-name"><span class="lang-es">{p.name.es}</span><span class="lang-en">{p.name.en}</span></span>
-            <span class="toc-year">{p.year}</span>
+            <span class="pj-list-name"><span class="lang-es">{p.name.es}</span><span class="lang-en">{p.name.en}</span></span>
+            <span class="pj-list-meta">{'company' in p && p.company ? p.company : ''}</span>
+            <span class="pj-list-year">{p.year}</span>
           </a></li>
         ))}
       </ul>
-      <a href={D.identity.contact.github} target="_blank" rel="noopener" class="cy-btn solid">GITHUB ↗</a>
+      <a href={D.identity.contact.github} target="_blank" rel="noopener" class="cy-btn pj-gh">GITHUB ↗</a>
     </div>
   </div>
-</Coverflow>
+</section>
 
 <style>
-  .toc, .hs-end-list { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); width: 100%; }
-  .toc a, .hs-end-list a {
-    display: grid; grid-template-columns: 3.2rem minmax(0, 1fr) auto; gap: 1rem; align-items: baseline;
-    padding: 0.8rem 0; border-bottom: 1px solid var(--line);
-    color: var(--ink-2); text-decoration: none; transition: color 0.25s, padding 0.35s cubic-bezier(.16,1,.3,1);
+  .pj-head { display: flex; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; gap: 1rem 2rem; margin-bottom: 2.5rem; }
+  .pj-lede { margin: 0; max-width: 26rem; font-family: var(--font-mono); font-size: 0.85rem; color: var(--ink-3); }
+
+  .pj-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.25rem; perspective: 1400px; }
+  .pj-card {
+    display: flex; flex-direction: column; min-width: 0; color: var(--ink); text-decoration: none;
+    border: 1px solid var(--line-2); background: var(--panel);
+    transition: transform .5s cubic-bezier(.16,1,.3,1), border-color .3s, box-shadow .5s;
+    transform-origin: center bottom;
   }
-  .toc a:hover, .hs-end-list a:hover, .toc a:focus-visible, .hs-end-list a:focus-visible { color: var(--ink); padding-left: 0.5rem; outline: none; }
-  .toc-n, .toc-year { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.1em; color: var(--ink-3); font-variant-numeric: tabular-nums; }
-  .toc-n { color: var(--accent); }
-  .toc-name { font-family: var(--font-display); font-size: 1.15rem; font-weight: 600; letter-spacing: -0.02em; min-width: 0; }
-  .hs-end-list { max-width: 640px; }
-  .hs-end-list .toc-name { font-size: 1rem; }
-  .media-kicker {
-    position: absolute; left: 1.25rem; bottom: 1.1rem; right: 1.25rem;
-    font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent);
-  }
-  .metrics { display: flex; flex-wrap: wrap; gap: 0.5rem 1.5rem; }
-  .metric { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-  .metric-v { font-family: var(--font-display); font-weight: 700; font-size: 1.1rem; color: var(--ink); }
-  .metric-k { font-family: var(--font-mono); font-size: 0.62rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-3); }
+  .pj-card:hover, .pj-card:focus-visible { transform: rotateX(5deg) translateY(-6px); border-color: var(--accent); box-shadow: 0 30px 50px -30px var(--accent-glow); outline: none; }
+
+  .pj-media { position: relative; aspect-ratio: 16 / 9; overflow: hidden; border-bottom: 1px solid var(--line); background: radial-gradient(120% 90% at 85% 10%, color-mix(in srgb, var(--accent) 22%, transparent), transparent 60%), var(--bg-2); }
+  .pj-num { position: absolute; right: 0.9rem; top: 0.2rem; font-family: var(--font-display); font-weight: 700; font-size: clamp(4rem, 7vw, 6.5rem); line-height: 1; letter-spacing: -0.05em; color: transparent; -webkit-text-stroke: 1px color-mix(in srgb, var(--accent) 70%, transparent); transition: transform .6s cubic-bezier(.16,1,.3,1); }
+  .pj-card:hover .pj-num { transform: translateX(-8px) scale(1.05); }
+  .pj-stackbg { position: absolute; left: 1rem; right: 1rem; bottom: 2.6rem; font-family: var(--font-mono); font-size: 0.68rem; line-height: 1.6; color: var(--ink-3); opacity: .5; }
+  .pj-kicker { position: absolute; left: 1rem; right: 1rem; bottom: 1rem; font-family: var(--font-mono); font-size: 0.66rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); }
+
+  .pj-body { display: flex; flex-direction: column; gap: 0.65rem; padding: 1.1rem 1.1rem 1.25rem; flex: 1; }
+  .pj-meta { font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 0.1em; color: var(--ink-3); }
+  .pj-title { font-family: var(--font-display); font-weight: 700; font-size: 1.35rem; line-height: 1.15; letter-spacing: -0.02em; }
+  .pj-desc { font-size: 0.92rem; line-height: 1.55; color: var(--ink-2); }
+  .pj-tags { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-top: auto; padding-top: 0.4rem; }
+  .pj-cta { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); }
+  .pj-card:hover .pj-cta span[aria-hidden] { display: inline-block; transform: translateX(4px); transition: transform .3s; }
+
+  .pj-more { margin-top: 3rem; display: grid; grid-template-columns: 12rem minmax(0, 1fr); gap: 1rem 2rem; align-items: start; }
+  .pj-more-k { margin: 0.8rem 0 0; font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent); }
+  .pj-more-k span { color: var(--ink-3); }
+  .pj-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 2rem; border-top: 1px solid var(--line); }
+  .pj-list a { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 0.75rem; align-items: baseline; padding: 0.75rem 0; border-bottom: 1px solid var(--line); color: var(--ink-2); text-decoration: none; transition: color .25s, padding .35s cubic-bezier(.16,1,.3,1); }
+  .pj-list a:hover, .pj-list a:focus-visible { color: var(--ink); padding-left: 0.4rem; outline: none; }
+  .pj-list-name { font-family: var(--font-display); font-weight: 600; font-size: 1rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .pj-list-meta, .pj-list-year { font-family: var(--font-mono); font-size: 0.68rem; color: var(--ink-3); white-space: nowrap; }
+  .pj-gh { grid-column: 2; justify-self: start; }
+
   @media (max-width: 1023px) {
-    .toc { display: none; }
-    .metrics { display: none; }
-    .hs-end-list a { padding: 0.55rem 0; }
-    .hs-end-list .toc-name { font-size: 0.92rem; }
+    .pj-grid { grid-template-columns: 1fr; max-width: 620px; }
+    .pj-media { aspect-ratio: 21 / 9; }
+    .pj-more { grid-template-columns: 1fr; }
+    .pj-list { grid-template-columns: 1fr; }
+    .pj-gh { grid-column: 1; }
+    .pj-list-meta { display: none; }
   }
+  /* Cel: las tres tarjetas se deslizan de lado (la siguiente se asoma). */
+  @media (max-width: 767px) {
+    .pj-grid { display: flex; gap: 0.75rem; overflow-x: auto; scroll-snap-type: x mandatory; margin: 0 -1.5rem; padding: 0 1.5rem 0.75rem; scroll-padding: 0 1.5rem; scrollbar-width: none; max-width: none; }
+    .pj-grid::-webkit-scrollbar { display: none; }
+    .pj-card { flex: 0 0 85%; scroll-snap-align: start; }
+    .pj-card:hover { transform: none; }
+    .pj-media { aspect-ratio: 16 / 7; }
+    .pj-num { font-size: 3.6rem; }
+    .pj-stackbg { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) { .pj-card, .pj-num { transition: none; } .pj-card:hover { transform: none; } }
 </style>

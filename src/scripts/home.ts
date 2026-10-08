@@ -31,9 +31,9 @@ import { initPlaylistSnake } from './game/snake';
 gsap.registerPlugin(ScrollTrigger);
 ScrollTrigger.config({ ignoreMobileResize: true });
 
-const coverflow = (id: string) => {
+const coverflow = (id: string, pace?: number) => {
   const el = document.getElementById(id);
-  if (el) createCoverflow(el);
+  if (el) createCoverflow(el, pace);
 };
 
 async function start() {
@@ -46,10 +46,9 @@ async function start() {
   // De arriba abajo, en el orden de la página.
   initHero();
   initNowBand();
-  coverflow('projects');
-  initPaperStack();
-  coverflow('blog');
   initExperience();
+  initPaperStack();
+  coverflow('blog', 0.5); // pocos posts: el carrusel se recorre en la mitad del scroll
   initPlaylistSnake();
   initContact();
 

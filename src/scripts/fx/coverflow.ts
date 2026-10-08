@@ -17,15 +17,21 @@ gsap.registerPlugin(ScrollTrigger);
 
 const pad = (n: number) => String(n).padStart(2, '0');
 
-/** Parte un texto en palabras → letras; las palabras no se cortan al envolver. */
+/** Parte un texto en palabras → letras; las palabras no se cortan al envolver.
+ *  Si el título trae versiones por idioma (.lang-es / .lang-en), parte cada una por
+ *  separado para no juntarlas en un solo texto. */
 function splitChars(el: HTMLElement) {
   if (el.dataset.split) return el.querySelectorAll<HTMLElement>('.hs-char');
-  const text = el.textContent || '';
   el.dataset.split = '1';
-  el.setAttribute('aria-label', text.trim());
-  el.innerHTML = text.trim().split(/\s+/).map((w) =>
-    `<span class="hs-word" aria-hidden="true">${[...w].map((c) => `<span class="hs-char">${c}</span>`).join('')}</span>`
-  ).join(' ');
+  const langs = el.querySelectorAll<HTMLElement>(':scope > .lang-es, :scope > .lang-en');
+  const targets = langs.length ? [...langs] : [el];
+  for (const t of targets) {
+    const text = (t.textContent || '').trim();
+    t.setAttribute('aria-label', text);
+    t.innerHTML = text.split(/\s+/).map((w) =>
+      `<span class="hs-word" aria-hidden="true">${[...w].map((c) => `<span class="hs-char">${c}</span>`).join('')}</span>`
+    ).join(' ');
+  }
   return el.querySelectorAll<HTMLElement>('.hs-char');
 }
 
@@ -42,7 +48,8 @@ export interface Coverflow {
   tween: gsap.core.Tween;
 }
 
-export function createCoverflow(section: HTMLElement): Coverflow | null {
+/** `pace`: cuánto scroll vertical cuesta el recorrido horizontal (1 = lo mismo; 0.5 = la mitad). */
+export function createCoverflow(section: HTMLElement, pace = 1): Coverflow | null {
   const viewport = section.querySelector<HTMLElement>('.hs-viewport');
   const track = section.querySelector<HTMLElement>('.hs-track');
   const slides = gsap.utils.toArray<HTMLElement>(section.querySelectorAll('[data-hs-slide]'));
@@ -86,7 +93,7 @@ export function createCoverflow(section: HTMLElement): Coverflow | null {
     scrollTrigger: {
       trigger: section,
       start: 'top top',
-      end: () => '+=' + distance(),
+      end: () => '+=' + distance() * pace,
       pin: true,
       scrub: 1,
       anticipatePin: 1,
@@ -116,7 +123,7 @@ export function createCoverflow(section: HTMLElement): Coverflow | null {
   computeStops();
 
   // Fondo vivo: dos capas en parallax opuesto.
-  const bgTrigger = () => ({ trigger: section, start: 'top top', end: () => '+=' + distance(), scrub: 1.2, invalidateOnRefresh: true });
+  const bgTrigger = () => ({ trigger: section, start: 'top top', end: () => '+=' + distance() * pace, scrub: 1.2, invalidateOnRefresh: true });
   if (bgA) gsap.fromTo(bgA, { xPercent: 0 }, { xPercent: -28, ease: 'none', scrollTrigger: bgTrigger() });
   if (bgB) gsap.fromTo(bgB, { xPercent: -30 }, { xPercent: 0, ease: 'none', scrollTrigger: bgTrigger() });
 

@@ -9,7 +9,7 @@ En producción: **[4ledmt.dev](https://4ledmt.dev)**.
 
 ## Qué hay adentro
 
-- **Home cinemático, pero escaneable.** Las secciones de Proyectos y Blog son carruseles horizontales pinneados (GSAP ScrollTrigger + `containerAnimation`). Todo lo demás es contenido estático que se lee aunque no cargue el JavaScript.
+- **Home cinemático, pero escaneable.** El Blog es un carrusel horizontal pinneado (GSAP ScrollTrigger + `containerAnimation`); Proyectos es una grilla de tres destacados con su caso de estudio. Todo lo demás es contenido estático que se lee aunque no cargue el JavaScript.
 - **Renderizado en servidor.** Experiencia, proyectos, stack y posts salen en el HTML, en español e inglés, y el cambio de idioma es solo CSS. Nada de contenido inyectado por JS: es mejor para SEO y no parpadea.
 - **CV en PDF generado en el build** (`/alejandro-vega-cv-{es,en}.pdf`) desde `src/data/cv.ts`. Tiene texto real en orden de lectura, legible por ATS, y no publica correo ni teléfono.
 - **Movimiento responsable.** `scripts/fx/env.ts` decide entre `off`, `lite` o `full` según `prefers-reduced-motion`, el panel de ajustes y los FPS medidos al cargar (modo ahorro automático).
