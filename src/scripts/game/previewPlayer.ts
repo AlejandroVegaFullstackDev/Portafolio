@@ -1,9 +1,10 @@
-// Reproductor de vistas previas (30 s) para el Snake, con un <audio> propio.
-// iOS/Safari solo deja reproducir audio si el MISMO elemento se activó con un toque:
-// `unlock()` se llama desde el botón "Activar sonido" y desde ahí `play()` funciona
-// aunque lo dispare el juego.
+// Reproductor de vistas previas (30 s) para el Snake, sin espera al comer:
+// - Dos <audio> que se turnan: mientras uno suena, el otro ya tiene descargada la
+//   siguiente canción (la que está en el tablero).
+// - iOS/Safari solo deja reproducir un <audio> que se activó con un toque, así que
+//   `unlock()` (llamado desde "Activar sonido") desbloquea los dos.
 
-/** WAV válido de 0,1 s en silencio, generado en código (sin depender de un base64 a mano). */
+/** WAV válido de 0,1 s en silencio, generado en código. */
 function silentWav(): string {
   const rate = 8000, samples = 800, bytes = 44 + samples;
   const v = new DataView(new ArrayBuffer(bytes));
@@ -18,54 +19,79 @@ function silentWav(): string {
   return 'data:audio/wav;base64,' + btoa(bin);
 }
 
+export interface Song { title: string; artist: string; preview: string | null }
+
 export class PreviewPlayer {
-  private audio = new Audio();
-  private cache = new Map<string, string | null>();
-  private token = 0;
+  private decks = [new Audio(), new Audio()];
+  private active = 0;                       // deck que suena
+  private loaded: (string | null)[] = [null, null];
+  private lookups = new Map<string, Promise<string | null>>();
   onChange: (title: string | null) => void = () => {};
 
   constructor() {
-    this.audio.preload = 'none';
-    this.audio.volume = 0.6;
-    this.audio.addEventListener('ended', () => this.onChange(null));
+    this.decks.forEach((a) => {
+      a.preload = 'auto';
+      a.volume = 0.6;
+      a.addEventListener('ended', () => { if (a === this.decks[this.active]) this.onChange(null); });
+    });
   }
 
   /** Llamar dentro de un toque/click del usuario. */
   unlock() {
-    this.audio.src = silentWav();
-    this.audio.play().then(() => this.audio.pause()).catch(() => {});
+    const src = silentWav();
+    this.decks.forEach((a) => {
+      a.src = src;
+      a.play().then(() => a.pause()).catch(() => {});
+    });
+    this.loaded = [null, null];
   }
 
-  private async resolve(artist: string, title: string) {
-    const key = `${artist}::${title}`;
-    if (this.cache.has(key)) return this.cache.get(key)!;
-    try {
-      const r = await fetch(`/api/preview?artist=${encodeURIComponent(artist)}&title=${encodeURIComponent(title)}`);
-      const url = r.ok ? ((await r.json()) as { preview: string | null }).preview : null;
-      this.cache.set(key, url);
-      return url;
-    } catch {
-      return null;
+  /** URL de la preview: la que vino con la lista o, de respaldo, /api/preview. */
+  private url(song: Song): Promise<string | null> {
+    if (song.preview) return Promise.resolve(song.preview);
+    const key = `${song.artist}::${song.title}`;
+    if (!this.lookups.has(key)) {
+      this.lookups.set(key, fetch(`/api/preview?artist=${encodeURIComponent(song.artist)}&title=${encodeURIComponent(song.title)}`)
+        .then((r) => (r.ok ? r.json() : { preview: null }))
+        .then((d: { preview: string | null }) => d.preview)
+        .catch(() => null));
     }
+    return this.lookups.get(key)!;
   }
 
-  async play(artist: string, title: string) {
-    const t = ++this.token; // si llega otra canción mientras se busca, gana la última
-    const url = await this.resolve(artist, title);
-    if (t !== this.token) return;
-    if (!url) { this.onChange(null); return; }
-    this.audio.src = url;
+  /** Deja la siguiente canción descargándose en el deck libre. */
+  async preload(song: Song | undefined) {
+    if (!song) return;
+    const u = await this.url(song);
+    const idle = 1 - this.active;
+    if (!u || this.loaded[idle] === u) return;
+    this.loaded[idle] = u;
+    this.decks[idle].src = u;
+    this.decks[idle].load();
+  }
+
+  async play(song: Song) {
+    const u = await this.url(song);
+    if (!u) { this.onChange(null); return; }
+    const idle = 1 - this.active;
+    // Si ya estaba precargada en el deck libre, se usa ese (arranque inmediato).
+    const deck = this.loaded[idle] === u ? idle : this.active;
+    const other = 1 - deck;
+    this.decks[other].pause();
+    const a = this.decks[deck];
+    if (this.loaded[deck] !== u) { a.src = u; this.loaded[deck] = u; }
+    a.currentTime = 0;
+    this.active = deck;
     try {
-      await this.audio.play();
-      this.onChange(title);
+      await a.play();
+      this.onChange(song.title);
     } catch {
       this.onChange(null);
     }
   }
 
   stop() {
-    this.token++;
-    this.audio.pause();
+    this.decks.forEach((a) => a.pause());
     this.onChange(null);
   }
 }

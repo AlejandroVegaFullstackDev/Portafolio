@@ -4,7 +4,7 @@
 import { createGame, step, tickMs, turn, type Dir, type SnakeState } from './snakeEngine';
 import { PreviewPlayer } from './previewPlayer';
 
-interface Track { id: string; title: string; artist: string; cover: string | null; uri: string; url: string }
+interface Track { id: string; title: string; artist: string; cover: string | null; uri: string; url: string; preview: string | null }
 
 const BEST_KEY = 'av_snake_best';
 const SIZE = 16;
@@ -145,7 +145,10 @@ export async function initPlaylistSnake() {
     li.innerHTML = `${t.cover ? `<img src="${esc(t.cover)}" alt="" width="40" height="40" loading="lazy" />` : '<span class="ph"></span>'}
       <span class="meta"><a href="${esc(t.url)}" target="_blank" rel="noopener">${esc(t.title)}</a><span>${esc(t.artist)}</span></span>`;
     list.prepend(li);
-    if (soundOn) player.play(t.artist, t.title);
+    if (soundOn) {
+      player.play(t);
+      player.preload(tracks[game.food.item]); // la siguiente ya queda descargándose
+    }
   }
 
   function onOver() {
@@ -166,6 +169,7 @@ export async function initPlaylistSnake() {
     running = true;
     paused = false;
     root.classList.add('is-playing');
+    if (soundOn) player.preload(tracks[game.food.item]);
     acc = 0;
     last = performance.now();
     canvas.focus({ preventScroll: true });
@@ -244,8 +248,10 @@ export async function initPlaylistSnake() {
     soundOn = !soundOn;
     soundBtn.setAttribute('aria-pressed', String(soundOn));
     root.classList.toggle('sound-on', soundOn);
-    if (soundOn) player.unlock(); // dentro del toque: habilita el audio en iOS/Safari
-    else player.stop();
+    if (soundOn) {
+      player.unlock(); // dentro del toque: habilita el audio en iOS/Safari
+      setTimeout(() => player.preload(tracks[game.food.item]), 150);
+    } else player.stop();
   });
   $('[data-snake-stop]')?.addEventListener('click', () => player.stop());
   // Pausa si cambias de pestaña o sales de la sección.
