@@ -52,10 +52,14 @@ const practices = [
     </dl>
 
     <div class="auto-box">
-      <h3 class="cy-eyebrow mb-4"><span class="lang-es">{D.automation.title.es}</span><span class="lang-en">{D.automation.title.en}</span></h3>
+      <h3 class="cy-eyebrow mb-3"><span class="lang-es">{D.automation.title.es}</span><span class="lang-en">{D.automation.title.en}</span></h3>
+      <p class="auto-lede"><span class="lang-es">{D.automation.lede.es}</span><span class="lang-en">{D.automation.lede.en}</span></p>
       <ul class="auto-list">
-        {D.automation.items.es.map((_, i) => (
-          <li data-stagger-item><span class="lang-es">{D.automation.items.es[i]}</span><span class="lang-en">{D.automation.items.en[i]}</span></li>
+        {D.automation.items.map((it) => (
+          <li data-stagger-item>
+            <p class="auto-t"><span class="lang-es">{it.t.es}</span><span class="lang-en">{it.t.en}</span></p>
+            <p class="auto-d"><span class="lang-es">{it.d.es}</span><span class="lang-en">{it.d.en}</span></p>
+          </li>
         ))}
       </ul>
     </div>
@@ -84,7 +88,10 @@ const practices = [
 
   .auto-box { margin-top: 3rem; border: 1px solid var(--line); padding: 1.5rem; background: linear-gradient(135deg, var(--panel), transparent); }
   .auto-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.5rem; }
-  .auto-list li { color: var(--ink-2); line-height: 1.6; font-size: 0.95rem; }
+  .auto-lede { margin: 0 0 1.5rem; max-width: 46rem; font-family: var(--font-display); font-size: clamp(1.1rem, 2vw, 1.35rem); line-height: 1.45; color: var(--ink); }
+  .auto-list li { border-top: 1px solid var(--line-2); padding-top: 0.9rem; }
+  .auto-t { margin: 0 0 0.4rem; font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); }
+  .auto-d { margin: 0; color: var(--ink-2); line-height: 1.6; font-size: 0.95rem; }
 
   @media (max-width: 1023px) {
     .groups { grid-template-columns: 1fr; }

@@ -23,19 +23,35 @@ export const stackGroups = [
   { key: 'testing', icon: 'FlaskConical', label: { es: 'Testing y calidad', en: 'Testing & quality' }, items: ['pytest', 'Jest', 'Vitest', 'PHPUnit', 'E2E tests', 'CI'] },
 ] as const;
 
-// Sección del CV que no existía en el sitio.
+// "Cómo uso la IA": en sus palabras. Lo pequeño se delega a agentes para dejar la
+// concentración para lo grande. Nada de verbos de CV.
 export const automation = {
-  title: { es: "Automatización e IA aplicada", en: "Automation & applied AI" },
-  items: {
-    es: [
-      "Rediseñé mi flujo de desarrollo alrededor de agentes de IA para exploración de código, refactorización y documentación técnica, con revisión humana y pruebas antes de cada entrega.",
-      "Automatizo procesos internos y propios con Python y APIs de Trello, Notion y Gmail: creación de tareas, documentación y reportes recurrentes.",
-      "Evalúo riesgos de seguridad en repositorios y dependencias con análisis asistido por IA antes de integrarlos a producción.",
-    ],
-    en: [
-      "Rebuilt my development workflow around AI agents for code exploration, refactoring and technical documentation, with human review and tests before every delivery.",
-      "I automate internal and personal processes with Python and the Trello, Notion and Gmail APIs: task creation, documentation and recurring reports.",
-      "I assess security risks in repositories and dependencies with AI-assisted analysis before they reach production.",
-    ],
+  title: { es: "Cómo uso la IA", en: "How I use AI" },
+  lede: {
+    es: "Le delego a la IA lo que me quita foco, para que mi cabeza quede libre para lo que de verdad la necesita.",
+    en: "I hand AI whatever steals my focus, so my head stays free for what actually needs it.",
   },
+  items: [
+    {
+      t: { es: "Lo pequeño, a un agente", en: "Small stuff goes to an agent" },
+      d: {
+        es: "Investigar un bug, rastrear un error que no tiene sentido o crear las tareas de un requerimiento. Un agente lo hace mientras yo sigo en lo mío.",
+        en: "Digging into a bug, tracing an error that makes no sense or creating the tasks for a requirement. An agent does it while I keep going.",
+      },
+    },
+    {
+      t: { es: "Lo grande, conmigo", en: "Big stuff stays with me" },
+      d: {
+        es: "Cuando llega un requerimiento o una solicitud grande necesito concentración, no que me interrumpan cosas que se pueden delegar.",
+        en: "When a big requirement or request lands I need focus, not interruptions from things that could be delegated.",
+      },
+    },
+    {
+      t: { es: "Skills, agentes y RAG", en: "Skills, agents and RAG" },
+      d: {
+        es: "Armo skills y agentes con el contexto del negocio y experimento con RAG para que respondan con información real. Si algo me quita tiempo, intento automatizarlo.",
+        en: "I build skills and agents with business context and experiment with RAG so they answer with real information. If something eats my time, I try to automate it.",
+      },
+    },
+  ],
 } as const;
