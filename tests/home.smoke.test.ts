@@ -41,8 +41,8 @@ describe.skipIf(!hasBuild)('home (smoke)', () => {
       ['projects', 'blog'].forEach((id) => expect(d.getElementById(id)?.classList.contains('is-pinned')).toBe(true));
       expect(d.querySelectorAll('#projects .hs-card').length).toBe(3);
       // Orden pensado para reclutadores: experiencia antes que proyectos.
-      const ids = [...d.querySelectorAll('main > section[id]')].map((s) => s.id);
-      expect(ids.indexOf('exp')).toBeLessThan(ids.indexOf('projects'));
+      const exp = d.getElementById('exp'), projects = d.getElementById('projects');
+      expect(exp && projects && exp.compareDocumentPosition(projects) & w.Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
 
       // Interacciones clave
       const click = (el: Element | null) => el?.dispatchEvent(new w.MouseEvent('click', { bubbles: true }));
