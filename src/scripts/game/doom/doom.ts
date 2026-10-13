@@ -42,8 +42,13 @@ export function initDoom(shared: ArcadeShared): GameHandle | null {
   let doom: DoomExports | null = null;
   let memory: WebAssembly.Memory | null = null;
   let running = false, active = false, loading = false;
-  // Reloj virtual: al pausar se congela, así Doom no "adelanta" el tiempo perdido.
-  let clock = 0, lastReal = performance.now();
+  // Reloj de Doom = tiempo real menos lo que estuvo en pausa. Tiene que avanzar DENTRO de
+  // cada llamada al motor: la transición "derretida" al empezar un nivel espera en un
+  // bucle a que pase el tiempo; con un reloj congelado entre cuadros, la página se colgaba.
+  let offset = performance.now(), frozenAt = 0;
+  const clock = () => performance.now() - offset;
+  const freeze = () => { frozenAt = clock(); };
+  const unfreeze = () => { offset = performance.now() - frozenAt; };
   let song = Math.floor(Math.random() * Math.max(1, tracks.length));
   let songTimer: ReturnType<typeof setInterval> | undefined;
 
@@ -66,7 +71,7 @@ export function initDoom(shared: ArcadeShared): GameHandle | null {
       js: {
         js_console_log: () => {}, js_stdout: () => {}, js_stderr: () => {},
         js_draw_screen: render,
-        js_milliseconds_since_start: () => clock,
+        js_milliseconds_since_start: clock,
       },
       env: { memory },
     };
@@ -89,16 +94,25 @@ export function initDoom(shared: ArcadeShared): GameHandle | null {
     const { instance } = await WebAssembly.instantiate(bytes, imports);
     doom = instance.exports as unknown as DoomExports;
     doom.main();
+    freeze(); // hasta que el usuario le dé jugar, el reloj de Doom no corre
     loading = false;
   }
 
   function loop() {
-    const now = performance.now();
     if (running && doom) {
-      clock += Math.min(100, now - lastReal); // si el navegador se atrasó, no saltar más de 100 ms
-      doom.doom_loop_step();
+      try { doom.doom_loop_step(); }
+      catch (e) {
+        // Si el motor falla, se apaga Doom y se avisa; el resto de la página sigue viva.
+        console.error('[doom]', e);
+        running = false;
+        doom = null;
+        clearInterval(songTimer);
+        root.classList.remove('is-playing');
+        focus.exit();
+        player.stop();
+        state('error');
+      }
     }
-    lastReal = now;
     requestAnimationFrame(loop);
   }
 
@@ -129,13 +143,14 @@ export function initDoom(shared: ArcadeShared): GameHandle | null {
     focus.enter(shared.consoleEl);
     running = true;
     root.classList.add('is-playing');
-    lastReal = performance.now();
+    unfreeze();
     canvas!.focus({ preventScroll: true });
     startMusic();
   }
   function pause() {
     if (!running) return;
     running = false;
+    freeze();
     clearInterval(songTimer);
     root.classList.remove('is-playing');
     focus.exit();
