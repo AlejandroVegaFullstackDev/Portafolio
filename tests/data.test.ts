@@ -1,6 +1,8 @@
 // Integridad del contenido: lo que un reclutador ve tiene que ser consistente y verificable.
 import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
+import { spawnSync } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
 import { portfolioData as D } from '../src/data';
 
 const allText = JSON.stringify(D);
@@ -64,12 +66,18 @@ describe('honestidad (regresiones que ya se corrigieron)', () => {
 });
 
 describe('CV descargable', () => {
-  // Los PDF salen de cv-por-posicion (repo ai-job-search), en su versión pública sin
-  // correo ni teléfono: un PDF público se scrapea.
+  // Los PDF salen de cv-por-posicion (repo ai-job-search), en su versión pública: con
+  // correo (decisión de Alejandro, 9 nov 2026) pero sin teléfono.
+  const hasPdftotext = spawnSync('pdftotext', ['-v']).error === undefined;
   for (const lang of ['es', 'en']) {
+    const file = fileURLToPath(new URL(`../public/alejandro-vega-cv-${lang}.pdf`, import.meta.url));
     it(`existe /alejandro-vega-cv-${lang}.pdf y es un PDF`, () => {
-      const buf = readFileSync(new URL(`../public/alejandro-vega-cv-${lang}.pdf`, import.meta.url));
-      expect(buf.subarray(0, 5).toString('latin1')).toBe('%PDF-');
+      expect(readFileSync(file).subarray(0, 5).toString('latin1')).toBe('%PDF-');
+    });
+    it.skipIf(!hasPdftotext)(`el CV ${lang} lleva correo y no teléfono`, () => {
+      const text = spawnSync('pdftotext', [file, '-'], { encoding: 'utf8' }).stdout;
+      expect(text).toContain('alejandro.vega103367@gmail.com');
+      expect(text).not.toMatch(/\+57|\b3\d{2}\s?\d{3}\s?\d{4}\b/);
     });
   }
 });
