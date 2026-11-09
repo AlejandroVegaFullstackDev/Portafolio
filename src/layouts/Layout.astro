@@ -14,8 +14,8 @@ interface Props {
 }
 
 const {
-  title = `${D.identity.name} — Full Stack Developer`,
-  description = 'Alejandro Vega — Desarrollador Full Stack en Bogotá: React, Python, NestJS y PostgreSQL. Backend, automatización, datos y plataformas internas. Roda, Kiki LATAM y Pulzo.',
+  title = `${D.identity.name} — ${D.identity.headline.es}`,
+  description = 'Alejandro Vega — Ingeniero de Software Backend en Bogotá, con 4 años de experiencia en fintech, logística y medios. APIs, microservicios e integraciones con NestJS, Node.js, Python y PostgreSQL.',
   image = '/og.png',
   type = 'website',
 } = Astro.props;
@@ -34,7 +34,7 @@ const person = {
   image: ogImage,
   address: { '@type': 'PostalAddress', addressLocality: 'Bogotá', addressCountry: 'CO' },
   sameAs: [D.identity.contact.linkedin, D.identity.contact.github],
-  knowsAbout: ['TypeScript', 'Python', 'NestJS', 'React', 'PostgreSQL', 'FastAPI', 'BigQuery'],
+  knowsAbout: ['NestJS', 'Node.js', 'TypeScript', 'Python', 'PostgreSQL', 'FastAPI', 'RabbitMQ', 'Redis'],
 };
 ---
 <!doctype html>

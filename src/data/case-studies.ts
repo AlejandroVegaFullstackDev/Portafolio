@@ -1,6 +1,52 @@
 // Detalle extendido por proyecto (página /proyecto/[slug]), indexado por slug.
 
 export const caseStudies = {
+  "meet-agent": {
+    challenge: {
+      es: "Las herramientas que toman notas de reuniones suben el audio a servidores de terceros y meten un bot en la llamada. Quería las notas sin eso: en mi equipo, con permiso de quienes hablan y con la IA que yo elija.",
+      en: "Meeting note-takers upload audio to third-party servers and drop a bot into the call. I wanted the notes without that: on my computer, with the consent of whoever is speaking and with the AI I choose.",
+    },
+    solution: {
+      es: "Una app de escritorio en C# / .NET que captura micrófono y audio del sistema solo después de un sí explícito, y una extensión que lee los subtítulos de Google Meet con el nombre de cada persona. Todo queda en SQLite en el equipo, y la IA del usuario lo consulta por MCP para hacer actas, resúmenes y responder preguntas.",
+      en: "A C# / .NET desktop app that captures microphone and system audio only after an explicit yes, plus an extension that reads Google Meet captions with each speaker's name. Everything stays in SQLite on the machine, and the user's own AI queries it over MCP to write minutes, summaries and answers.",
+    },
+    arch: ["Micrófono + audio del sistema", "Consentimiento", "Core hexagonal", "SQLite", "MCP → tu IA"],
+    learnings: {
+      es: [
+        ["La privacidad es una decisión de diseño", "Sin un sí, el audio no toca el disco, y las pruebas lo verifican."],
+        ["El core no conoce la plataforma", "Con arquitectura hexagonal, la captura en Windows y en Linux son adaptadores distintos del mismo núcleo."],
+        ["Medir antes de decidir", "Cada cambio de modelo o de modo quedó registrado en un ADR con su medición."],
+      ],
+      en: [
+        ["Privacy is a design decision", "Without a yes, audio never touches the disk, and the tests check it."],
+        ["The core doesn't know the platform", "With a hexagonal architecture, capture on Windows and on Linux are different adapters around the same core."],
+        ["Measure before deciding", "Every model or mode change was recorded in an ADR with its measurement."],
+      ],
+    },
+  },
+  "ai-skill-coach": {
+    challenge: {
+      es: "Casi toda la formación te hace repasar lo básico durante meses porque no recuerda lo que ya demostraste, y asume que tienes una hora libre. Yo quería practicar inglés y guitarra en el hueco que tuviera, sin repetir lo que ya sabía.",
+      en: "Most training makes you review the basics for months because it doesn't remember what you've already shown, and it assumes you have a free hour. I wanted to practice English and guitar in whatever gap I had, without repeating what I already knew.",
+    },
+    solution: {
+      es: "Un tutor que vive en un repositorio: comandos que hacen un paso cada uno (perfil, test de nivel, plan, sesión, repaso) y un archivo de progreso que el agente lee y actualiza. Los ejercicios salen de material con fuente citada y se eligen según el tiempo y las condiciones del día.",
+      en: "A tutor that lives in a repository: commands that each do one step (profile, level test, plan, session, review) and a progress file the agent reads and updates. Exercises come from material with cited sources and are picked to fit the day's time and conditions.",
+    },
+    arch: ["/setup", "/assess", "/harvest", "/plan", "/learn → progreso.md"],
+    learnings: {
+      es: [
+        ["La memoria es un archivo", "Guardar el progreso en texto plano hace que cualquier agente pueda retomarlo."],
+        ["Sin fuente, no hay ejercicio", "Exigir la fuente de cada ejercicio es lo que evita que el agente se invente el currículo."],
+        ["Un paso por comando", "Separar evaluar, planear y practicar hace que cada parte se pueda revisar por sí sola."],
+      ],
+      en: [
+        ["Memory is a file", "Keeping progress in plain text means any agent can pick it up."],
+        ["No source, no exercise", "Requiring a source for every exercise is what stops the agent from making up the curriculum."],
+        ["One step per command", "Separating assessment, planning and practice means each part can be reviewed on its own."],
+      ],
+    },
+  },
   "worker-gps": {
     challenge: {
       es: "El worker consultaba la API del proveedor GPS dispositivo por dispositivo, en serie y abriendo una conexión nueva cada vez. Con la flota creciendo, el ciclo de sincronización se alargaba hasta solaparse consigo mismo: dos ejecuciones simultáneas escribiendo el mismo estado.",
@@ -53,8 +99,8 @@ export const caseStudies = {
       en: "Vehicle and credit recovery was coordinated between spreadsheets and messages with the field teams. There was no traceability of where each case stood or who was holding it.",
     },
     solution: {
-      es: "Desarrollé el módulo de punta a punta con dos interfaces administrativas: una para el seguimiento de casos y otra para la coordinación con campo. Cada caso tiene estado, responsable e historial, y el proceso manual dejó de existir.",
-      en: "I built the module end to end with two admin interfaces: one for case tracking and one for field coordination. Every case has a state, an owner and a history, and the manual process went away.",
+      es: "Desarrollé el módulo con dos interfaces administrativas: una para el seguimiento de casos y otra para la coordinación con campo. Cada caso tiene estado, responsable e historial, y el proceso manual dejó de existir.",
+      en: "I built the module with two admin interfaces: one for case tracking and one for field coordination. Every case has a state, an owner and a history, and the manual process went away.",
     },
     arch: ["React", "API Python", "Casos de uso", "PostgreSQL", "Equipos de campo"],
     learnings: {
@@ -95,46 +141,46 @@ export const caseStudies = {
   },
   "escaneo-masivo": {
     challenge: {
-      es: "El registro de devoluciones se hacía guía por guía. Con lotes de miles, la operación se quedaba esperando al sistema, y las condiciones de devolución (fraude, daño) se anotaban aparte y después.",
-      en: "Return registration was done waybill by waybill. With batches of thousands, operations sat waiting on the system, and return conditions (fraud, damage) were noted separately and after the fact.",
+      es: "Las guías de envío se generaban una por una. Con lotes de miles, la operación dependía de un proceso lento y repetitivo.",
+      en: "Shipping labels were generated one at a time. With batches of thousands, operations depended on a slow, repetitive process.",
     },
     solution: {
-      es: "Moví el procesamiento a un stored procedure en PostgreSQL que trabaja por lote en vez de por fila, invocado desde NestJS. El escaneo con lectores entra directo y procesa más de 10.000 guías en segundos, cuando antes tomaba horas.",
-      en: "I moved processing into a PostgreSQL stored procedure that works per batch instead of per row, called from NestJS. Reader scanning feeds in directly and processes over 10,000 waybills in seconds, where it used to take hours.",
+      es: "Moví la generación a un procedimiento almacenado en PostgreSQL que trabaja por lote en vez de por fila, invocado desde la API en NestJS. El módulo seguía una arquitectura hexagonal, con el dominio separado del acceso a datos, y hoy procesa lotes de más de 10.000 guías.",
+      en: "I moved generation into a PostgreSQL stored procedure that works per batch instead of per row, called from the NestJS API. The module followed a hexagonal architecture, with the domain separated from data access, and it now handles batches of more than 10,000 labels.",
     },
-    arch: ["Lector de códigos", "API NestJS", "Casos de uso", "Procedimientos PostgreSQL", "Reportes"],
+    arch: ["Operación", "API NestJS", "Casos de uso", "Procedimiento PostgreSQL", "Guías"],
     learnings: {
       es: [
-        ["Por lote, no por fila", "El salto de rendimiento vino de cambiar la forma de la consulta, no de agregar máquina."],
-        ["Hexagonal para poder medir", "Con el dominio aislado se podía probar la lógica de devolución sin levantar la base."],
-        ["El hardware manda el ritmo", "El lector define la cadencia de entrada; el backend tenía que absorberla sin pedir pausas."],
+        ["Por lote, no por fila", "La mejora vino de cambiar la forma de la consulta, no de agregar máquina."],
+        ["Hexagonal para poder probar", "Con el dominio aislado se podía probar la lógica sin levantar la base."],
+        ["La base hace lo que sabe hacer", "Un procedimiento en PostgreSQL resolvió en la base lo que en la API eran miles de viajes de ida y vuelta."],
       ],
       en: [
-        ["Per batch, not per row", "The performance jump came from changing the shape of the query, not from adding hardware."],
-        ["Hexagonal to be able to measure", "With the domain isolated, return logic could be tested without bringing up the database."],
-        ["Hardware sets the pace", "The reader defines the input cadence; the backend had to absorb it without asking for pauses."],
+        ["Per batch, not per row", "The improvement came from changing the shape of the query, not from adding hardware."],
+        ["Hexagonal so it can be tested", "With the domain isolated, the logic could be tested without bringing up the database."],
+        ["Let the database do its job", "A PostgreSQL procedure solved in the database what in the API was thousands of round trips."],
       ],
     },
   },
   "etl-bigquery": {
     challenge: {
-      es: "Los análisis de tráfico se armaban a mano, exportando de la interfaz de Analytics cada vez. El histórico estaba repartido entre Universal Analytics y GA4, y responder una pregunta de audiencia tomaba horas.",
-      en: "Traffic analyses were assembled by hand, exporting from the Analytics UI every time. History was split between Universal Analytics and GA4, and answering an audience question took hours.",
+      es: "Los análisis de tráfico se armaban a mano, exportando de la interfaz de Analytics cada vez. El histórico estaba repartido entre Universal Analytics y GA4, y Universal Analytics iba a dejar de existir.",
+      en: "Traffic analyses were assembled by hand, exporting from the Analytics UI every time. History was split between Universal Analytics and GA4, and Universal Analytics was about to be shut down.",
     },
     solution: {
-      es: "Escribí procesos ETL en Python que consultan ambas APIs y cargan el resultado en BigQuery con un modelo común. Con más de 5 años de histórico centralizado, los reportes pasaron a ser consultas SQL sobre una sola tabla.",
-      en: "I wrote Python ETL processes that query both APIs and load the result into BigQuery under a common model. With over 5 years of history centralized, reports became SQL queries against a single table.",
+      es: "Escribí procesos ETL en Python que consultan ambas APIs y cargan el resultado en BigQuery con un modelo común. Migré la analítica a GA4 sin perder el histórico, y sobre esa base armé los dashboards del equipo comercial.",
+      en: "I wrote Python ETL processes that query both APIs and load the result into BigQuery under a common model. I migrated analytics to GA4 without losing the history, and built the sales team's dashboards on top of it.",
     },
     arch: ["Universal Analytics", "GA4 Data API", "ETL Python", "BigQuery", "Reportes SQL"],
     learnings: {
       es: [
         ["Dos APIs, un modelo", "Lo caro no fue extraer, fue decidir cómo hacer comparables las métricas de UA y GA4."],
-        ["El histórico es el activo", "Cinco años de datos valen más que cualquier dashboard que se construya encima."],
+        ["El histórico es el activo", "Los años de datos acumulados valen más que cualquier dashboard que se construya encima."],
         ["Backfill una sola vez", "Cargar el histórico de golpe y dejar el incremental corriendo evita reprocesar para siempre."],
       ],
       en: [
         ["Two APIs, one model", "The expensive part wasn't extraction, it was deciding how to make UA and GA4 metrics comparable."],
-        ["History is the asset", "Five years of data is worth more than any dashboard built on top of it."],
+        ["History is the asset", "Years of accumulated data are worth more than any dashboard built on top of it."],
         ["Backfill once", "Loading history in one pass and leaving the incremental running avoids reprocessing forever."],
       ],
     },

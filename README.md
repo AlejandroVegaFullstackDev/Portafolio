@@ -11,7 +11,7 @@ En producción: **[4ledmt.dev](https://4ledmt.dev)**.
 
 - **Home cinemático, pero escaneable.** Proyectos y Blog son carruseles horizontales pinneados y cortos (GSAP ScrollTrigger + `containerAnimation`). Todo lo demás es contenido estático que se lee aunque no cargue el JavaScript.
 - **Renderizado en servidor.** Experiencia, proyectos, stack y posts salen en el HTML, en español e inglés, y el cambio de idioma es solo CSS. Nada de contenido inyectado por JS: es mejor para SEO y no parpadea.
-- **CV en PDF generado en el build** (`/alejandro-vega-cv-{es,en}.pdf`) desde `src/data/cv.ts`. Tiene texto real en orden de lectura, legible por ATS, y no publica correo ni teléfono.
+- **CV en PDF** (`/alejandro-vega-cv-{es,en}.pdf`, en `public/`): es el CV base de backend que genera la skill `cv-por-posicion` del repo ai-job-search, con foto, en su versión pública sin correo ni teléfono. Para actualizarlo se regenera allá y se copia aquí.
 - **Movimiento responsable.** `scripts/fx/env.ts` decide entre `off`, `lite` o `full` según `prefers-reduced-motion`, el panel de ajustes y los FPS medidos al cargar (modo ahorro automático).
 - **Rendimiento.** Fuentes self-hosted (`@fontsource-variable`), imágenes con `astro:assets` (WebP y `srcset`), y las fuentes alternativas del panel solo se descargan si se eligen.
 

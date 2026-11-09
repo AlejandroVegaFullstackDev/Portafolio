@@ -1,9 +1,9 @@
 // Integridad del contenido: lo que un reclutador ve tiene que ser consistente y verificable.
 import { describe, expect, it } from 'vitest';
+import { readFileSync } from 'node:fs';
 import { portfolioData as D } from '../src/data';
-import { cv } from '../src/data/cv';
 
-const allText = JSON.stringify({ D, cv });
+const allText = JSON.stringify(D);
 
 describe('datos del portafolio', () => {
   it('los slugs de proyecto son únicos', () => {
@@ -31,7 +31,6 @@ describe('datos del portafolio', () => {
       Object.entries(rec).forEach(([k, v]) => check(v, `${path}.${k}`));
     };
     check(D, 'D');
-    check(cv, 'cv');
   });
 
   it('el stack por áreas no repite tecnologías entre áreas', () => {
@@ -55,9 +54,22 @@ describe('honestidad (regresiones que ya se corrigieron)', () => {
     expect(D.identity.title.en).not.toMatch(/senior/i);
   });
 
-  it('el CV público no expone correo ni teléfono', () => {
-    const cvText = JSON.stringify(cv);
-    expect(cvText).not.toMatch(/@[a-z0-9-]+\.[a-z]{2,}/i);
-    expect(cvText).not.toMatch(/\+57|\b3\d{2}\s?\d{3}\s?\d{4}\b/);
+  it('sin cifras infladas ni "de punta a punta"', () => {
+    expect(allText).not.toMatch(/10 veces|horas a segundos|hours to seconds|punta a punta|end to end/i);
   });
+
+  it('el titular es el mismo del CV y de LinkedIn', () => {
+    expect(D.identity.headline.es).toBe('Ingeniero de Software Backend | Automatización e integraciones');
+  });
+});
+
+describe('CV descargable', () => {
+  // Los PDF salen de cv-por-posicion (repo ai-job-search), en su versión pública sin
+  // correo ni teléfono: un PDF público se scrapea.
+  for (const lang of ['es', 'en']) {
+    it(`existe /alejandro-vega-cv-${lang}.pdf y es un PDF`, () => {
+      const buf = readFileSync(new URL(`../public/alejandro-vega-cv-${lang}.pdf`, import.meta.url));
+      expect(buf.subarray(0, 5).toString('latin1')).toBe('%PDF-');
+    });
+  }
 });

@@ -43,19 +43,19 @@ for y in range(0, H, 56):
 d.rectangle([0, 0, W, 8], fill=ACCENT)
 
 pad = 72
-d.text((pad, 80), "// FULL STACK DEVELOPER", font=load("mono", 26, 600), fill=ACCENT)
+d.text((pad, 80), "// INGENIERO DE SOFTWARE BACKEND", font=load("mono", 26, 600), fill=ACCENT)
 d.text((pad, 128), "ALEJANDRO_", font=load("mono", 104, 800), fill=INK)
 name2 = load("mono", 104, 800)
 d.text((pad, 238), "VEGA", font=name2, fill=INK)
 d.text((pad + d.textlength("VEGA", font=name2), 238), ".", font=name2, fill=ACCENT)
 
-d.text((pad, 380), "Productos web de punta a punta: frontend, backend,", font=load("display", 34, 400), fill=MUTED)
-d.text((pad, 424), "automatización y datos.", font=load("display", 34, 400), fill=MUTED)
+d.text((pad, 380), "Automatización e integraciones: APIs y microservicios", font=load("display", 34, 400), fill=MUTED)
+d.text((pad, 424), "para fintech, logística y medios. 4 años.", font=load("display", 34, 400), fill=MUTED)
 
 # Stack principal como etiquetas
 x = pad
 chip = load("mono", 24, 600)
-for tech in ["TypeScript", "Python", "NestJS", "React", "PostgreSQL"]:
+for tech in ["NestJS", "Node.js", "TypeScript", "Python", "PostgreSQL"]:
     w = d.textlength(tech, font=chip) + 28
     d.rectangle([x, 500, x + w, 544], outline=ACCENT, width=2)
     d.text((x + 14, 508), tech, font=chip, fill=INK)

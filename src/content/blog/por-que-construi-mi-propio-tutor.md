@@ -113,7 +113,7 @@ Así que sí: esto es gratis, es MIT, y si lo mejoras no me debes nada.
 
 ---
 
-El repo está en [github.com/AlejandroVegaFullstackDev/ai-skill-coach](https://github.com/AlejandroVegaFullstackDev/ai-skill-coach). Funciona con Claude Code en la terminal, y también desde ChatGPT, Claude o Gemini para quien no programa.
+El repo está en [github.com/AlejandroVegaFullstackDev/ai-skill-coach](https://github.com/AlejandroVegaFullstackDev/ai-skill-coach). Funciona con Claude Code en la terminal, y también desde ChatGPT, Claude o Gemini para quien no programa. La ficha técnica está en [el portafolio](/proyecto/ai-skill-coach).
 
 Se agradecen issues, incluso los mal escritos.
 

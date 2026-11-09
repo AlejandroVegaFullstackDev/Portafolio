@@ -22,7 +22,7 @@ src/
 │  ├─ sections/           Interacción propia de una sección (hero, blog, experience, contact, nowBand).
 │  └─ fx/                 Efectos reutilizables, uno por archivo (ver tabla).
 ├─ data/                  Contenido del portafolio. index.ts los junta en `portfolioData`.
-├─ lib/                   Utilidades: blog.ts (posts), text.ts (fechas, lectura, índice), cv.ts (render del PDF), ticker.ts.
+├─ lib/                   Utilidades: blog.ts (posts), text.ts (fechas, lectura, índice), ticker.ts.
 ├─ content/blog/          Posts en Markdown.
 ├─ styles/                global.css (entrada) → tokens, base, components, effects, coverflow, prose.
 tests/                    Vitest: datos, helpers, CV y smoke del home.
@@ -34,7 +34,7 @@ tools/og-image.py         Genera public/og.png.
 | Quiero…                              | Archivo                                   |
 |--------------------------------------|-------------------------------------------|
 | Un texto, cifra, proyecto o empleo   | `src/data/*.ts`                           |
-| El CV en PDF                         | `src/data/cv.ts` (contenido), `src/lib/cv.ts` (diseño) |
+| El CV en PDF                         | `public/alejandro-vega-cv-{es,en}.pdf` (se generan con cv-por-posicion en ai-job-search) |
 | Un post                              | `src/content/blog/*.md`                   |
 | El orden de las secciones del home   | `src/pages/index.astro`                   |
 | El diseño de una sección             | `src/components/sections/<Sección>.astro` (su CSS va dentro) |

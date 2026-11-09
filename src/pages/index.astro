@@ -25,7 +25,7 @@ import { buildTicker } from '../lib/ticker';
 const [latest] = await getSortedPosts();
 const ticker = buildTicker(latest?.data.title);
 ---
-<Layout title={`${D.identity.name} — Full Stack Developer`}>
+<Layout title={`${D.identity.name} — ${D.identity.headline.es}`}>
   <BootScreen />
   <Header ticker={ticker} />
   <MobileMenu />

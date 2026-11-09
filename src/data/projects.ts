@@ -1,4 +1,5 @@
-// Proyectos del portafolio. Los primeros 6 son los destacados del carrusel.
+// Proyectos del portafolio, en el orden en que se muestran: primero los propios de código
+// abierto (los tres destacados del carrusel), después el trabajo de Roda y luego el resto.
 
 export const projects = [
   // ── Open source ───────────────────────────────────────────────────────────
@@ -12,8 +13,8 @@ export const projects = [
       en: "A support system that reads each ticket, classifies it and suggests a reply with AI. If the AI fails, it keeps working with its own classifier.",
     },
     summary: {
-      es: "Sistema de soporte orientado a eventos: una API en NestJS guarda los tickets en PostgreSQL y los publica en RabbitMQ; un agente en FastAPI los clasifica (categoría, prioridad y respuesta sugerida) con Claude u OpenAI usando salida estructurada, y cae a un clasificador local si el LLM falla. Panel en React, colas de dead-letter, CI con prueba end-to-end del stack completo y decisiones documentadas en ADRs.",
-      en: "Event-driven support system: a NestJS API stores tickets in PostgreSQL and publishes them to RabbitMQ; a FastAPI agent classifies them (category, priority and suggested reply) with Claude or OpenAI using structured output, falling back to a local classifier when the LLM fails. React panel, dead-letter queues, CI with an end-to-end run of the full stack, and decisions documented as ADRs.",
+      es: "Sistema de soporte orientado a eventos: una API en NestJS guarda los tickets en PostgreSQL y los publica en RabbitMQ; un agente en FastAPI los clasifica (categoría, prioridad y respuesta sugerida) con Claude u OpenAI usando salida estructurada, y cae a un clasificador local si el LLM falla. Panel en React, colas de dead-letter, CI con una prueba del stack completo en Docker Compose y decisiones documentadas en ADRs.",
+      en: "Event-driven support system: a NestJS API stores tickets in PostgreSQL and publishes them to RabbitMQ; a FastAPI agent classifies them (category, priority and suggested reply) with Claude or OpenAI using structured output, falling back to a local classifier when the LLM fails. React panel, dead-letter queues, CI with a full-stack run in Docker Compose, and decisions documented as ADRs.",
     },
     role: { es: "Autor", en: "Author" },
     year: "2026",
@@ -23,13 +24,62 @@ export const projects = [
     metrics: [
       { k: { es: "servicios", en: "services" }, v: "3" },
       { k: { es: "proveedor LLM", en: "LLM provider" }, v: "Claude | OpenAI | local" },
-      { k: { es: "CI", en: "CI" }, v: "End-to-end" },
+      { k: { es: "CI", en: "CI" }, v: "GitHub Actions" },
+    ],
+  },
+  {
+    slug: "meet-agent",
+    n: "002",
+    name: { es: "Meet Agent", en: "Meet Agent" },
+    kicker: { es: "Escritorio + IA · C# / .NET · Open source", en: "Desktop + AI · C# / .NET · Open source" },
+    plain: {
+      es: "Notas de tus reuniones que se quedan en tu equipo. Graba o transcribe solo si los participantes dicen que sí, y tu propia IA arma el acta.",
+      en: "Notes from your meetings that stay on your computer. It records or transcribes only if participants say yes, and your own AI writes the minutes.",
+    },
+    summary: {
+      es: "App de escritorio en C# / .NET con Avalonia para Windows y Linux: captura el micrófono y el audio del sistema, con consentimiento explícito de los participantes antes de guardar nada. Empezó transcribiendo en local con Whisper; hoy también lee los subtítulos de Google Meet con una extensión del navegador, guarda todo en SQLite y deja que la IA del usuario (Claude, Codex u otra) haga resúmenes y responda preguntas por MCP. Arquitectura hexagonal y decisiones documentadas en ADRs.",
+      en: "Desktop app in C# / .NET with Avalonia for Windows and Linux: it captures the microphone and system audio, with explicit consent from participants before anything is saved. It started out transcribing locally with Whisper; it now also reads Google Meet captions through a browser extension, stores everything in SQLite and lets the user's own AI (Claude, Codex or another) summarize and answer questions over MCP. Hexagonal architecture and decisions documented as ADRs.",
+    },
+    role: { es: "Autor", en: "Author" },
+    year: "2026",
+    company: "Open source",
+    github: "https://github.com/AlejandroVegaFullstackDev/meet-agent",
+    stack: ["C#", ".NET", "Avalonia", "Whisper", "SQLite", "MCP"],
+    metrics: [
+      { k: { es: "plataformas", en: "platforms" }, v: "Windows · Linux" },
+      { k: { es: "privacidad", en: "privacy" }, v: { es: "Consentimiento", en: "Consent" } },
+      { k: { es: "IA", en: "AI" }, v: "MCP" },
+    ],
+  },
+  {
+    slug: "ai-skill-coach",
+    n: "003",
+    name: { es: "AI Skill Coach", en: "AI Skill Coach" },
+    kicker: { es: "Tutor con agentes de IA · Open source", en: "AI-agent tutor · Open source" },
+    plain: {
+      es: "Un tutor que vive en un repositorio y recuerda lo que ya sabes: mide tu nivel con evidencia y no te vuelve a enseñar lo que dominas. Sirve para cualquier habilidad; yo lo uso para inglés y guitarra.",
+      en: "A tutor that lives in a repository and remembers what you already know: it measures your level with evidence and doesn't teach you again what you've mastered. It works for any skill; I use it for English and guitar.",
+    },
+    summary: {
+      es: "Marco de trabajo para aprender cualquier habilidad con un agente de código como Claude Code. Comandos que hacen un paso cada uno (perfil, test de nivel, plan, sesión, repaso) y un archivo de progreso que persiste entre sesiones. El material sale de tus PDFs y de la web, con la fuente citada: un ejercicio sin fuente no se acepta. También funciona sin terminal, desde ChatGPT, Claude o Gemini. Licencia MIT; en el blog cuento por qué lo construí.",
+      en: "A framework for learning any skill with a coding agent such as Claude Code. Commands that each do one step (profile, level test, plan, session, review) and a progress file that persists between sessions. Material comes from your PDFs and the web, with the source cited: an exercise without a source is rejected. It also works without a terminal, from ChatGPT, Claude or Gemini. MIT licensed; on the blog I explain why I built it.",
+    },
+    role: { es: "Autor", en: "Author" },
+    year: "2026",
+    company: "Open source",
+    github: "https://github.com/AlejandroVegaFullstackDev/ai-skill-coach",
+    post: "/blog/por-que-construi-mi-propio-tutor",
+    stack: ["Claude Code", "Agentes de IA", "Markdown", "MIT"],
+    metrics: [
+      { k: { es: "memoria", en: "memory" }, v: "progreso.md" },
+      { k: { es: "material", en: "material" }, v: { es: "Con fuente", en: "Sourced" } },
+      { k: { es: "funciona en", en: "runs in" }, v: { es: "Terminal o chat", en: "Terminal or chat" } },
     ],
   },
   // ── Trabajo de producción ─────────────────────────────────────────────────
   {
     slug: "worker-gps",
-    n: "002",
+    n: "004",
     name: { es: "Worker de sincronización GPS", en: "GPS sync worker" },
     kicker: { es: "Concurrencia y locks · Python", en: "Concurrency & locks · Python" },
     plain: {
@@ -53,18 +103,18 @@ export const projects = [
   },
   {
     slug: "plataforma-interna",
-    n: "003",
+    n: "005",
     name: { es: "Plataforma administrativa interna", en: "Internal admin platform" },
     kicker: { es: "Plataforma interna · Python", en: "Internal platform · Python" },
     plain: {
-      es: "La parte más grande de la herramienta interna con la que el equipo gestiona clientes y cartera todos los días.",
-      en: "The largest part of the internal tool the team uses every day to manage customers and their accounts.",
+      es: "El CRM y los paneles internos con los que el equipo de operaciones gestiona clientes, pagos y cartera todos los días.",
+      en: "The CRM and internal dashboards the operations team uses every day to manage customers, payments and collections.",
     },
     summary: {
-      es: "El componente de mayor volumen funcional de la plataforma administrativa interna de Roda: gestión de clientes, seguimiento de cartera y los flujos que el equipo de operación usa todos los días. Backend en Python (Flask / FastAPI), interfaz en React y PostgreSQL sobre GCP.",
-      en: "The largest functional component of Roda's internal admin platform: customer management, portfolio follow-up and the flows the operations team uses every day. Python (Flask / FastAPI) backend, React interface and PostgreSQL on GCP.",
+      es: "Plataforma administrativa interna de Roda: CRM en React para el equipo de operaciones, gestión de clientes y seguimiento de cartera, y microservicios en Python (FastAPI y Flask) que automatizan procesos de pagos, créditos y cartera. PostgreSQL y despliegue con Docker en Cloud Run de GCP.",
+      en: "Roda's internal admin platform: a React CRM for the operations team, customer management and collections follow-up, and Python microservices (FastAPI and Flask) that automate payment, credit and collections processes. PostgreSQL, deployed with Docker on GCP Cloud Run.",
     },
-    role: { es: "Desarrollador principal", en: "Lead developer" },
+    role: { es: "Desarrollador full stack", en: "Full stack developer" },
     year: "2025",
     company: "Roda",
     github: null,
@@ -77,7 +127,7 @@ export const projects = [
   },
   {
     slug: "recuperacion-cartera",
-    n: "004",
+    n: "006",
     name: { es: "Recuperación de cartera y activos", en: "Portfolio & asset recovery" },
     kicker: { es: "Operación de campo · Python", en: "Field operations · Python" },
     plain: {
@@ -85,23 +135,23 @@ export const projects = [
       en: "Recovering vehicles and loans used to live in spreadsheets and chats. Now it has its own tool, with one panel for the office and one for the field team.",
     },
     summary: {
-      es: "Recuperación de vehículos y créditos, de punta a punta. Dos interfaces administrativas que sustituyeron un proceso que se llevaba entre hojas de cálculo y coordinación por chat con los equipos de campo.",
-      en: "Vehicle and credit recovery, end to end. Two admin interfaces that replaced a process previously run across spreadsheets and chat coordination with the field teams.",
+      es: "Módulo de recuperación de vehículos y créditos con dos interfaces administrativas, una para la oficina y otra para el equipo en campo. Reemplazó un proceso que se llevaba entre hojas de cálculo y coordinación por chat.",
+      en: "Vehicle and credit recovery module with two admin interfaces, one for the office and one for the field team. It replaced a process run across spreadsheets and chat coordination.",
     },
-    role: { es: "Desarrollador principal", en: "Lead developer" },
+    role: { es: "Desarrollador full stack", en: "Full stack developer" },
     year: "2025",
     company: "Roda",
     github: null,
     stack: ["Python", "Flask", "React", "PostgreSQL", "GCP"],
     metrics: [
       { k: { es: "interfaces", en: "interfaces" }, v: "2" },
-      { k: { es: "alcance", en: "scope" }, v: { es: "Punta a punta", en: "End to end" } },
+      { k: { es: "usuarios", en: "users" }, v: { es: "Oficina + campo", en: "Office + field" } },
       { k: { es: "reemplaza", en: "replaces" }, v: { es: "Proceso manual", en: "Manual process" } },
     ],
   },
   {
     slug: "vegareparaciones",
-    n: "005",
+    n: "007",
     name: { es: "vegareparaciones.com", en: "vegareparaciones.com" },
     kicker: { es: "Sitio y SEO · Next.js", en: "Site & SEO · Next.js" },
     plain: {
@@ -126,48 +176,48 @@ export const projects = [
   },
   {
     slug: "escaneo-masivo",
-    n: "006",
-    name: { es: "Escaneo masivo de guías", en: "Bulk waybill scanning" },
+    n: "008",
+    name: { es: "Generación masiva de guías", en: "Bulk shipping labels" },
     kicker: { es: "Rendimiento · PostgreSQL", en: "Performance · PostgreSQL" },
     plain: {
-      es: "Registrar devoluciones guía por guía tomaba horas. Ahora se escanean con lector y se procesan más de 10.000 guías en segundos.",
-      en: "Registering returns one waybill at a time took hours. Now they're scanned with a reader and 10,000+ waybills are processed in seconds.",
+      es: "Las guías de envío se generaban una por una. Ahora un procedimiento en la base de datos las genera por lote.",
+      en: "Shipping labels used to be generated one at a time. Now a database procedure generates them in batches.",
     },
     summary: {
-      es: "Módulo de escaneo masivo con lectores de código para registrar condiciones de devolución (fraude, daño). Lo que antes tomaba horas ahora procesa más de 10.000 guías en segundos, con un stored procedure en PostgreSQL invocado desde NestJS.",
-      en: "Bulk scanning module with barcode readers to register return conditions (fraud, damage). What used to take hours now processes over 10,000 waybills in seconds, through a PostgreSQL stored procedure called from NestJS.",
+      es: "Automaticé con un procedimiento almacenado en PostgreSQL, invocado desde NestJS, la generación masiva de guías de envío, que antes se hacía una por una. Lotes de más de 10.000 guías, en un módulo con arquitectura hexagonal.",
+      en: "I automated bulk shipping-label generation, previously done one at a time, with a PostgreSQL stored procedure called from NestJS. Batches of more than 10,000 labels, in a module with a hexagonal architecture.",
     },
-    role: { es: "Desarrollador a cargo", en: "Lead developer" },
+    role: { es: "Desarrollador backend", en: "Backend developer" },
     year: "2024",
     company: "Kiki LATAM",
     github: null,
     stack: ["NestJS", "PostgreSQL", "TypeScript"],
     metrics: [
-      { k: { es: "guías por corrida", en: "waybills per run" }, v: "+10.000" },
-      { k: { es: "antes", en: "before" }, v: "horas" },
-      { k: { es: "ahora", en: "now" }, v: "segundos" },
+      { k: { es: "guías por lote", en: "labels per batch" }, v: "+10.000" },
+      { k: { es: "motor", en: "engine" }, v: "PostgreSQL" },
+      { k: { es: "arquitectura", en: "architecture" }, v: "Hexagonal" },
     ],
   },
   {
     slug: "etl-bigquery",
-    n: "007",
+    n: "009",
     name: { es: "ETL de audiencia a BigQuery", en: "Audience ETL into BigQuery" },
     kicker: { es: "Datos · Python", en: "Data · Python" },
     plain: {
-      es: "Más de 5 años de datos de audiencia de un medio digital estaban repartidos. Los junté en un solo lugar y los reportes dejaron de tomar horas.",
-      en: "Over 5 years of a digital outlet's audience data were scattered. I brought them into one place and reports stopped taking hours.",
+      es: "Los datos de audiencia de un medio digital estaban repartidos entre dos versiones de Google Analytics. Los llevé a un solo lugar y armé los dashboards del equipo comercial.",
+      en: "A digital outlet's audience data was split between two versions of Google Analytics. I brought it into one place and built the sales team's dashboards.",
     },
     summary: {
-      es: "Procesos ETL en Python que integran Universal Analytics y GA4 en BigQuery para uno de los medios digitales más grandes de Colombia. Centralizaron más de 5 años de datos históricos de tráfico y comportamiento de audiencia, y con ellos los reportes que antes tomaban horas.",
-      en: "Python ETL processes bringing Universal Analytics and GA4 into BigQuery for one of Colombia's largest digital outlets. They centralized over 5 years of historical traffic and audience data, and with it the reports that used to take hours.",
+      es: "Procesos ETL en Python que llevan los datos de audiencia de Universal Analytics y GA4 a BigQuery, con la migración a GA4 hecha sin perder el histórico. Sobre esa base armé los dashboards del equipo comercial.",
+      en: "Python ETL processes that bring audience data from Universal Analytics and GA4 into BigQuery, with the GA4 migration done without losing the history. On top of that I built the sales team's dashboards.",
     },
-    role: { es: "Desarrollador a cargo", en: "Lead developer" },
+    role: { es: "Desarrollador backend / datos", en: "Backend / data developer" },
     year: "2023",
     company: "Pulzo",
     github: null,
     stack: ["Python", "BigQuery", "GA4", "SQL"],
     metrics: [
-      { k: { es: "histórico", en: "history" }, v: "+5 años" },
+      { k: { es: "histórico", en: "history" }, v: { es: "Conservado", en: "Kept" } },
       { k: { es: "fuentes", en: "sources" }, v: "UA + GA4" },
       { k: { es: "destino", en: "sink" }, v: "BigQuery" },
     ],
@@ -176,7 +226,7 @@ export const projects = [
   // ── Código abierto ────────────────────────────────────────────────────────
   {
     slug: "cufe-dian",
-    n: "008",
+    n: "010",
     name: { es: "CUFE Scraper DIAN", en: "CUFE DIAN Scraper" },
     kicker: { es: "Automatización fiscal · Python", en: "Tax automation · Python" },
     plain: {
@@ -187,7 +237,7 @@ export const projects = [
       es: "Servicio Flask + Selenium que automatiza la consulta masiva de CUFEs en el catálogo DIAN. Extrae datos de emisor, receptor y eventos; los persiste en MySQL vía REST API. Dockerizado, con tests (pytest) y CI en GitHub Actions.",
       en: "Flask + Selenium service that automates bulk CUFE lookups in the DIAN catalog. Extracts issuer, receiver and event data; persists it in MySQL via REST API. Dockerized, with tests (pytest) and CI on GitHub Actions.",
     },
-    role: { es: "Desarrollador a cargo", en: "Lead developer" },
+    role: { es: "Autor", en: "Author" },
     year: "2024",
     github: "https://github.com/AlejandroVegaFullstackDev/Dian-Cufe",
     stack: ["Python", "Flask", "Selenium", "MySQL", "Docker"],
@@ -199,7 +249,7 @@ export const projects = [
   },
   {
     slug: "shipping-nestjs",
-    n: "009",
+    n: "011",
     name: { es: "API de envíos NestJS", en: "NestJS Shipment API" },
     kicker: { es: "Backend · NestJS", en: "Backend · NestJS" },
     plain: {
@@ -222,7 +272,7 @@ export const projects = [
   },
   {
     slug: "task-laravel",
-    n: "010",
+    n: "012",
     name: { es: "Task Manager Laravel", en: "Laravel Task Manager" },
     kicker: { es: "Full stack · Laravel", en: "Full stack · Laravel" },
     plain: {
@@ -245,7 +295,7 @@ export const projects = [
   },
   {
     slug: "roda-technical",
-    n: "011",
+    n: "013",
     name: { es: "Microservicio e-Bike Autolock", en: "e-Bike Autolock Microservice" },
     kicker: { es: "Clean Architecture · Python", en: "Clean Architecture · Python" },
     plain: {
@@ -268,7 +318,7 @@ export const projects = [
   },
   {
     slug: "universal-analytics",
-    n: "012",
+    n: "014",
     name: { es: "Extractor Universal Analytics", en: "Universal Analytics Extractor" },
     kicker: { es: "Data · Python", en: "Data · Python" },
     plain: {
@@ -279,7 +329,7 @@ export const projects = [
       es: "Herramienta Python que extrae reportes de Universal Analytics (Reporting API v4) y los exporta a CSV/Excel. Arquitectura por capas (domain · usecases · controller · infrastructure · view), con tests (pytest) y CI en GitHub Actions.",
       en: "Python tool that extracts Universal Analytics reports (Reporting API v4) and exports them to CSV/Excel. Layered architecture (domain · usecases · controller · infrastructure · view), with tests (pytest) and CI on GitHub Actions.",
     },
-    role: { es: "Desarrollador a cargo", en: "Lead developer" },
+    role: { es: "Autor", en: "Author" },
     year: "2024",
     github: "https://github.com/AlejandroVegaFullstackDev/UAnalyticsExtractInfo",
     stack: ["Python", "Google Analytics", "pandas", "openpyxl"],
@@ -291,7 +341,7 @@ export const projects = [
   },
   {
     slug: "ga4-factory",
-    n: "013",
+    n: "015",
     name: { es: "Reportes GA4 · Factory Method", en: "GA4 Reports · Factory Method" },
     kicker: { es: "Patrón de diseño · Python", en: "Design pattern · Python" },
     plain: {
@@ -302,7 +352,7 @@ export const projects = [
       es: "Generador de reportes de Google Analytics 4 (Data API v1beta) que exporta métricas diarias a CSV. Usa el patrón Factory Method para construir distintos tipos de reporte, con arquitectura por capas, tests (pytest) y CI.",
       en: "Google Analytics 4 report generator (Data API v1beta) that exports daily metrics to CSV. Uses the Factory Method pattern to build different report types, with layered architecture, tests (pytest) and CI.",
     },
-    role: { es: "Desarrollador a cargo", en: "Lead developer" },
+    role: { es: "Autor", en: "Author" },
     year: "2024",
     github: "https://github.com/AlejandroVegaFullstackDev/GA4_Reports_FactoryMethod",
     stack: ["Python", "GA4 Data API", "pandas", "Factory Method"],

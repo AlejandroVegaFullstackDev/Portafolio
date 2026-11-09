@@ -17,6 +17,7 @@ const deep = (D.deep as Record<string, object>)[p.slug] ?? {};
 const others = D.projects.filter((x) => x.slug !== p.slug).slice(0, 2);
 const live = 'url' in p ? (p.url as string | undefined) : undefined;
 const repo = 'github' in p ? (p.github as string | null | undefined) : undefined;
+const post = 'post' in p ? (p.post as string | undefined) : undefined;
 ---
 <Layout title={`${p.name.es} — Alejandro Vega`} description={`${p.name.es}: ${p.plain.es}`}>
   <link slot="head" rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@1,9..144,600&display=swap" />
@@ -30,6 +31,7 @@ const repo = 'github' in p ? (p.github as string | null | undefined) : undefined
         <p class="kicker"><span class="lang-es">{p.kicker.es}</span><span class="lang-en">{p.kicker.en}</span></p>
         <p class="summary"><span class="lang-es">{p.plain.es}</span><span class="lang-en">{p.plain.en}</span></p>
         <p class="tech"><span class="tech-label"><span class="lang-es">En detalle</span><span class="lang-en">In detail</span></span><span class="lang-es">{p.summary.es}</span><span class="lang-en">{p.summary.en}</span></p>
+        {post && <p class="tech"><a href={post} class="link"><span class="lang-es">Lee en el blog por qué lo construí →</span><span class="lang-en">Read on the blog why I built it (Spanish) →</span></a></p>}
       </div>
     </section>
 

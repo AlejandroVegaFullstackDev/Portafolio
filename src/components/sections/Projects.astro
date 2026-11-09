@@ -5,7 +5,7 @@ import Coverflow from '../ui/Coverflow.astro';
 import SectionHeading from '../ui/SectionHeading.astro';
 import { portfolioData as D } from '../../data';
 
-const FEATURED = ['support-triage', 'worker-gps', 'recuperacion-cartera'];
+const FEATURED = ['support-triage', 'meet-agent', 'ai-skill-coach'];
 const featured = FEATURED.map((s) => D.projects.find((p) => p.slug === s)!).filter(Boolean);
 const rest = D.projects.filter((p) => !FEATURED.includes(p.slug));
 const num = (i: number) => String(i + 1).padStart(2, '0');
