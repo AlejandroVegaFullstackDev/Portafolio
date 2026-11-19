@@ -9,7 +9,7 @@
 //     servidor. El puntaje que cuenta es el de la repetición, nunca el que dice el cliente.
 //  4. Se guarda el mejor puntaje por dispositivo; el registro va cifrado (AES-256-GCM).
 import { decrypt, encrypt, pseudonym, randomId, signToken, verifyToken } from './crypto';
-import { rateLimit, redis } from './redis';
+import { rateLimit, redis, redisMulti } from './redis';
 import { cleanName } from './names';
 import { replay, type Move } from '../../scripts/game/replay';
 
@@ -20,7 +20,23 @@ const TOKEN_TTL_MS = 30 * 60_000; // una partida no puede durar más de 30 min
 const TIME_SLACK = 0.85;          // margen por jitter de red/frames
 
 interface Session { v: 1; seed: number; nonce: string; iat: number; dev: string }
-interface Entry { name: string; score: number; at: number }
+interface Entry { name: string; at: number }
+
+// La condición del nonce se evalúa dentro de EXEC. Redis no revierte errores
+// de ejecución: se comprueban ambos tipos de clave antes de escribir.
+const SAVE_SCORE = `
+  local board, entries, nonce = KEYS[1], KEYS[2], KEYS[3]
+  local member, score, record, keep, ttl = unpack(ARGV)
+  if redis.call('EXISTS', nonce) == 1 then return false end
+  redis.call('ZSCORE', board, member)
+  redis.call('HEXISTS', entries, member)
+  redis.call('ZADD', board, 'GT', score, member)
+  local best = redis.call('ZSCORE', board, member)
+  redis.call('HSET', entries, member, record)
+  redis.call('ZREMRANGEBYRANK', board, 0, -(tonumber(keep) + 1))
+  redis.call('SET', nonce, '1', 'PX', ttl)
+  return {best, redis.call('ZREVRANK', board, member)}
+`;
 
 export class LbError extends Error {
   constructor(public status: number, public code: string) { super(code); }
@@ -53,36 +69,28 @@ export async function submitScore(ip: string, body: { token?: unknown; name?: un
   if (result.score < 1) throw new LbError(400, 'zero');
   if (now - session.iat < result.minMs * TIME_SLACK) throw new LbError(400, 'too-fast');
 
-  // Un token = una partida: el nonce se marca como usado (NX) y expira solo.
-  const [fresh] = await redis<[string | null]>(['SET', `lb:v1:nonce:${session.nonce}`, '1', 'NX', 'PX', TOKEN_TTL_MS * 2]);
-  if (fresh !== 'OK') throw new LbError(409, 'replayed');
-
-  // Mejor puntaje por dispositivo (GT = solo sube).
-  const [, best] = await redis<[number, string | null]>(['ZADD', BOARD_KEY, 'GT', result.score, session.dev], ['ZSCORE', BOARD_KEY, session.dev]);
-  const bestScore = Number(best ?? result.score);
-  const record = await encrypt({ name, score: bestScore, at: now } satisfies Entry);
-  const [, , rank] = await redis<[number, number, number | null]>(
-    ['HSET', ENTRY_KEY, session.dev, record],
-    ['ZREMRANGEBYRANK', BOARD_KEY, 0, -(KEEP + 1)],
-    ['ZREVRANK', BOARD_KEY, session.dev],
-  );
-  return { score: result.score, best: bestScore, rank: rank === null ? null : rank + 1 };
+  // El conjunto ordenado es la fuente del puntaje. El registro cifrado guarda el nombre.
+  const record = await encrypt({ name, at: now } satisfies Entry);
+  const [saved] = await redisMulti<[[string, number | null] | null]>([
+    'EVAL', SAVE_SCORE, 3, BOARD_KEY, ENTRY_KEY, `lb:v1:nonce:${session.nonce}`,
+    session.dev, result.score, record, KEEP, TOKEN_TTL_MS * 2,
+  ]);
+  if (!saved) throw new LbError(409, 'replayed');
+  const [best, rank] = saved;
+  return { score: result.score, best: Number(best), rank: rank === null ? null : rank + 1 };
 }
 
 export async function topScores(limit = 10) {
-  // Se piden de más por si hay que descartar nombres que el filtro actual ya no acepta.
-  const [flat] = await redis<[string[]]>(['ZREVRANGE', BOARD_KEY, 0, limit * 2 - 1, 'WITHSCORES']);
+  // Se revisa todo el ranking acotado para llenar el top aunque haya filas incompletas.
+  const [flat] = await redis<[string[]]>(['ZREVRANGE', BOARD_KEY, 0, KEEP - 1, 'WITHSCORES']);
   if (!flat?.length) return [];
   const members = flat.filter((_, i) => i % 2 === 0);
   const [blobs] = await redis<[(string | null)[]]>(['HMGET', ENTRY_KEY, ...members]);
   const rows: { name: string; score: number }[] = [];
-  const purge: string[] = [];
-  for (let i = 0; i < members.length; i++) {
+  for (let i = 0; i < members.length && rows.length < limit; i++) {
     const e = blobs[i] ? await decrypt<Entry>(blobs[i]!) : null;
-    if (!e || !cleanName(e.name)) { purge.push(members[i]); continue; }
+    if (!e || !cleanName(e.name)) continue;
     rows.push({ name: e.name, score: Number(flat[i * 2 + 1]) });
   }
-  // Registros con nombres que ya no pasan el filtro (o ilegibles) salen del ranking.
-  if (purge.length) await redis(['ZREM', BOARD_KEY, ...purge], ['HDEL', ENTRY_KEY, ...purge]).catch(() => {});
-  return rows.slice(0, limit);
+  return rows;
 }

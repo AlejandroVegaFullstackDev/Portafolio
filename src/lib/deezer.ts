@@ -7,7 +7,7 @@ type Hit = { data?: { preview?: string }[] };
 export const cleanTitle = (s: string) => s.replace(/\s*[-–(].*?(remaster|live|unplugged|version|mono|stereo|edit).*$/i, '').trim();
 
 async function search(q: string): Promise<string | null> {
-  const res = await fetch(`https://api.deezer.com/search?limit=1&q=${encodeURIComponent(q)}`);
+  const res = await fetch(`https://api.deezer.com/search?limit=1&q=${encodeURIComponent(q)}`, { signal: AbortSignal.timeout(4000) });
   if (!res.ok) return null;
   return ((await res.json()) as Hit).data?.[0]?.preview || null;
 }

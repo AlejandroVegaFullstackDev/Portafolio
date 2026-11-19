@@ -1,4 +1,6 @@
 // Flujo completo del ranking contra un Redis en memoria (simula Upstash REST).
+import type { APIContext } from 'astro';
+import { createHash } from 'node:crypto';
 import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createGame, step, turn, type Dir } from '../src/scripts/game/snakeEngine';
 import { mulberry32 } from '../src/scripts/game/prng';
@@ -12,6 +14,14 @@ function exec(cmd: (string | number)[]): unknown {
   const z = () => zsets.get(key) ?? (zsets.set(key, new Map()), zsets.get(key)!);
   const ranked = () => [...z().entries()].sort((x, y) => y[1] - x[1]);
   switch (op) {
+    case 'EVAL': {
+      const [, board, entries, nonce, dev, score, record] = a;
+      if (kv.has(nonce)) return null;
+      exec(['ZADD', board, 'GT', score, dev]);
+      exec(['HSET', entries, dev, record]);
+      kv.set(nonce, '1');
+      return [exec(['ZSCORE', board, dev]), exec(['ZREVRANK', board, dev])];
+    }
     case 'INCR': counters.set(key, (counters.get(key) ?? 0) + 1); return counters.get(key);
     case 'EXPIRE': return 1;
     case 'SET': if (a.includes('NX') && kv.has(key)) return null; kv.set(key, a[0]); return 'OK';
@@ -64,9 +74,11 @@ beforeAll(async () => {
   env.LEADERBOARD_SECRET = 'service-test-secret-'.padEnd(48, 'y');
   env.KV_REST_API_URL = 'https://redis.test';
   env.KV_REST_API_TOKEN = 't';
-  vi.stubGlobal('fetch', async (_u: string, init: { body: string }) => ({
-    ok: true, json: async () => (JSON.parse(init.body) as (string | number)[][]).map((c) => ({ result: exec(c) })),
-  }));
+  vi.stubGlobal('fetch', async (url: string, init: { body: string }) => {
+    const commands = JSON.parse(init.body) as (string | number)[][];
+    if (commands.some(([op]) => op === 'EVAL')) expect(url).toBe('https://redis.test/multi-exec');
+    return { ok: true, json: async () => commands.map((c) => ({ result: exec(c) })) };
+  });
   (await import('../src/lib/leaderboard/crypto'))._resetKeys();
   S = await import('../src/lib/leaderboard/service');
 });
@@ -91,6 +103,19 @@ describe('servicio del ranking', () => {
     await expect(S.submitScore('2.2.2.2', { token, name: 'Uno', moves: g.moves, ticks: g.ticks }, later)).rejects.toMatchObject({ code: 'replayed' });
   });
 
+  it('omite las filas incompletas sin borrarlas', async () => {
+    const { token, g } = await scoringSession('7.7.7.7', 'device-complete');
+    await S.submitScore('7.7.7.7', { token, name: 'Completo', moves: g.moves, ticks: g.ticks }, Date.now() + 600_000);
+    const board = 'lb:v1:global';
+    exec(['ZADD', board, 'GT', 1_000_000, 'incomplete']);
+    try {
+      expect(await S.topScores(1)).toHaveLength(1);
+      expect(exec(['ZSCORE', board, 'incomplete'])).toBe('1000000');
+    } finally {
+      exec(['ZREM', board, 'incomplete']);
+    }
+  });
+
   it('rechaza envíos más rápidos de lo que el juego permite', async () => {
     const { token, g } = await scoringSession('3.3.3.3', 'device-c');
     await expect(S.submitScore('3.3.3.3', { token, name: 'Rápido', moves: g.moves, ticks: g.ticks }, Date.now())).rejects.toMatchObject({ code: 'too-fast' });
@@ -103,5 +128,39 @@ describe('servicio del ranking', () => {
   it('limita la cantidad de envíos por IP', async () => {
     for (let i = 0; i < 12; i++) await S.submitScore('5.5.5.5', { token: 'x.y', name: 'X', moves: [], ticks: 1 }).catch(() => {});
     await expect(S.submitScore('5.5.5.5', { token: 'x.y', name: 'X', moves: [], ticks: 1 })).rejects.toMatchObject({ code: 'rate-limited' });
+  });
+});
+
+describe('endpoints con Redis REST', () => {
+  it('rechaza un origen ausente, un cuerpo nulo o mal tipado y cuerpos demasiado grandes en bytes', async () => {
+    const { POST } = await import('../src/pages/api/leaderboard');
+    const send = (body: string, origin?: string) => POST({
+      request: new Request('https://4ledmt.dev/api/leaderboard', {
+        method: 'POST',
+        headers: origin ? { Origin: origin, 'Content-Type': 'application/json' } : undefined,
+        body,
+      }),
+      clientAddress: '8.8.8.8',
+    } as APIContext);
+    const origin = 'https://4ledmt.dev';
+    expect((await send('{"action":"start","device":"a"}')).status).toBe(403);
+    expect((await send('null', origin)).status).toBe(400);
+    expect((await send('{"action":"start","device":1}', origin)).status).toBe(400);
+    expect((await send('{"action":"submit","token":"x","name":"Xx","moves":[],"ticks":"1"}', origin)).status).toBe(400);
+    expect((await send(JSON.stringify({ action: 'start', device: 'á'.repeat(40_000) }), origin)).status).toBe(413);
+    expect((await send('{"action":"start","device":"a"}', origin)).status).toBe(200);
+  });
+
+  it('limita la búsqueda de vistas previas por IP y rechaza consultas demasiado largas', async () => {
+    const { GET } = await import('../src/pages/api/preview');
+    const ip = '8.8.4.4';
+    const key = `preview:v1:rl:${createHash('sha256').update(ip).digest('hex')}`;
+    counters.set(key, 30);
+    const url = new URL('https://4ledmt.dev/api/preview?artist=Alguien&title=Canción');
+    const context = { clientAddress: ip, url } as APIContext;
+    expect((await GET(context)).status).toBe(429);
+    url.searchParams.set('title', 'x'.repeat(101));
+    expect((await GET(context)).status).toBe(400);
+    expect(counters.get(key)).toBe(31);
   });
 });

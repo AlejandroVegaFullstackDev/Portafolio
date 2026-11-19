@@ -33,8 +33,23 @@ export async function redis<T = unknown[]>(...cmds: Cmd[]): Promise<T> {
     // node-redis agrupa en un pipeline los comandos enviados en el mismo tick.
     return (await Promise.all(cmds.map((cmd) => c.sendCommand(cmd.map(String))))) as T;
   }
-  const res = await fetch(`${restUrl()}/pipeline`, {
+  return rest<T>('pipeline', cmds);
+}
+
+/** Ejecuta los comandos de una transacción MULTI/EXEC. */
+export async function redisMulti<T>(...cmds: Cmd[]): Promise<T> {
+  if (!(restUrl() && restToken())) {
+    const transaction = (await tcp()).multi();
+    for (const cmd of cmds) transaction.addCommand(cmd.map(String));
+    return (await transaction.exec()) as T;
+  }
+  return rest<T>('multi-exec', cmds);
+}
+
+async function rest<T>(operation: 'pipeline' | 'multi-exec', cmds: Cmd[]): Promise<T> {
+  const res = await fetch(`${restUrl()}/${operation}`, {
     method: 'POST',
+    signal: AbortSignal.timeout(4000),
     headers: { Authorization: `Bearer ${restToken()}`, 'Content-Type': 'application/json' },
     body: JSON.stringify(cmds),
   });
