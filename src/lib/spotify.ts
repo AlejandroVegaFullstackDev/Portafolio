@@ -26,6 +26,7 @@ export async function getAccessToken(): Promise<string | null> {
   const basic = Buffer.from(`${c.clientId}:${c.clientSecret}`).toString('base64');
   const res = await fetch(TOKEN_URL, {
     method: 'POST',
+    signal: AbortSignal.timeout(4000),
     headers: { Authorization: `Basic ${basic}`, 'Content-Type': 'application/x-www-form-urlencoded' },
     body: new URLSearchParams({ grant_type: 'refresh_token', refresh_token: c.refreshToken }),
   });
@@ -35,7 +36,7 @@ export async function getAccessToken(): Promise<string | null> {
 }
 
 export async function spotifyGet<T>(url: string, token: string): Promise<{ status: number; data: T | null }> {
-  const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
+  const res = await fetch(url, { signal: AbortSignal.timeout(4000), headers: { Authorization: `Bearer ${token}` } });
   if (res.status === 204 || res.status >= 400) return { status: res.status, data: null };
   return { status: res.status, data: (await res.json()) as T };
 }
@@ -46,6 +47,6 @@ export function coverUrl(track: SpotifyTrack, min = 64): string | null {
   return (imgs.find((i) => i.width >= min) ?? imgs[imgs.length - 1])?.url ?? null;
 }
 
-export function json(data: unknown, cache = 'no-store, max-age=0') {
-  return new Response(JSON.stringify(data), { headers: { 'Content-Type': 'application/json', 'Cache-Control': cache } });
+export function json(data: unknown, cache = 'no-store, max-age=0', status = 200) {
+  return new Response(JSON.stringify(data), { status, headers: { 'Content-Type': 'application/json', 'Cache-Control': cache } });
 }

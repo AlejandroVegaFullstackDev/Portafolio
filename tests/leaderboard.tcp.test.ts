@@ -26,11 +26,20 @@ describe.skipIf(!URL)('ranking sobre Redis TCP real', () => {
     S = await import('../src/lib/leaderboard/service');
   });
   it('guarda, rankea y no deja repetir', async () => {
-    const { seed, token } = await S.startSession('9.9.9.9', 'dev-tcp');
-    const g = play(seed); const later = Date.now() + 600_000;
-    const r = await S.submitScore('9.9.9.9', { token, name: 'Tcp', moves: g.moves, ticks: g.ticks }, later);
-    expect(r.score).toBe(g.score); expect(r.rank).toBe(1);
-    expect(await S.topScores()).toEqual([{ name: 'Tcp', score: g.score }]);
-    await expect(S.submitScore('9.9.9.9', { token, name: 'Tcp', moves: g.moves, ticks: g.ticks }, later)).rejects.toMatchObject({ code: 'replayed' });
+    let session = await S.startSession('9.9.9.9', 'dev-tcp');
+    let g = play(session.seed);
+    for (let attempt = 0; g.score === 0 && attempt < 30; attempt++) {
+      session = await S.startSession('9.9.9.9', 'dev-tcp');
+      g = play(session.seed);
+    }
+    expect(g.score).toBeGreaterThan(0);
+    const later = Date.now() + 600_000;
+    const submit = (name: string) => S.submitScore('9.9.9.9', { token: session.token, name, moves: g.moves, ticks: g.ticks }, later);
+    const results = await Promise.allSettled([submit('Primero'), submit('Segundo')]);
+    const winner = results.findIndex((r) => r.status === 'fulfilled');
+    expect(winner).toBeGreaterThanOrEqual(0);
+    expect(results[winner]).toMatchObject({ status: 'fulfilled', value: { score: g.score, rank: 1 } });
+    expect(results[1 - winner]).toMatchObject({ status: 'rejected', reason: { code: 'replayed' } });
+    expect(await S.topScores()).toEqual([{ name: ['Primero', 'Segundo'][winner], score: g.score }]);
   });
 });

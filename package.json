@@ -12,16 +12,16 @@
     "verify": "astro check && astro build && vitest run",
     "spotify-token": "node tools/spotify-token.mjs",
     "predev": "node tools/copy-doom.mjs",
-    "prebuild": "node tools/copy-doom.mjs"
+    "prebuild": "node tools/copy-doom.mjs",
+    "preverify": "node tools/copy-doom.mjs"
   },
   "dependencies": {
-    "@astrojs/react": "^3.6.0",
-    "@astrojs/sitemap": "^3.7.3",
-    "@astrojs/tailwind": "^5.1.0",
-    "@astrojs/vercel": "^8.2.11",
+    "@astrojs/react": "^7.1.9",
+    "@astrojs/sitemap": "^3.7.6",
+    "@astrojs/vercel": "^11.0.22",
     "@fontsource-variable/jetbrains-mono": "^5.3.0",
     "@fontsource-variable/space-grotesk": "^5.3.0",
-    "astro": "^5.7.0",
+    "astro": "^7.4.13",
     "gsap": "^3.12.5",
     "lucide-static": "^1.52.0",
     "react": "^18.3.1",
@@ -30,16 +30,24 @@
     "wasm-doom": "^1.2.0"
   },
   "devDependencies": {
-    "@astrojs/check": "^0.9.10",
+    "@astrojs/check": "^0.9.12",
     "@types/jsdom": "^30.0.0",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
+    "autoprefixer": "^10.7.0",
+    "esbuild": "^0.28.2",
     "jsdom": "^29.1.1",
+    "postcss": "^8.5.33",
     "tailwindcss": "^3.4.0",
     "typescript": "^5.5.0",
     "vitest": "^5.0.3"
   },
   "engines": {
-    "node": ">=20"
+    "node": "^22.23.4 || >=24.16.0"
+  },
+  "overrides": {
+    "@vercel/routing-utils": {
+      "path-to-regexp": "6.3.0"
+    }
   }
 }
