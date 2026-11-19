@@ -46,7 +46,3 @@ export function coverUrl(track: SpotifyTrack, min = 64): string | null {
   const imgs = [...track.album.images].sort((a, b) => a.width - b.width);
   return (imgs.find((i) => i.width >= min) ?? imgs[imgs.length - 1])?.url ?? null;
 }
-
-export function json(data: unknown, cache = 'no-store, max-age=0', status = 200) {
-  return new Response(JSON.stringify(data), { status, headers: { 'Content-Type': 'application/json', 'Cache-Control': cache } });
-}

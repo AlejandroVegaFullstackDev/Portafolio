@@ -1,5 +1,6 @@
 // Canción sonando ahora (o la última reproducida) para el widget y la franja de estado.
-import { coverUrl, getAccessToken, json, spotifyGet, type SpotifyTrack } from '../../lib/spotify';
+import { coverUrl, getAccessToken, spotifyGet, type SpotifyTrack } from '../../lib/spotify';
+import { json } from '../../lib/http';
 
 export const prerender = false;
 

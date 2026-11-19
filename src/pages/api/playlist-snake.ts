@@ -2,7 +2,8 @@
 // Fuente: la playlist del sitio (SPOTIFY_SNAKE_PLAYLIST o la de abajo); si no se puede
 // leer, lo último escuchado → top tracks. Solo cachea respuestas con canciones.
 // `source` y `status` sirven para diagnosticar y no exponen secretos.
-import { coverUrl, credentials, getAccessToken, json, spotifyGet, type SpotifyTrack } from '../../lib/spotify';
+import { coverUrl, credentials, getAccessToken, spotifyGet, type SpotifyTrack } from '../../lib/spotify';
+import { json } from '../../lib/http';
 import { findPreviews } from '../../lib/deezer';
 import type { Track } from '../../lib/arcade/track';
 
@@ -22,10 +23,10 @@ const unique = (list: (SpotifyTrack | null | undefined)[]) => {
 };
 
 export async function GET() {
-  if (!credentials()) return json({ tracks: [], source: 'none', status: 'missing-env' }, NO_CACHE);
+  if (!credentials()) return json({ tracks: [], source: 'none', status: 'missing-env' }, 200, NO_CACHE);
   try {
     const token = await getAccessToken();
-    if (!token) return json({ tracks: [], source: 'none', status: 'token-refresh-failed' }, NO_CACHE);
+    if (!token) return json({ tracks: [], source: 'none', status: 'token-refresh-failed' }, 200, NO_CACHE);
     const statuses: Record<string, number> = {};
 
     // Desde feb-2026 Spotify movió /tracks → /items (y `track` → `item`), y solo devuelve
@@ -74,8 +75,8 @@ export async function GET() {
     const previews = await findPreviews(base);
     const tracks: Track[] = base.map((t, i) => ({ ...t, preview: previews[i] }));
 
-    return json({ tracks, source: tracks.length ? source : 'none', status: statuses }, tracks.length ? CACHE_OK : NO_CACHE);
+    return json({ tracks, source: tracks.length ? source : 'none', status: statuses }, 200, tracks.length ? CACHE_OK : NO_CACHE);
   } catch {
-    return json({ tracks: [], source: 'none', status: 'error' }, NO_CACHE);
+    return json({ tracks: [], source: 'none', status: 'error' }, 200, NO_CACHE);
   }
 }
