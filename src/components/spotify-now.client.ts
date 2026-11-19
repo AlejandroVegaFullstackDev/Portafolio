@@ -1,5 +1,5 @@
 // Widget flotante "sonando en Spotify". Escucha el evento spotify:update que emite
-// scripts/sections/nowBand.ts y anima el disco/estado.
+// layout/now-band.client.ts y anima el disco/estado.
 import gsap from 'gsap';
 
 export function initSpotifyWidget() {
@@ -175,7 +175,7 @@ function hide() {
   });
 }
 
-// ── Listen for data from initNowPlaying ───────────────────────────────────────
+// ── Listen for data from initNowBand ───────────────────────────────────────
 window.addEventListener('spotify:update', (e) => {
   const data = (e as CustomEvent).detail;
   if (data?.title && data?.artist) show(data);

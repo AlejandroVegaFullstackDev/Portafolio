@@ -7,8 +7,8 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 import { getLang, initLangToggle } from '../../lib/client/language';
-import { bootSequence, hideBoot } from '../../scripts/core/boot';
-import { initMobileMenu } from '../../scripts/core/menu';
+import { bootSequence, hideBoot } from '../../components/layout/boot.client';
+import { initMobileMenu } from '../../components/layout/mobile-menu.client';
 
 import { detectPerformance } from '../../lib/client/motion';
 import { initGyro } from './effects/gyro';
@@ -16,16 +16,16 @@ import { initScramble } from './effects/scramble';
 import { initTypewriter } from './effects/typewriter';
 import { initWipes } from './effects/wipe';
 import { initCrt } from './effects/crt';
-import { createCoverflow } from '../../scripts/fx/coverflow';
+import { createCoverflow } from '../../components/ui/coverflow.client';
 import { initLens } from './effects/lens';
-import { initSecretTerminal } from '../../scripts/fx/secretTerminal';
+import { initSecretTerminal } from '../../components/ui/secret-terminal.client';
 import { initMarquees, initScrollProgress, initSpotlight } from './effects/chrome';
 
-import { initHero } from '../../scripts/sections/hero';
-import { initNowBand } from '../../scripts/sections/nowBand';
-import { initPaperStack } from '../../scripts/sections/blog';
-import { initExperience } from '../../scripts/sections/experience';
-import { initContact } from '../../scripts/sections/contact';
+import { initHero } from '../../components/sections/hero.client';
+import { initNowBand } from '../../components/layout/now-band.client';
+import { initPaperStack } from '../../components/ui/paper-stack.client';
+import { initExperience } from '../../components/sections/experience.client';
+import { initContact } from '../../components/sections/contact.client';
 import { initPlaylistSnake } from '../../scripts/game/snake';
 import { initArcade } from '../../scripts/game/arcade';
 

@@ -1,6 +1,6 @@
 // Blog: pila de hojas 3D de la intro. Se abre en abanico justo antes de que la
 // sección se pinee; flota, sigue al mouse o al giroscopio, y la hoja del frente
-// se levanta al pasar el cursor. El carrusel lo maneja fx/coverflow.
+// se levanta al pasar el cursor. El carrusel lo maneja coverflow.client.ts.
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { canAnimate, isFinePointer } from '../../lib/client/motion';

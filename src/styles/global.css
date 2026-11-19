@@ -7,6 +7,6 @@
 @import "tailwindcss/components";
 @import "./components.css";
 @import "../features/home/effects.css";
-@import "./coverflow.css";
+@import "../components/ui/coverflow.css";
 @import "./prose.css";
 @import "tailwindcss/utilities";

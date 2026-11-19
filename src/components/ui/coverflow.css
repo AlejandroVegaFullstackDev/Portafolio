@@ -1,4 +1,4 @@
-/* Carrusel horizontal pinneado (components/ui/Coverflow.astro + scripts/fx/coverflow.ts).
+/* Carrusel horizontal pinneado (components/ui/Coverflow.astro + coverflow.client.ts).
    Es global porque lo comparten Proyectos y Blog y estiliza contenido que llega por <slot />. */
 
 /* Sin JS (o con movimiento reducido) es un carrusel con swipe nativo + scroll-snap.

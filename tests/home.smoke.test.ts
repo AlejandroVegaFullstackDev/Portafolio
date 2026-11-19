@@ -1,4 +1,4 @@
-// Smoke test del home construido: carga dist/ en jsdom, ejecuta scripts/home.ts y
+// Smoke test del home construido: carga dist/ en jsdom, ejecuta features/home/init.client.ts y
 // verifica que todo arranque sin errores, en perfil desktop (mouse) y móvil (táctil).
 // Requiere `npm run build` antes.
 import { existsSync, readFileSync } from 'node:fs';
