@@ -1,4 +1,5 @@
-/* Prose: contenido renderizado desde Markdown (posts del blog). */
+/* Prose: contenido renderizado desde Markdown (posts del blog). Global: lo importa
+   styles/global.css, porque el HTML del Markdown no recibe el scope de Astro. */
 
 .prose {
   color: var(--ink);

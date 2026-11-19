@@ -1,5 +1,5 @@
 ---
-// /blog: encabezado + lista (components/blog/PostList.astro). Efectos en scripts/blogIndex.ts.
+// /blog: encabezado + lista (components/blog/PostList.astro). Efectos en features/blog/index.client.ts.
 import Layout from '../../layouts/Layout.astro';
 import PostList from '../../components/blog/PostList.astro';
 import { getSortedPosts } from '../../lib/blog';
@@ -36,7 +36,7 @@ const posts = await getSortedPosts();
 </Layout>
 
 <script>
-  import { initBlogIndex } from '../../scripts/blogIndex';
+  import { initBlogIndex } from '../../features/blog/index.client';
   initBlogIndex();
 </script>
 

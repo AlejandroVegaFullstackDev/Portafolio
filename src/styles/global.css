@@ -8,5 +8,5 @@
 @import "./components.css";
 @import "../features/home/effects.css";
 @import "../components/ui/coverflow.css";
-@import "./prose.css";
+@import "../features/blog/prose.css";
 @import "tailwindcss/utilities";

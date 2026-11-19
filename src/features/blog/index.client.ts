@@ -1,13 +1,13 @@
 // Efectos 3D de /blog: la palabra BLOG gira con scroll/cursor y las filas entran volteándose.
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { canAnimate, isFinePointer } from '../../lib/client/motion';
 gsap.registerPlugin(ScrollTrigger);
 
 export function initBlogIndex() {
-
-  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    || document.documentElement.getAttribute('data-tweak-anim') === 'off';
-  const finePointer = window.matchMedia('(pointer: fine)').matches;
+  // Misma política de movimiento que el home (prefers-reduced-motion y panel de tweaks).
+  const reduced = !canAnimate();
+  const finePointer = isFinePointer();
 
   if (!reduced) {
     // Palabra BLOG con profundidad: gira con el scroll y con el cursor.

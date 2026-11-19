@@ -1,6 +1,6 @@
 ---
 // Página de un post. Encabezado y barra lateral son componentes (components/blog);
-// los estilos del contenido Markdown viven en styles/prose.css.
+// los estilos del contenido Markdown viven en features/blog/prose.css.
 import Layout from '../../layouts/Layout.astro';
 import PostHeader from '../../components/blog/PostHeader.astro';
 import PostSidebar from '../../components/blog/PostSidebar.astro';
@@ -46,7 +46,7 @@ const toc = getToc(post.body);
 </Layout>
 
 <script>
-  import { initBlogPost } from '../../scripts/blogPost';
+  import { initBlogPost } from '../../features/blog/post.client';
   initBlogPost();
 </script>
 
