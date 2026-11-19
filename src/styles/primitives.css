@@ -1,4 +1,5 @@
-/* Componentes globales reutilizados por varias secciones: botones, etiquetas, terminal, etc. */
+/* Primitivas globales reutilizadas por varias secciones: botones, etiquetas, terminal, enlaces.
+   Lo que usa un solo componente va en el <style> de ese componente. */
 
 /* Buttons */
 .cy-btn {
@@ -195,46 +196,6 @@
   transition: transform 0.3s cubic-bezier(.6,.05,.4,1);
 }
 .cy-link:hover::after { transform: scaleX(1); transform-origin: left; }
-
-/* Tweaks trigger button */
-.tweaks-trigger {
-  position: fixed;
-  bottom: 16px;
-  right: 16px;
-  z-index: 2000;
-  width: 36px;
-  height: 36px;
-  background: var(--panel);
-  border: 1px solid var(--line-2);
-  color: var(--ink-3);
-  font-size: 16px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: border-color 0.2s, color 0.2s;
-}
-.tweaks-trigger:hover {
-  border-color: var(--accent);
-  color: var(--accent);
-}
-
-/* Now status band */
-.now-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 11px 22px;
-  font-family: var(--font-mono);
-  font-size: 0.72rem;
-  letter-spacing: 0.1em;
-  color: var(--ink-3);
-  text-transform: uppercase;
-  white-space: nowrap;
-  border-right: 1px solid var(--line);
-  flex-shrink: 0;
-}
-.now-item:last-child { border-right: 0; }
 
 @media (hover: none) {
   .cy-btn:active { background: var(--accent) !important; color: #000 !important; }
