@@ -18,5 +18,4 @@ export const portfolioData = {
   deep: caseStudies,
 } as const;
 
-export type Lang = 'es' | 'en';
 export type Project = (typeof projects)[number];
