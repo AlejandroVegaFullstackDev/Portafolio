@@ -1,10 +1,10 @@
 // Juego de bloques de la consola: dibujo neón, controles y estados (listo/pausa/fin).
-// Motor: ./engine.ts. Comparte con el Snake la música, el tocadiscos, el modo juego y
+// Motor: lib/arcade/blocks/engine.ts. Comparte con el Snake la música, el tocadiscos, el modo juego y
 // la barra de puntos (ArcadeShared). Cada línea completa cambia de canción.
-import { COLS, ROWS, TYPES, cellsOf, createBlocks, dropY, gravityMs, hardDrop, move, previewCells, rotate, step, type BlocksState, type PieceType } from './engine';
-import type { ArcadeShared } from '../snake';
+import { COLS, ROWS, TYPES, cellsOf, createBlocks, dropY, gravityMs, hardDrop, move, previewCells, rotate, step, type BlocksState, type PieceType } from '../../../lib/arcade/blocks/engine';
+import type { ArcadeShared, GameHandle } from '../shared/contracts';
 import { canAnimate } from '../../../lib/client/motion';
-import { tr } from '../snakeUi';
+import { tr } from '../../../lib/client/language';
 
 const BEST_KEY = 'av_blocks_best';
 const COLORS: Record<PieceType, string> = { I: '#00f0ff', O: '#fcee0a', T: '#b026ff', S: '#39ff88', Z: '#ff003c', J: '#3a86ff', L: '#ff8a00' };
@@ -14,7 +14,6 @@ const ls = {
 };
 
 /** Lo que la consola necesita de cada juego para cambiar de pestaña. */
-export interface GameHandle { activate: () => void; deactivate: () => void }
 
 export function initBlocks(shared: ArcadeShared): GameHandle | null {
   const { root, tracks, player, deck, focus } = shared;

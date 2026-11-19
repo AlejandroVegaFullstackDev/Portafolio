@@ -3,8 +3,8 @@
 //  · al comer, la carátula salta del tablero girando
 //  · al chocar, el tablero tiembla y destella
 // Respeta "reducir movimiento" y el modo ahorro (fx/env).
-import { canAffordHeavy, canAnimate, isFinePointer } from '../../lib/client/motion';
-import type { Dir } from './snakeEngine';
+import { canAffordHeavy, canAnimate, isFinePointer } from '../../../lib/client/motion';
+import type { Dir } from '../../../lib/arcade/snake/engine';
 
 const LEAN: Record<Dir, [number, number]> = { up: [3, 0], down: [-2, 0], left: [0, -3], right: [0, 3] };
 const BASE_X = 4; // inclinación de "consola sobre la mesa" mientras se juega

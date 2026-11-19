@@ -1,7 +1,7 @@
 // Motor del juego de bloques: piezas, rotación, líneas, puntaje y fin de partida.
 import { describe, expect, it } from 'vitest';
-import { COLS, ROWS, TYPES, cellsOf, createBlocks, dropY, gravityMs, hardDrop, move, rotate, step } from '../src/scripts/game/blocks/engine';
-import { mulberry32 } from '../src/scripts/game/prng';
+import { COLS, ROWS, TYPES, cellsOf, createBlocks, dropY, gravityMs, hardDrop, move, rotate, step } from '../src/lib/arcade/blocks/engine';
+import { mulberry32 } from '../src/lib/arcade/random';
 
 describe('bloques', () => {
   it('la bolsa de 7 reparte cada pieza una vez por ronda', () => {

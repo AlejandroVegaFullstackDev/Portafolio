@@ -1,7 +1,7 @@
 // La serpiente es un diablito: cabeza con cuernos, ojos amarillos que miran hacia donde
 // va, cejas fruncidas, sonrisa con colmillos y cola terminada en punta de flecha.
 // Todo en canvas, en coordenadas relativas a la celda (s = tamaño de la celda).
-import type { Dir } from './snakeEngine';
+import type { Dir } from '../../../lib/arcade/snake/engine';
 
 type Cell = { x: number; y: number };
 const LOOK: Record<Dir, [number, number]> = { up: [0, -1], down: [0, 1], left: [-1, 0], right: [1, 0] };

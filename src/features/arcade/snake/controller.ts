@@ -1,45 +1,31 @@
 // "Cómete mi playlist": orquesta el juego. La comida son carátulas de mi playlist de
 // Spotify; el cuerpo se arma con las que te comes.
-//   motor: snakeEngine.ts · dibujo: snakeRender.ts · efectos: snakeFx.ts
-//   interfaz: snakeUi.ts · controles: snakeInput.ts · vinilo: vinylDeck.ts · audio: previewPlayer.ts · ranking: ranking.ts
+//   motor: lib/arcade/snake/engine.ts · dibujo: render.ts · efectos: effects.ts · interfaz: ui.ts
+//   controles: input.ts · ranking: ranking-client.ts + score-form.ts
+//   compartido con Bloques y Doom (shared/): vinilo, audio, modo juego y contracts.ts
 // Flujo: Listo (con o sin música) → jugando ⇄ pausa → fin (música se apaga, se anota solo
 // si el dispositivo ya tiene nombre) → otra vez.
-import { createGame, step, tickMs, turn, type Dir, type SnakeState } from './snakeEngine';
-import { PreviewPlayer } from './previewPlayer';
-import { Ranking, validName } from './ranking';
-import { mulberry32 } from './prng';
-import { drawBoard, readPalette, type Palette } from './snakeRender';
-import { SnakeFx } from './snakeFx';
-import { VinylDeck } from './vinylDeck';
-import { SnakeUi, tr } from './snakeUi';
-import { bindControls } from './snakeInput';
-import { SnakeFocus } from './snakeFocus';
-import type { Move } from './replay';
-
-export interface Track { id: string; title: string; artist: string; cover: string | null; art?: string | null; uri: string; url: string; preview: string | null }
+import { BOARD, createGame, step, tickMs, turn, type Dir, type SnakeState } from '../../../lib/arcade/snake/engine';
+import type { Track } from '../../../lib/arcade/track';
+import { tr } from '../../../lib/client/language';
+import { PreviewPlayer } from '../shared/preview-player';
+import type { ArcadeShared } from '../shared/contracts';
+import { Ranking } from './ranking-client';
+import { bindScoreForm } from './score-form';
+import { mulberry32 } from '../../../lib/arcade/random';
+import { drawBoard, readPalette, type Palette } from './render';
+import { SnakeFx } from './effects';
+import { VinylDeck } from '../shared/vinyl-deck';
+import { SnakeUi } from './ui';
+import { bindControls } from './input';
+import { SnakeFocus } from '../shared/game-focus';
+import type { Move } from '../../../lib/arcade/snake/replay';
 
 const BEST_KEY = 'av_snake_best';
-const SIZE = 16;
 const store = {
   get: () => { try { return Number(localStorage.getItem(BEST_KEY)) || 0; } catch { return 0; } },
   set: (v: number) => { try { localStorage.setItem(BEST_KEY, String(v)); } catch { /* sin storage */ } },
 };
-
-/** Lo que el Snake comparte con los otros juegos de la consola (arcade.ts). */
-export interface ArcadeShared {
-  root: HTMLElement;
-  tracks: Track[];
-  player: PreviewPlayer;
-  deck: VinylDeck;
-  focus: SnakeFocus;
-  consoleEl: HTMLElement;
-  setSound: (on: boolean) => void;
-  soundOn: () => boolean;
-  /** Pausa el Snake si está corriendo. */
-  pauseSnake: () => void;
-  /** Vuelve a poner en la barra los puntos y el récord del Snake. */
-  snakeHud: () => void;
-}
 
 export async function initPlaylistSnake(): Promise<ArcadeShared | null> {
   const root = document.getElementById('snake');
@@ -57,9 +43,6 @@ export async function initPlaylistSnake(): Promise<ArcadeShared | null> {
   const scoreEl = $('[data-snake-score]');
   const bestEl = $('[data-snake-best]');
   const soundBtn = $<HTMLButtonElement>('[data-snake-sound]');
-  const form = $<HTMLFormElement>('[data-lb-form]');
-  const nameInput = $<HTMLInputElement>('[data-lb-name]');
-  const lbMsg = $('[data-lb-msg]');
 
   // ── Datos ──
   let tracks: Track[] = [];
@@ -88,7 +71,7 @@ export async function initPlaylistSnake(): Promise<ArcadeShared | null> {
   };
 
   // ── Estado ──
-  let game: SnakeState = createGame(SIZE, tracks.length);
+  let game: SnakeState = createGame(BOARD, tracks.length);
   let rand: () => number = Math.random;
   let moves: Move[] = [];
   let ticks = 0;
@@ -102,10 +85,7 @@ export async function initPlaylistSnake(): Promise<ArcadeShared | null> {
 
   // ── Ranking ──
   const ranking = new Ranking($('[data-lb-global]'), $('[data-lb-local]'), $('[data-lb-off]'));
-  const meBox = $('[data-me]'), meName = $('[data-me-name]'), meForm = $<HTMLFormElement>('[data-me-form]'), meInput = $<HTMLInputElement>('[data-me-input]');
-  const showMe = (n: string) => { meBox.hidden = !n; meName.textContent = n; };
-  ranking.onName = showMe;
-  showMe(ranking.name);
+  const scoreForm = bindScoreForm(root, ui, ranking, () => ({ runId, moves, ticks }));
   ranking.load();
 
   // ── Audio ──
@@ -142,8 +122,8 @@ export async function initPlaylistSnake(): Promise<ArcadeShared | null> {
     const cs = getComputedStyle(board);
     const w = board.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    cell = Math.max(8, Math.floor(w / SIZE));
-    const px = cell * SIZE;
+    cell = Math.max(8, Math.floor(w / BOARD));
+    const px = cell * BOARD;
     canvas.style.width = canvas.style.height = `${px}px`;
     canvas.width = canvas.height = px * dpr;
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -151,7 +131,7 @@ export async function initPlaylistSnake(): Promise<ArcadeShared | null> {
   };
   let palette: Palette = readPalette(root);
   new MutationObserver(() => { palette = readPalette(root); dirty = true; }).observe(document.documentElement, { attributes: true });
-  const draw = () => drawBoard(ctx, game, covers, cell, SIZE, flash, palette);
+  const draw = () => drawBoard(ctx, game, covers, cell, BOARD, flash, palette);
 
   // ── Ciclo de una partida ──
   async function start(withMusic: boolean) {
@@ -165,7 +145,7 @@ export async function initPlaylistSnake(): Promise<ArcadeShared | null> {
     rand = seed === null ? Math.random : mulberry32(seed);
     moves = [];
     ticks = 0;
-    game = createGame(SIZE, tracks.length, rand);
+    game = createGame(BOARD, tracks.length, rand);
     scoreEl.textContent = '0';
     ui.clear();
     deck.reset();
@@ -233,40 +213,11 @@ export async function initPlaylistSnake(): Promise<ArcadeShared | null> {
     if (newBest) { best = game.score; store.set(best); bestEl.textContent = String(best); fx.bump(bestEl); }
     const localPos = ranking.recordLocal(game.score);
     ui.over(game.score, game.eaten.map((i) => tracks[i]).filter(Boolean), newBest && game.score > 0);
-    form.hidden = true;
+    scoreForm.hide();
 
     const localText = localPos ? tr(`#${localPos} en este dispositivo`, `#${localPos} on this device`) : '';
     if (!ranking.ranked || game.score < 1) { ui.result(localText); return; }
-    if (ranking.name) await sendScore(ranking.name);
-    else {
-      // Primera vez en este dispositivo: se pide el nombre una sola vez.
-      ui.result('');
-      ui.overActions.hidden = true;
-      form.hidden = false;
-      lbMsg.textContent = '';
-      nameInput.value = '';
-      requestAnimationFrame(() => nameInput.focus({ preventScroll: true }));
-    }
-  }
-
-  async function sendScore(name: string) {
-    const id = runId;
-    ui.result(tr('Anotando…', 'Saving…'));
-    const res = await ranking.submit(name, moves, ticks);
-    if (id !== runId) return; // ya se está jugando otra partida: no pisar su pantalla
-    if ('reason' in res && res.reason === 'name') {
-      ui.result('');
-      ui.overActions.hidden = true;
-      form.hidden = false;
-      nameInput.value = name;
-      lbMsg.textContent = tr('Ese nombre no va. Prueba otro (2–16 letras o números).', 'That name won’t work. Try another (2–16 letters or numbers).');
-      return;
-    }
-    form.hidden = true;
-    ui.overActions.hidden = false;
-    if (res.ok && res.rank) ui.result(tr(`en el ranking global · como ${name}`, `in the global ranking · as ${name}`), `#${res.rank}`);
-    else if (res.ok) ui.result(tr(`Anotado como ${name}`, `Saved as ${name}`));
-    else ui.result(tr('No se pudo anotar esta vez.', 'Couldn’t save it this time.'));
+    await scoreForm.submitOrAsk();
   }
 
   // ── Bucle ──
@@ -303,25 +254,6 @@ export async function initPlaylistSnake(): Promise<ArcadeShared | null> {
     setSound(!soundOn);
     // Si se activa a mitad de partida, suena la de la carátula en pantalla.
     if (soundOn && running) playBoard();
-  });
-  form.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const n = nameInput.value.trim();
-    if (!validName(n)) { lbMsg.textContent = tr('Usa de 2 a 16 letras o números.', 'Use 2–16 letters or numbers.'); return; }
-    sendScore(n);
-  });
-  $('[data-lb-skip]').addEventListener('click', () => {
-    form.hidden = true;
-    ui.overActions.hidden = false;
-    ui.result(tr('Sin anotar. Te lo vuelvo a preguntar la próxima.', 'Not saved. I’ll ask again next time.'));
-    $<HTMLButtonElement>('[data-again]').focus({ preventScroll: true });
-  });
-  $('[data-me-edit]').addEventListener('click', () => { meForm.hidden = false; meInput.value = ranking.name; meInput.focus(); });
-  meForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    if (!validName(meInput.value)) return;
-    ranking.name = meInput.value;
-    meForm.hidden = true;
   });
 
   bindControls($('[data-snake-pad]'), canvas, { running: () => running, turn: doTurn, pause });

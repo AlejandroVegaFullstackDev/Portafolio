@@ -1,7 +1,7 @@
 // Controles del Snake: teclado (solo mientras se juega, para no robarle el scroll a la
 // página) y swipe en toda la consola: gira apenas el dedo recorre ~22 px, sin esperar a
 // soltar, y se pueden encadenar giros. Mientras se juega, deslizar no mueve la página.
-import type { Dir } from './snakeEngine';
+import type { Dir } from '../../../lib/arcade/snake/engine';
 
 const SWIPE = 22;
 const KEYS: Record<string, Dir> = {

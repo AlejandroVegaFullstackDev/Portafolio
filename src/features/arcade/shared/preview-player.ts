@@ -4,6 +4,8 @@
 // - iOS/Safari solo deja reproducir un <audio> que se activó con un toque, así que
 //   `unlock()` (llamado desde "Activar sonido") desbloquea los dos.
 
+import type { Track } from '../../../lib/arcade/track';
+
 /** WAV válido de 0,1 s en silencio, generado en código. */
 function silentWav(): string {
   const rate = 8000, samples = 800, bytes = 44 + samples;
@@ -21,7 +23,7 @@ function silentWav(): string {
 
 const VOLUME = 0.6;
 
-export interface Song { title: string; artist: string; preview: string | null }
+type Song = Pick<Track, 'title' | 'artist' | 'preview'>;
 
 export class PreviewPlayer {
   private decks = [new Audio(), new Audio()];

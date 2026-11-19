@@ -1,7 +1,7 @@
 // Dibujo del tablero del Snake en canvas. Da profundidad sin WebGL: cada carátula
 // proyecta sombra (parece una ficha levantada), la comida flota y la serpiente es un diablito.
-import type { SnakeState } from './snakeEngine';
-import { drawDevilHead, drawDevilTail } from './devil';
+import type { SnakeState } from '../../../lib/arcade/snake/engine';
+import { drawDevilHead, drawDevilTail } from './devil-sprite';
 
 export interface Palette { accent: string; line: string; panel: string }
 
@@ -64,7 +64,7 @@ export function drawBoard(ctx: CanvasRenderingContext2D, game: SnakeState, cover
     ctx.strokeRect(c.x * cell + 1.5, c.y * cell + 1.5, cell - 3, cell - 3);
   });
 
-  // Cola de diablo y cabeza de diablito (devil.ts).
+  // Cola de diablo y cabeza de diablito (devil-sprite.ts).
   const n = game.snake.length;
   if (n > 1) drawDevilTail(ctx, game.snake[n - 1], game.snake[n - 2], cell, p.accent);
   drawDevilHead(ctx, game.snake[0], cell, game.dir, p.accent, flash > 0);

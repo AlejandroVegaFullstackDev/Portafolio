@@ -3,9 +3,8 @@
 // darle "Jugar" (6,8 MB). Cargador propio para poder pausarlo, tener controles
 // táctiles y no secuestrar el teclado de toda la página. Doom no trae sonido aquí:
 // de fondo suena la playlist, una canción cada 30 s.
-import type { ArcadeShared } from '../snake';
-import type { GameHandle } from '../blocks/blocks';
-import { tr } from '../snakeUi';
+import type { ArcadeShared, GameHandle } from '../shared/contracts';
+import { tr } from '../../../lib/client/language';
 
 const WASM_URL = '/games/doom.wasm';
 const W = 640, H = 400;

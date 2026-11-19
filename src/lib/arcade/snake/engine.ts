@@ -2,6 +2,9 @@
 // La comida es una canción (índice en la lista que llega de Spotify); el renderer
 // dibuja su carátula y, con lo que se va comiendo, arma el cuerpo de la serpiente.
 
+/** Lado del tablero (celdas). Lo comparten el juego del cliente y la repetición del servidor. */
+export const BOARD = 16;
+
 export type Dir = 'up' | 'down' | 'left' | 'right';
 export interface Cell { x: number; y: number }
 export interface Food extends Cell { item: number }
@@ -32,7 +35,7 @@ export function placeFood(size: number, snake: Cell[], item: number, rand: () =>
 
 const nextItem = (s: Pick<SnakeState, 'items' | 'score'>) => (s.items > 0 ? s.score % s.items : -1);
 
-export function createGame(size = 16, items = 0, rand: () => number = Math.random): SnakeState {
+export function createGame(size = BOARD, items = 0, rand: () => number = Math.random): SnakeState {
   const mid = Math.floor(size / 2);
   const snake = [{ x: mid, y: mid }, { x: mid - 1, y: mid }, { x: mid - 2, y: mid }];
   return { size, items, snake, dir: 'right', queued: [], food: placeFood(size, snake, items > 0 ? 0 : -1, rand), score: 0, eaten: [], over: false };

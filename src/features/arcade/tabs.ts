@@ -3,9 +3,9 @@
 // la música, el tocadiscos y el modo juego (los expone el Snake: ArcadeShared).
 // Las pestañas se conectan de inmediato: no dependen de que el Snake termine de cargar
 // (ni de que cargue bien); los juegos se arman cuando lo compartido está listo.
-import type { ArcadeShared } from './snake';
-import { initBlocks, type GameHandle } from './blocks/blocks';
-import { initDoom } from './doom/doom';
+import type { ArcadeShared, GameHandle } from './shared/contracts';
+import { initBlocks } from './blocks/controller';
+import { initDoom } from './doom/controller';
 
 type GameId = 'snake' | 'blocks' | 'doom';
 

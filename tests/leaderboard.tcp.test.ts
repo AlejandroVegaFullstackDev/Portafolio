@@ -1,8 +1,8 @@
 // Solo corre si hay un Redis local en REDIS_TEST_URL (p. ej. redis://127.0.0.1:6390).
 import { beforeAll, describe, expect, it } from 'vitest';
-import { createGame, step, turn, type Dir } from '../src/scripts/game/snakeEngine';
-import { mulberry32 } from '../src/scripts/game/prng';
-import { BOARD, type Move } from '../src/scripts/game/replay';
+import { BOARD, createGame, step, turn, type Dir } from '../src/lib/arcade/snake/engine';
+import { mulberry32 } from '../src/lib/arcade/random';
+import type { Move } from '../src/lib/arcade/snake/replay';
 
 const URL = process.env.REDIS_TEST_URL;
 function play(seed: number) {

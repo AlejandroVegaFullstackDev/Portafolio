@@ -2,7 +2,8 @@
 // (este dispositivo, localStorage). El servidor repite la partida para validar el
 // puntaje, así que aquí solo se registran la semilla, los giros y los ticks.
 // El nombre se pide una sola vez por dispositivo; después se anota solo.
-import type { Move } from './replay';
+import type { Move } from '../../../lib/arcade/snake/replay';
+import { isEn } from '../../../lib/client/language';
 
 const DEVICE_KEY = 'av_device';
 const LOCAL_KEY = 'av_snake_local';
@@ -137,7 +138,7 @@ export class Ranking {
 
   private renderLocal(highlight?: number) {
     const rows = readLocal();
-    const fmt = (t: number) => new Date(t).toLocaleDateString(document.documentElement.getAttribute('data-lang') === 'en' ? 'en-US' : 'es-CO', { day: '2-digit', month: 'short' });
+    const fmt = (t: number) => new Date(t).toLocaleDateString(isEn() ? 'en-US' : 'es-CO', { day: '2-digit', month: 'short' });
     this.localList.innerHTML = rows
       .map((r, i) => `<li${r.at === highlight ? ' class="me"' : ''}><span class="pos">${String(i + 1).padStart(2, '0')}</span><span class="who">${fmt(r.at)}</span><span class="pts">${r.score}</span></li>`)
       .join('');

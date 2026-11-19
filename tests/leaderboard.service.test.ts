@@ -2,9 +2,9 @@
 import type { APIContext } from 'astro';
 import { createHash } from 'node:crypto';
 import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
-import { createGame, step, turn, type Dir } from '../src/scripts/game/snakeEngine';
-import { mulberry32 } from '../src/scripts/game/prng';
-import { BOARD, type Move } from '../src/scripts/game/replay';
+import { BOARD, createGame, step, turn, type Dir } from '../src/lib/arcade/snake/engine';
+import { mulberry32 } from '../src/lib/arcade/random';
+import type { Move } from '../src/lib/arcade/snake/replay';
 
 type Z = Map<string, number>;
 const kv = new Map<string, string>(), hashes = new Map<string, Map<string, string>>(), zsets = new Map<string, Z>(), counters = new Map<string, number>();

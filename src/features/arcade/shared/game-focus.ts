@@ -1,7 +1,7 @@
 // Modo juego del Snake: mientras se juega, la página no se mueve (en cel ningún toque
 // hace scroll), detrás aparece un fondo oscuro cyberpunk con partículas neón y cada
 // canción comida suelta confeti. Al pausar o perder, todo vuelve a la normalidad.
-import { canAffordHeavy, canAnimate } from '../../lib/client/motion';
+import { canAffordHeavy, canAnimate } from '../../../lib/client/motion';
 
 const NEON = ['#ff003c', '#00f0ff', '#fcee0a', '#b026ff', '#39ff88'];
 

@@ -1,12 +1,12 @@
 ---
 // 06 · Receso: consola con tres juegos (Snake con carátulas de mi playlist, bloques y Doom).
 // Una consola (barra de estado + tablero con sus estados) y un panel que gira en 3D entre
-// "Sonando" y "Ranking". Lógica: scripts/game/snake.ts · estilos: styles/snake.css.
+// "Sonando" y "Ranking". Lógica: features/arcade/ (snake/controller.ts, tabs.ts) · estilos: features/arcade/arcade.css.
 import { Pause, Play, RotateCcw, Trophy, Music2, Volume2, VolumeX } from 'lucide-static';
 import SectionHeading from '../ui/SectionHeading.astro';
 import BlocksBoard from '../arcade/BlocksBoard.astro';
 import DoomBoard from '../arcade/DoomBoard.astro';
-import '../../styles/snake.css';
+import '../../features/arcade/arcade.css';
 ---
 <section id="snake" class="relative px-6 lg:px-20 py-20 lg:py-28 overflow-hidden" data-wipe>
   <div class="max-w-[1480px] mx-auto">

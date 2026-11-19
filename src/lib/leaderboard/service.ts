@@ -11,7 +11,7 @@
 import { decrypt, encrypt, pseudonym, randomId, signToken, verifyToken } from './crypto';
 import { rateLimit, redis, redisMulti } from './redis';
 import { cleanName } from './names';
-import { replay, type Move } from '../../scripts/game/replay';
+import { replay, type Move } from '../arcade/snake/replay';
 
 const BOARD_KEY = 'lb:v1:global';
 const ENTRY_KEY = 'lb:v1:entry';

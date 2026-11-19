@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { createGame, step, tickMs, turn, type Dir, type SnakeState } from '../src/scripts/game/snakeEngine';
-import { BOARD, replay, type Move } from '../src/scripts/game/replay';
-import { mulberry32 } from '../src/scripts/game/prng';
+import { BOARD, createGame, step, tickMs, turn, type Dir, type SnakeState } from '../src/lib/arcade/snake/engine';
+import { replay, type Move } from '../src/lib/arcade/snake/replay';
+import { mulberry32 } from '../src/lib/arcade/random';
 
 // rand determinista: siempre elige la primera celda libre y la primera etiqueta.
 const zero = () => 0;
@@ -71,7 +71,7 @@ describe('snake sin Spotify', () => {
 });
 
 describe('ráfagas de teclado y el ranking', () => {
-  // Simula la partida como snake.ts: una ráfaga de teclas en el tick 0 y luego recto hasta chocar.
+  // Simula la partida como snake/controller.ts: una ráfaga de teclas en el tick 0 y luego recto hasta chocar.
   function burstGame(record: 'accepted' | 'all') {
     const seed = 42;
     const rand = mulberry32(seed);

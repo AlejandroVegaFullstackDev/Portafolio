@@ -27,3 +27,8 @@ export function initLangToggle() {
   document.documentElement.setAttribute('data-lang', getLang());
   document.getElementById('langToggle')?.addEventListener('click', () => setLang(getLang() === 'es' ? 'en' : 'es'));
 }
+
+/** Idioma visible ahora mismo (el atributo de <html>, que cambia sin recargar). */
+export const isEn = () => document.documentElement.getAttribute('data-lang') === 'en';
+/** Texto según el idioma visible: tr('Hola', 'Hello'). */
+export const tr = (es: string, en: string) => (isEn() ? en : es);

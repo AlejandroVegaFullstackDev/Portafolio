@@ -4,6 +4,7 @@
 // `source` y `status` sirven para diagnosticar y no exponen secretos.
 import { coverUrl, credentials, getAccessToken, json, spotifyGet, type SpotifyTrack } from '../../lib/spotify';
 import { findPreviews } from '../../lib/deezer';
+import type { Track } from '../../lib/arcade/track';
 
 export const prerender = false;
 
@@ -13,7 +14,6 @@ const MAX = 40;
 const CACHE_OK = 'public, max-age=0, s-maxage=1800, stale-while-revalidate=600';
 const NO_CACHE = 'no-store, max-age=0';
 
-export interface SnakeTrack { id: string; title: string; artist: string; cover: string | null; art: string | null; uri: string; url: string; preview: string | null }
 type PlaylistRow = { item?: SpotifyTrack | null; track?: SpotifyTrack | null };
 
 const unique = (list: (SpotifyTrack | null | undefined)[]) => {
@@ -72,7 +72,7 @@ export async function GET() {
       url: t.external_urls.spotify,
     }));
     const previews = await findPreviews(base);
-    const tracks: SnakeTrack[] = base.map((t, i) => ({ ...t, preview: previews[i] }));
+    const tracks: Track[] = base.map((t, i) => ({ ...t, preview: previews[i] }));
 
     return json({ tracks, source: tracks.length ? source : 'none', status: statuses }, tracks.length ? CACHE_OK : NO_CACHE);
   } catch {

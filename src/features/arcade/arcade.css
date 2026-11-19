@@ -1,4 +1,5 @@
-/* "Cómete mi playlist" — consola + panel que gira. Todo cuelga de #snake. */
+/* Consola de juegos (Snake, Bloques y Doom) + panel que gira. Todo cuelga de #snake.
+   La importa components/sections/PlaylistSnake.astro. */
 
 #snake .sn-head { display: flex; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; gap: 1rem 2rem; margin-bottom: 2rem; }
 #snake .sn-lede { margin: 0; font-family: var(--font-mono); font-size: 0.85rem; color: var(--ink-3); }
@@ -165,7 +166,7 @@
 }
 :root[data-tweak-anim='off'] #snake .sn-console { transform: none; }
 
-/* ── Modo juego (scripts/game/snakeFocus.ts) ── */
+/* ── Modo juego (shared/game-focus.ts) ── */
 html.snake-focus, html.snake-focus body { overflow: hidden; overscroll-behavior: none; }
 html.snake-focus body { touch-action: none; }
 html.snake-focus #snake { position: relative; z-index: 310; }
@@ -204,7 +205,7 @@ html.snake-focus .sn-backdrop { opacity: .96; visibility: visible; transition: o
   .sn-bd-glow, .sn-bd-floor, #snake .sn-console::before { animation: none !important; }
 }
 
-/* ── Pestañas de juegos (scripts/game/arcade.ts) ── */
+/* ── Pestañas de juegos (tabs.ts) ── */
 #snake .gm-tabs { display: grid; grid-template-columns: repeat(3, 1fr); border-bottom: 1px solid var(--line); }
 #snake .gm-tabs button { padding: 0.7rem 0.5rem; font: 600 0.72rem var(--font-mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-3); background: none; border: 0; border-bottom: 2px solid transparent; cursor: pointer; transition: color .2s, background .2s; }
 #snake .gm-tabs button:hover { color: var(--ink); background: color-mix(in srgb, var(--accent) 6%, transparent); }

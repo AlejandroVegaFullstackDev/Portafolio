@@ -1,10 +1,9 @@
 // Repetición determinista de una partida (la usa el servidor para validar el ranking).
 // El cliente registra cada giro con el número de tick en que ocurrió; el servidor
 // recrea el juego con la misma semilla y aplica los mismos giros en el mismo orden.
-import { createGame, step, tickMs, turn, type Dir } from './snakeEngine';
-import { mulberry32 } from './prng';
+import { BOARD, createGame, step, tickMs, turn, type Dir } from './engine';
+import { mulberry32 } from '../random';
 
-export const BOARD = 16;
 export type Move = [tick: number, dir: Dir];
 const DIRS = new Set<Dir>(['up', 'down', 'left', 'right']);
 

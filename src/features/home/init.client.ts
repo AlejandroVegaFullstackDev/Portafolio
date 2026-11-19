@@ -26,8 +26,8 @@ import { initNowBand } from '../../components/layout/now-band.client';
 import { initPaperStack } from '../../components/ui/paper-stack.client';
 import { initExperience } from '../../components/sections/experience.client';
 import { initContact } from '../../components/sections/contact.client';
-import { initPlaylistSnake } from '../../scripts/game/snake';
-import { initArcade } from '../../scripts/game/arcade';
+import { initPlaylistSnake } from '../arcade/snake/controller';
+import { initArcade } from '../arcade/tabs';
 
 gsap.registerPlugin(ScrollTrigger);
 ScrollTrigger.config({ ignoreMobileResize: true });

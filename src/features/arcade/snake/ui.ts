@@ -1,13 +1,13 @@
 // Interfaz del Snake: estados del tablero (listo / pausa / fin), barra de estado,
 // panel que gira (Sonando ⟷ Ranking) y el mosaico de lo que te comiste.
-// No sabe nada del juego: snake.ts le dice qué mostrar.
+// No sabe nada del juego: controller.ts le dice qué mostrar.
+import { tr } from '../../../lib/client/language';
+import type { Track } from '../../../lib/arcade/track';
 
 export type OverlayState = 'ready' | 'paused' | 'over' | 'none';
 export type Face = 'now' | 'rank';
-export interface CoverInfo { title: string; artist: string; cover: string | null; url: string }
+type CoverInfo = Pick<Track, 'title' | 'artist' | 'cover' | 'url'>;
 
-export const isEn = () => document.documentElement.getAttribute('data-lang') === 'en';
-export const tr = (es: string, en: string) => (isEn() ? en : es);
 const cssUrl = (u: string) => `url("${u.replace(/["\\\n]/g, encodeURIComponent)}")`;
 
 export class SnakeUi {
