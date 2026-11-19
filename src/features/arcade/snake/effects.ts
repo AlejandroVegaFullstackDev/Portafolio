@@ -2,7 +2,7 @@
 //  · el tablero se inclina hacia donde va la serpiente, y sigue al mouse en reposo
 //  · al comer, la carátula salta del tablero girando
 //  · al chocar, el tablero tiembla y destella
-// Respeta "reducir movimiento" y el modo ahorro (fx/env).
+// Respeta "reducir movimiento" y el modo ahorro (lib/client/motion).
 import { canAffordHeavy, canAnimate, isFinePointer } from '../../../lib/client/motion';
 import type { Dir } from '../../../lib/arcade/snake/engine';
 
