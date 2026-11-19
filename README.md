@@ -5,7 +5,7 @@
 Portafolio y blog de **Alejandro Vega**, Full Stack Developer en Bogotá.
 En producción: **[4ledmt.dev](https://4ledmt.dev)**.
 
-**Stack:** Astro 5 · TypeScript · Tailwind · GSAP · Vercel. Contenido en Markdown y TypeScript, sin CMS.
+**Stack:** Astro 7 · TypeScript · Tailwind · GSAP · Vercel. Contenido en Markdown y TypeScript, sin CMS.
 
 ## Qué hay adentro
 
@@ -27,6 +27,8 @@ En producción: **[4ledmt.dev](https://4ledmt.dev)**.
 La guía de "dónde cambio qué" está en **[ARCHITECTURE.md](./ARCHITECTURE.md)**.
 
 ## Desarrollo
+
+La versión de Node.js usada en CI y Vercel es 24.
 
 ```bash
 npm ci

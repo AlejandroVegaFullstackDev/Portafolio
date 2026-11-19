@@ -1,6 +1,6 @@
 # Arquitectura
 
-Astro 5 + Tailwind + GSAP, desplegado en Vercel desde `main`.
+Astro 7 + Tailwind + GSAP, desplegado en Vercel desde `main`.
 Regla de oro: **un archivo, una responsabilidad, menos de ~300 líneas.**
 
 ```

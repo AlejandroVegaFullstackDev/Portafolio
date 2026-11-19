@@ -28,7 +28,7 @@ const latest = allPosts.slice(0, 3);
   </div>
 
   {latest.map((post, i) => (
-    <a href={`/blog/${post.slug}`} class="hs-slide hs-card" data-hs-slide data-lens="leer">
+    <a href={`/blog/${post.id}`} class="hs-slide hs-card" data-hs-slide data-lens="leer">
       <span class="hs-inner">
         <span class="hs-media" aria-hidden="true">
           {post.data.cover
