@@ -75,6 +75,7 @@ export async function initPlaylistSnake(): Promise<ArcadeShared | null> {
     if (!t.cover) return null;
     const img = new Image();
     img.decoding = 'async';
+    img.onload = () => { dirty = true; }; // la carátula llegó: hay que pintarla
     img.src = t.cover;
     return img;
   });
@@ -94,6 +95,8 @@ export async function initPlaylistSnake(): Promise<ArcadeShared | null> {
   let running = false;
   let best = store.get();
   let acc = 0, last = 0, flash = 0;
+  let dirty = true; // hay algo nuevo que dibujar aunque no se esté jugando
+  let runId = 0;    // cada partida nueva invalida las respuestas pendientes de la anterior
   let soundOn = false;
   bestEl.textContent = String(best);
 
@@ -147,16 +150,18 @@ export async function initPlaylistSnake(): Promise<ArcadeShared | null> {
     draw();
   };
   let palette: Palette = readPalette(root);
-  new MutationObserver(() => { palette = readPalette(root); }).observe(document.documentElement, { attributes: true });
+  new MutationObserver(() => { palette = readPalette(root); dirty = true; }).observe(document.documentElement, { attributes: true });
   const draw = () => drawBoard(ctx, game, covers, cell, SIZE, flash, palette);
 
   // ── Ciclo de una partida ──
   async function start(withMusic: boolean) {
+    const id = ++runId;
     player.stop();
     setSound(withMusic);
     root!.querySelectorAll<HTMLButtonElement>('[data-play], [data-again], [data-restart]').forEach((b) => (b.disabled = true));
     const seed = await ranking.begin();
     root!.querySelectorAll<HTMLButtonElement>('[data-play], [data-again], [data-restart]').forEach((b) => (b.disabled = false));
+    if (id !== runId) return; // mientras esperaba la semilla empezó otra partida
     rand = seed === null ? Math.random : mulberry32(seed);
     moves = [];
     ticks = 0;
@@ -166,10 +171,14 @@ export async function initPlaylistSnake(): Promise<ArcadeShared | null> {
     deck.reset();
     ui.face('now');
     preloadArt(game.food.item);
+    dirty = true;
+    // Si mientras esperaba cambiaron de pestaña (consola u hoja), queda en pausa.
+    if (board.hidden || document.hidden) { ui.state('paused'); return; }
     resume();
   }
 
   function resume() {
+    if (board.hidden || document.hidden) return;
     ui.state('none');
     focus.enter(consoleEl); // centra la consola y bloquea el scroll mientras se juega
     running = true;
@@ -191,7 +200,8 @@ export async function initPlaylistSnake(): Promise<ArcadeShared | null> {
     ui.state('paused');
   }
 
-  const doTurn = (d: Dir) => { if (!running) return; moves.push([ticks, d]); turn(game, d); fx.lean(d); };
+  // Solo se registran los giros que el motor acepta: una ráfaga de teclas no infla la repetición.
+  const doTurn = (d: Dir) => { if (!running || !turn(game, d)) return; moves.push([ticks, d]); fx.lean(d); };
 
   function onEat() {
     flash = 3;
@@ -212,6 +222,7 @@ export async function initPlaylistSnake(): Promise<ArcadeShared | null> {
 
   async function onOver() {
     running = false;
+    dirty = true;
     root!.classList.remove('is-playing');
     fx.hit();
     fx.idle();
@@ -239,8 +250,10 @@ export async function initPlaylistSnake(): Promise<ArcadeShared | null> {
   }
 
   async function sendScore(name: string) {
+    const id = runId;
     ui.result(tr('Anotando…', 'Saving…'));
     const res = await ranking.submit(name, moves, ticks);
+    if (id !== runId) return; // ya se está jugando otra partida: no pisar su pantalla
     if ('reason' in res && res.reason === 'name') {
       ui.result('');
       ui.overActions.hidden = true;
@@ -270,8 +283,9 @@ export async function initPlaylistSnake(): Promise<ArcadeShared | null> {
       }
     }
     last = now;
+    // Solo se redibuja si se está jugando, hay destello o cambió algo (no a 60 fps en reposo).
+    if (!board.hidden && (running || flash > 0 || dirty)) { draw(); dirty = false; }
     if (flash > 0) flash--;
-    if (!board.hidden) draw();
     requestAnimationFrame(frame);
   }
 
@@ -330,6 +344,6 @@ export async function initPlaylistSnake(): Promise<ArcadeShared | null> {
     root, tracks, player, deck, focus, consoleEl, setSound,
     soundOn: () => soundOn,
     pauseSnake: pause,
-    snakeHud: () => { scoreEl.textContent = String(game.score); bestEl.textContent = String(best); },
+    snakeHud: () => { dirty = true; scoreEl.textContent = String(game.score); bestEl.textContent = String(best); },
   };
 }

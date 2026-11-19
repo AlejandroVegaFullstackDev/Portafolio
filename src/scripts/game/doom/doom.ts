@@ -136,9 +136,13 @@ export function initDoom(shared: ArcadeShared): GameHandle | null {
       if (loading) return;
       try { await load(); } catch { loading = false; state('error'); return; }
     }
+    // Si durante la descarga cambiaron de pestaña (consola u hoja), Doom no arranca
+    // escondido: queda en pausa hasta que vuelvan y le den continuar.
+    if (!active || document.hidden) { state('paused'); return; }
     resume();
   }
   function resume() {
+    if (!active || document.hidden || !doom) return;
     state('none');
     focus.enter(shared.consoleEl);
     running = true;

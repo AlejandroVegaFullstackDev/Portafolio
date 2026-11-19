@@ -16,6 +16,7 @@ import { onTilt } from './gyro';
 gsap.registerPlugin(ScrollTrigger);
 
 const pad = (n: number) => String(n).padStart(2, '0');
+const esc = (s: string) => s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]!));
 
 /** Parte un texto en palabras → letras; las palabras no se cortan al envolver.
  *  Si el título trae versiones por idioma (.lang-es / .lang-en), parte cada una por
@@ -27,9 +28,9 @@ function splitChars(el: HTMLElement) {
   const targets = langs.length ? [...langs] : [el];
   for (const t of targets) {
     const text = (t.textContent || '').trim();
-    t.setAttribute('aria-label', text);
-    t.innerHTML = text.split(/\s+/).map((w) =>
-      `<span class="hs-word" aria-hidden="true">${[...w].map((c) => `<span class="hs-char">${c}</span>`).join('')}</span>`
+    // El texto real queda para lectores de pantalla; las letras animadas, ocultas para ellos.
+    t.innerHTML = `<span class="sr-only">${esc(text)}</span>` + text.split(/\s+/).map((w) =>
+      `<span class="hs-word" aria-hidden="true">${[...w].map((c) => `<span class="hs-char">${esc(c)}</span>`).join('')}</span>`
     ).join(' ');
   }
   return el.querySelectorAll<HTMLElement>('.hs-char');

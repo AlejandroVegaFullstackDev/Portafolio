@@ -1,20 +1,26 @@
 // Idioma de la página: se guarda en localStorage y se refleja en <html data-lang>.
 // El CSS oculta .lang-es / .lang-en según ese atributo (styles/base.css).
+// El storage puede lanzar (cookies bloqueadas): nunca debe tumbar la página.
 
 export type Lang = 'es' | 'en';
 const KEY = 'av_lang';
-const listeners = new Set<(lang: Lang) => void>();
 
-export const getLang = (): Lang => (localStorage.getItem(KEY) as Lang) || 'es';
+const isLang = (v: unknown): v is Lang => v === 'es' || v === 'en';
 
-export function setLang(lang: Lang) {
-  localStorage.setItem(KEY, lang);
-  document.documentElement.setAttribute('data-lang', lang);
-  document.documentElement.setAttribute('lang', lang);
-  listeners.forEach((fn) => fn(lang));
+export function getLang(): Lang {
+  try {
+    const v = localStorage.getItem(KEY);
+    if (isLang(v)) return v;
+  } catch { /* sin storage */ }
+  const attr = document.documentElement.getAttribute('data-lang');
+  return isLang(attr) ? attr : 'es';
 }
 
-export const onLangChange = (fn: (lang: Lang) => void) => listeners.add(fn);
+export function setLang(lang: Lang) {
+  try { localStorage.setItem(KEY, lang); } catch { /* sin storage: vale para esta página */ }
+  document.documentElement.setAttribute('data-lang', lang);
+  document.documentElement.setAttribute('lang', lang);
+}
 
 /** Conecta el botón ES/EN del header. */
 export function initLangToggle() {

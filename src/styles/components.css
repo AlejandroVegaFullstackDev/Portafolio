@@ -127,12 +127,6 @@
 .cy-term-bar .dot.r { background: var(--accent); box-shadow: 0 0 8px var(--accent-glow); }
 .cy-term-bar .label { margin-left: auto; }
 .cy-term-body { padding: 16px 18px; }
-.cy-term-line { white-space: pre-wrap; display: flex; align-items: baseline; gap: 0.6ch; }
-.cy-term-line.ok, .cy-term-line.com { display: block; padding-left: 2ch; }
-.cy-term-line .ps1 { color: var(--accent); flex-shrink: 0; }
-.cy-term-line .ok { color: var(--ok); }
-.cy-term-line .warn { color: var(--warn); }
-.cy-term-line .com { color: var(--ink-3); }
 
 /* Headline */
 .cy-headline {
@@ -201,20 +195,6 @@
   transition: transform 0.3s cubic-bezier(.6,.05,.4,1);
 }
 .cy-link:hover::after { transform: scaleX(1); transform-origin: left; }
-
-/* Boot screen */
-.cy-boot {
-  position: fixed;
-  inset: 0;
-  background: #000;
-  z-index: 10000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  font-family: var(--font-mono);
-  color: var(--ok);
-}
 
 /* Tweaks trigger button */
 .tweaks-trigger {

@@ -1,24 +1,33 @@
 // Consola con varios juegos: pestañas Snake · Bloques · Doom. Cambiar de pestaña pausa
 // el juego que estaba corriendo y muestra el otro; todos comparten la barra de puntos,
 // la música, el tocadiscos y el modo juego (los expone el Snake: ArcadeShared).
+// Las pestañas se conectan de inmediato: no dependen de que el Snake termine de cargar
+// (ni de que cargue bien); los juegos se arman cuando lo compartido está listo.
 import type { ArcadeShared } from './snake';
 import { initBlocks, type GameHandle } from './blocks/blocks';
 import { initDoom } from './doom/doom';
 
 type GameId = 'snake' | 'blocks' | 'doom';
 
-export function initArcade(shared: ArcadeShared) {
-  const { root } = shared;
+export function initArcade(root: HTMLElement | null, ready: Promise<ArcadeShared | null>) {
+  if (!root) return;
   const tabs = [...root.querySelectorAll<HTMLButtonElement>('[data-game-tab]')];
   const boards = [...root.querySelectorAll<HTMLElement>('[data-game-board]')];
   if (!tabs.length) return;
 
-  const snake: GameHandle = { activate: shared.snakeHud, deactivate: shared.pauseSnake };
-  const games: Partial<Record<GameId, GameHandle>> = { snake };
+  let shared: ArcadeShared | null = null;
+  const games: Partial<Record<GameId, GameHandle>> = {};
   // Bloques y Doom se arman la primera vez que se abren (no cuestan nada si nadie entra).
-  const lazy: Record<Exclude<GameId, 'snake'>, () => GameHandle | null> = {
-    blocks: () => initBlocks(shared),
-    doom: () => initDoom(shared),
+  const lazy: Record<GameId, (s: ArcadeShared) => GameHandle | null> = {
+    snake: (s) => ({ activate: s.snakeHud, deactivate: s.pauseSnake }),
+    blocks: (s) => initBlocks(s),
+    doom: (s) => initDoom(s),
+  };
+  const handle = (id: GameId) => {
+    if (!games[id] && shared) {
+      try { games[id] = lazy[id](shared) ?? undefined; } catch (e) { console.error(`[arcade] ${id}`, e); }
+    }
+    return games[id];
   };
   let current: GameId = 'snake';
 
@@ -26,13 +35,19 @@ export function initArcade(shared: ArcadeShared) {
     if (id === current) return;
     games[current]?.deactivate();
     current = id;
-    root.dataset.game = id;
+    root!.dataset.game = id;
     tabs.forEach((t) => t.setAttribute('aria-selected', String(t.dataset.gameTab === id)));
     boards.forEach((b) => { b.hidden = b.dataset.gameBoard !== id; });
-    if (!games[id] && id !== 'snake') games[id] = lazy[id]() ?? undefined;
-    games[id]?.activate();
+    handle(id)?.activate();
   }
 
   tabs.forEach((t) => t.addEventListener('click', () => show(t.dataset.gameTab as GameId)));
   root.dataset.game = 'snake';
+
+  ready.then((s) => {
+    shared = s;
+    if (!s) return;
+    handle('snake');
+    if (current !== 'snake') handle(current)?.activate(); // cambiaron de pestaña mientras cargaba
+  }).catch((e) => console.error('[arcade]', e));
 }

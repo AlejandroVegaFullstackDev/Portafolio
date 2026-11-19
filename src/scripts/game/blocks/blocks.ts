@@ -34,6 +34,7 @@ export function initBlocks(shared: ArcadeShared): GameHandle | null {
   let best = ls.get();
   let acc = 0, last = 0, softHeld = false;
   let flashRows: number[] = [], flashT = 0;
+  let dirty = true; // hay algo nuevo que dibujar aunque no se esté jugando
   let song = Math.floor(Math.random() * Math.max(1, tracks.length));
   let cell = 20, ox = 0, oy = 0, size = 0;
 
@@ -160,6 +161,7 @@ export function initBlocks(shared: ArcadeShared): GameHandle | null {
     hud();
     overTitle.textContent = s.lines === 1 ? tr('1 línea', '1 line') : tr(`${s.lines} líneas`, `${s.lines} lines`);
     overResult.textContent = newBest ? tr(`¡Nuevo récord! ${s.score} puntos`, `New best! ${s.score} points`) : tr(`${s.score} puntos · récord ${best}`, `${s.score} points · best ${best}`);
+    dirty = true;
     if (canAnimate()) board!.animate([{ transform: 'translateX(0)' }, { transform: 'translateX(-6px)' }, { transform: 'translateX(5px)' }, { transform: 'translateX(0)' }], { duration: 320 });
     state('over');
   }
@@ -173,8 +175,9 @@ export function initBlocks(shared: ArcadeShared): GameHandle | null {
       if (softHeld) hud();
     }
     last = now;
+    // Solo se redibuja si se está jugando, hay destello o cambió algo (no a 60 fps en reposo).
+    if (active && (running || flashT > 0 || dirty)) { draw(); dirty = false; }
     if (flashT > 0) flashT--;
-    if (active) draw();
     requestAnimationFrame(frame);
   }
 
@@ -187,6 +190,7 @@ export function initBlocks(shared: ArcadeShared): GameHandle | null {
     resume();
   }
   function resume() {
+    if (!active || document.hidden) return;
     state('none');
     focus.enter(shared.consoleEl);
     running = true;
@@ -256,11 +260,12 @@ export function initBlocks(shared: ArcadeShared): GameHandle | null {
 
   document.addEventListener('visibilitychange', () => { if (document.hidden) pause(); });
   if (typeof ResizeObserver !== 'undefined') new ResizeObserver(resize).observe(board);
+  new MutationObserver(() => { dirty = true; }).observe(document.documentElement, { attributeFilter: ['data-lang'] }); // textos del lateral
   state('ready');
   requestAnimationFrame(frame);
 
   return {
-    activate() { active = true; resize(); hud(); if (!running && tracks.length) deck.show(current()); },
+    activate() { active = true; dirty = true; resize(); hud(); if (!running && tracks.length) deck.show(current()); },
     deactivate() { pause(); active = false; },
   };
 }

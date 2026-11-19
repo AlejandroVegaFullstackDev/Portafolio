@@ -25,6 +25,17 @@ function deviceId() {
 }
 
 interface LocalRow { score: number; at: number }
+
+/** Ranking local guardado; si el JSON está corrupto o no es una lista, empieza vacío. */
+function readLocal(): LocalRow[] {
+  try {
+    const rows: unknown = JSON.parse(ls.get(LOCAL_KEY) ?? '[]');
+    if (!Array.isArray(rows)) return [];
+    return rows.filter((r): r is LocalRow => !!r && Number.isFinite(r.score) && Number.isFinite(r.at));
+  } catch {
+    return [];
+  }
+}
 export type SubmitResult = { ok: true; rank: number | null } | { ok: false; reason: 'name' | 'error' };
 
 export const validName = (n: string) => NAME_RE.test(n.trim());
@@ -32,6 +43,7 @@ export const validName = (n: string) => NAME_RE.test(n.trim());
 export class Ranking {
   enabled = false;
   private token: string | null = null;
+  private gen = 0; // cada begin() es una partida: una respuesta vieja no pisa la nueva
   onName: (name: string) => void = () => {};
 
   constructor(private globalList: HTMLElement, private localList: HTMLElement, private offEl: HTMLElement) {
@@ -55,6 +67,7 @@ export class Ranking {
 
   /** Pide una semilla firmada. Si el ranking no está disponible, la partida es libre. */
   async begin(): Promise<number | null> {
+    const g = ++this.gen;
     this.token = null;
     if (!this.enabled) return null;
     try {
@@ -64,6 +77,7 @@ export class Ranking {
       });
       if (!r.ok) return null;
       const d = (await r.json()) as { seed: number; token: string };
+      if (g !== this.gen) return null; // ya empezó otra partida
       this.token = d.token;
       return d.seed;
     } catch {
@@ -77,7 +91,7 @@ export class Ranking {
   /** Guarda en el ranking del dispositivo. Devuelve la posición (1-5) o null si no entró. */
   recordLocal(score: number): number | null {
     if (score < 1) return null;
-    const rows: LocalRow[] = JSON.parse(ls.get(LOCAL_KEY) ?? '[]');
+    const rows = readLocal();
     const row = { score, at: Date.now() };
     rows.push(row);
     rows.sort((a, b) => b.score - a.score || b.at - a.at);
@@ -89,19 +103,22 @@ export class Ranking {
   }
 
   async submit(name: string, moves: Move[], ticks: number): Promise<SubmitResult> {
-    if (!this.token) return { ok: false, reason: 'error' };
+    const token = this.token;
+    if (!token) return { ok: false, reason: 'error' };
+    // Solo se descarta el token de ESTA partida (si ya empezó otra, el suyo no se toca).
+    const drop = () => { if (this.token === token) this.token = null; };
     try {
       const r = await fetch('/api/leaderboard', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'submit', token: this.token, name, moves, ticks }),
+        body: JSON.stringify({ action: 'submit', token, name, moves, ticks }),
       });
       const d = (await r.json()) as { rank?: number | null; error?: string };
       if (!r.ok) {
         if (d.error === 'bad-name') return { ok: false, reason: 'name' }; // el token sigue sirviendo
-        this.token = null;
+        drop();
         return { ok: false, reason: 'error' };
       }
-      this.token = null; // un token = un envío
+      drop(); // un token = un envío
       this.name = name;
       await this.load();
       return { ok: true, rank: d.rank ?? null };
@@ -119,7 +136,7 @@ export class Ranking {
   }
 
   private renderLocal(highlight?: number) {
-    const rows: LocalRow[] = JSON.parse(ls.get(LOCAL_KEY) ?? '[]');
+    const rows = readLocal();
     const fmt = (t: number) => new Date(t).toLocaleDateString(document.documentElement.getAttribute('data-lang') === 'en' ? 'en-US' : 'es-CO', { day: '2-digit', month: 'short' });
     this.localList.innerHTML = rows
       .map((r, i) => `<li${r.at === highlight ? ' class="me"' : ''}><span class="pos">${String(i + 1).padStart(2, '0')}</span><span class="who">${fmt(r.at)}</span><span class="pts">${r.score}</span></li>`)

@@ -4,12 +4,16 @@ import gsap from 'gsap';
 import { canAffordHeavy, canAnimate, isFinePointer } from '../fx/env';
 import { onTilt } from '../fx/gyro';
 
-function paintName() {
-  const el = document.getElementById('heroName');
-  if (!el) return;
-  const line = (text: string, tail = '') =>
-    `<span class="reveal-wrap" aria-hidden="true"><span class="inline-block">${[...text].map((c) => `<span class="hc">${c}</span>`).join('')}${tail}</span></span>`;
-  el.innerHTML = line('ALEJANDRO_') + line('VEGA', '<span class="hc" style="color:var(--accent)">.</span>');
+/** El nombre ya viene del servidor (Hero.astro); aquí solo se parte en letras .hc. */
+function splitName() {
+  document.querySelectorAll<HTMLElement>('#heroName [data-hero-split]').forEach((el) => {
+    el.replaceChildren(...[...(el.textContent || '')].map((c) => {
+      const s = document.createElement('span');
+      s.className = 'hc';
+      s.textContent = c;
+      return s;
+    }));
+  });
 }
 
 function animateIn() {
@@ -64,7 +68,7 @@ function initDepth() {
 }
 
 export function initHero() {
-  paintName();
+  splitName();
   animateIn();
   initDepth();
 }

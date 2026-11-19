@@ -38,11 +38,12 @@ export function createGame(size = 16, items = 0, rand: () => number = Math.rando
   return { size, items, snake, dir: 'right', queued: [], food: placeFood(size, snake, items > 0 ? 0 : -1, rand), score: 0, eaten: [], over: false };
 }
 
-/** Encola un giro; ignora reversas sobre sí misma y repetidos. */
-export function turn(state: SnakeState, dir: Dir): void {
+/** Encola un giro; ignora reversas sobre sí misma y repetidos. Devuelve si lo aceptó. */
+export function turn(state: SnakeState, dir: Dir): boolean {
   const last = state.queued[state.queued.length - 1] ?? state.dir;
-  if (dir === last || dir === OPPOSITE[last] || state.queued.length >= 2) return;
+  if (dir === last || dir === OPPOSITE[last] || state.queued.length >= 2) return false;
   state.queued.push(dir);
+  return true;
 }
 
 /** Avanza un tick. Devuelve 'ate' si comió, 'over' si chocó, o null. */

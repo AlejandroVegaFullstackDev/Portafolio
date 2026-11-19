@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { createGame, step, tickMs, turn, type SnakeState } from '../src/scripts/game/snakeEngine';
+import { createGame, step, tickMs, turn, type Dir, type SnakeState } from '../src/scripts/game/snakeEngine';
+import { BOARD, replay, type Move } from '../src/scripts/game/replay';
+import { mulberry32 } from '../src/scripts/game/prng';
 
 // rand determinista: siempre elige la primera celda libre y la primera etiqueta.
 const zero = () => 0;
@@ -65,5 +67,41 @@ describe('snake sin Spotify', () => {
   it('funciona con comida genérica cuando no hay canciones', () => {
     const s = createGame(10, 0, zero);
     expect(s.food.item).toBe(-1);
+  });
+});
+
+describe('ráfagas de teclado y el ranking', () => {
+  // Simula la partida como snake.ts: una ráfaga de teclas en el tick 0 y luego recto hasta chocar.
+  function burstGame(record: 'accepted' | 'all') {
+    const seed = 42;
+    const rand = mulberry32(seed);
+    const g = createGame(BOARD, 0, rand);
+    const moves: Move[] = [];
+    let ticks = 0;
+    const keys: Dir[] = Array.from({ length: 30 }, (_, i) => (i % 2 ? 'down' : 'up'));
+    for (const d of keys) {
+      const ok = turn(g, d);
+      if (ok || record === 'all') moves.push([ticks, d]);
+    }
+    while (!g.over && ticks < 1000) { ticks++; step(g, rand); }
+    return { seed, moves, ticks, score: g.score };
+  }
+
+  it('turn() dice si aceptó el giro', () => {
+    const g = createGame(10, 0, zero);
+    expect(turn(g, 'left')).toBe(false); // reversa
+    expect(turn(g, 'right')).toBe(false); // repetido
+    expect(turn(g, 'up')).toBe(true);
+  });
+
+  it('registrando solo los giros aceptados, la ráfaga no invalida la partida', () => {
+    const r = burstGame('accepted');
+    expect(r.moves).toHaveLength(1);
+    expect(replay(r.seed, r.moves, r.ticks)).toMatchObject({ ok: true, score: r.score });
+  });
+
+  it('registrando cada tecla, la misma ráfaga la invalidaba', () => {
+    const r = burstGame('all');
+    expect(replay(r.seed, r.moves, r.ticks).ok).toBe(false);
   });
 });

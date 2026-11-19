@@ -87,6 +87,20 @@ export function initSecretTerminal() {
 
   form.addEventListener('submit', (e) => { e.preventDefault(); run(input.value); input.value = ''; });
   root.addEventListener('click', (e) => { if (e.target === root) close(); });
+  document.getElementById('stClose')?.addEventListener('click', close);
+
+  // Modal de verdad: el foco no se escapa a la página de atrás mientras está abierta.
+  root.addEventListener('keydown', (e) => {
+    if (e.key !== 'Tab') return;
+    const items = [...root.querySelectorAll<HTMLElement>('a[href], button, input')].filter((el) => !el.hidden && el.offsetParent !== null);
+    if (!items.length) return;
+    const first = items[0], last = items[items.length - 1];
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+  });
+  document.addEventListener('focusin', (e) => {
+    if (!root.hidden && !root.contains(e.target as Node)) input.focus({ preventScroll: true });
+  });
 
   // Disparadores: escribir "sudo" (fuera de inputs) o 5 toques al logo.
   let buffer = '';

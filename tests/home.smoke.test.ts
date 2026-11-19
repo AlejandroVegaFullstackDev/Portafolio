@@ -55,11 +55,17 @@ describe.skipIf(!hasBuild)('home (smoke)', () => {
     }, 20_000);
   }
 
-  it('enlaza al CV en ambos idiomas y no publica correo', () => {
+  it('enlaza al CV en ambos idiomas y ofrece el mismo correo del CV (sin teléfono)', () => {
     const html = readFileSync(HTML, 'utf8');
     expect(html).toContain('/alejandro-vega-cv-es.pdf');
     expect(html).toContain('/alejandro-vega-cv-en.pdf');
-    expect(html).not.toMatch(/mailto:|@gmail\.com/);
+    expect(html).toContain('mailto:alejandro.vega103367@gmail.com');
+    expect(html).not.toMatch(/tel:|\+57/);
+  });
+
+  it('el nombre (H1) viene en el HTML del servidor, sin depender de JS', () => {
+    const html = readFileSync(HTML, 'utf8');
+    expect(html).toMatch(/<h1 id="heroName"[^>]*>.*Alejandro Vega/s);
   });
 
   it('tiene vista previa para compartir (og:image) y datos estructurados', () => {

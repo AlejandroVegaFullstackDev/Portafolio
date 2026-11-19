@@ -54,10 +54,15 @@ export class PreviewPlayer {
     if (song.preview) return Promise.resolve(song.preview);
     const key = `${song.artist}::${song.title}`;
     if (!this.lookups.has(key)) {
-      this.lookups.set(key, fetch(`/api/preview?artist=${encodeURIComponent(song.artist)}&title=${encodeURIComponent(song.title)}`)
-        .then((r) => (r.ok ? r.json() : { preview: null }))
-        .then((d: { preview: string | null }) => d.preview)
-        .catch(() => null));
+      // Solo se cachea una respuesta buena: si Deezer falla, la próxima vez se reintenta.
+      const lookup = fetch(`/api/preview?artist=${encodeURIComponent(song.artist)}&title=${encodeURIComponent(song.title)}`)
+        .then((r) => {
+          if (!r.ok) throw new Error(`preview ${r.status}`);
+          return r.json() as Promise<{ preview: string | null }>;
+        })
+        .then((d) => d.preview ?? null)
+        .catch(() => { this.lookups.delete(key); return null; });
+      this.lookups.set(key, lookup);
     }
     return this.lookups.get(key)!;
   }

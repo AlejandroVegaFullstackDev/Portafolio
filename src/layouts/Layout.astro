@@ -11,6 +11,8 @@ interface Props {
   description?: string;
   image?: string;
   type?: 'website' | 'article';
+  /** Páginas que solo existen en español: no se les aplica el idioma elegido (av_lang). */
+  spanishOnly?: boolean;
 }
 
 const {
@@ -18,7 +20,10 @@ const {
   description = 'Alejandro Vega — Ingeniero de Software Backend en Bogotá, con 4 años de experiencia en fintech, logística y medios. APIs, microservicios e integraciones con NestJS, Node.js, Python y PostgreSQL.',
   image = '/og.png',
   type = 'website',
+  spanishOnly = false,
 } = Astro.props;
+// Solo /og.png mide 1200×630; las portadas de los posts no, así que no se declaran medidas.
+const ogSize = image === '/og.png' ? { width: '1200', height: '630' } : null;
 
 const site = Astro.site ?? new URL('https://4ledmt.dev');
 const canonical = new URL(Astro.url.pathname, site).href;
@@ -33,12 +38,13 @@ const person = {
   url: site.href,
   image: ogImage,
   address: { '@type': 'PostalAddress', addressLocality: 'Bogotá', addressCountry: 'CO' },
+  email: `mailto:${D.identity.contact.email}`,
   sameAs: [D.identity.contact.linkedin, D.identity.contact.github],
   knowsAbout: ['NestJS', 'Node.js', 'TypeScript', 'Python', 'PostgreSQL', 'FastAPI', 'RabbitMQ', 'Redis'],
 };
 ---
 <!doctype html>
-<html lang="es" data-lang="es">
+<html lang="es" data-lang="es" data-es-only={spanishOnly ? '' : undefined}>
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -54,8 +60,8 @@ const person = {
   <meta property="og:title" content={title} />
   <meta property="og:description" content={description} />
   <meta property="og:image" content={ogImage} />
-  <meta property="og:image:width" content="1200" />
-  <meta property="og:image:height" content="630" />
+  {ogSize && <meta property="og:image:width" content={ogSize.width} />}
+  {ogSize && <meta property="og:image:height" content={ogSize.height} />}
   <meta property="og:locale" content="es_CO" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content={title} />
@@ -88,7 +94,9 @@ const person = {
         if (t.accent) r.setAttribute('data-tweak-accent', t.accent);
         if (t.font) { r.setAttribute('data-tweak-font', t.font); window.__avLoadFont(t.font); }
       } catch (e) {}
-      var lang = localStorage.getItem('av_lang') || 'es';
+      if (document.documentElement.hasAttribute('data-es-only')) return; // página solo en español
+      var lang = 'es';
+      try { lang = localStorage.getItem('av_lang') === 'en' ? 'en' : 'es'; } catch (e) {}
       document.documentElement.setAttribute('data-lang', lang);
       document.documentElement.setAttribute('lang', lang);
     })();

@@ -7,7 +7,7 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 import { getLang, initLangToggle } from './core/i18n';
-import { bootSequence } from './core/boot';
+import { bootSequence, hideBoot } from './core/boot';
 import { initMobileMenu } from './core/menu';
 
 import { detectPerformance } from './fx/env';
@@ -37,36 +37,56 @@ const coverflow = (id: string, pace?: number) => {
   if (el) createCoverflow(el, pace);
 };
 
-async function start() {
-  initLangToggle();
-  // El modo ahorro mide FPS mientras corre la pantalla de arranque.
-  await Promise.all([bootSequence(), detectPerformance()]);
+/** Un init que falla se registra y no corta a los que vienen después. */
+const safe = (name: string, fn: () => unknown) => {
+  try {
+    const r = fn();
+    if (r instanceof Promise) r.catch((e) => console.error(`[home] ${name}`, e));
+  } catch (e) {
+    console.error(`[home] ${name}`, e);
+  }
+};
 
-  initGyro();
+async function start() {
+  safe('lang', initLangToggle);
+  // El menú responde desde el primer momento, sin esperar al arranque.
+  safe('menu', initMobileMenu);
+  // El modo ahorro mide FPS mientras corre la pantalla de arranque.
+  try {
+    await Promise.all([bootSequence(), detectPerformance()]);
+  } catch (e) {
+    console.error('[home] boot', e);
+  } finally {
+    hideBoot(); // pase lo que pase, el contenido queda visible
+  }
+
+  safe('gyro', initGyro);
 
   // De arriba abajo, en el orden de la página.
-  initHero();
-  initNowBand();
-  initExperience();
-  coverflow('projects', 0.5); // 3 destacados: corto, sin pantallas vacías
-  initPaperStack();
-  coverflow('blog', 0.5); // pocos posts: el carrusel se recorre en la mitad del scroll
-  initPlaylistSnake().then((shared) => shared && initArcade(shared));
-  initContact();
+  safe('hero', initHero);
+  safe('nowBand', initNowBand);
+  safe('experience', initExperience);
+  safe('projects', () => coverflow('projects', 0.5)); // 3 destacados: corto, sin pantallas vacías
+  safe('paperStack', initPaperStack);
+  safe('blog', () => coverflow('blog', 0.5)); // pocos posts: el carrusel se recorre en la mitad del scroll
+  safe('arcade', () => {
+    const snake = initPlaylistSnake().catch((e) => { console.error('[home] snake', e); return null; });
+    initArcade(document.getElementById('snake'), snake);
+  });
+  safe('contact', initContact);
 
   // Efectos transversales (leen atributos data-* en todo el documento).
-  initScramble(getLang);
-  initTypewriter(getLang);
-  initWipes();
-  initCrt();
+  safe('scramble', () => initScramble(getLang));
+  safe('typewriter', () => initTypewriter(getLang));
+  safe('wipes', initWipes);
+  safe('crt', initCrt);
 
   // Interfaz.
-  initMobileMenu();
-  initSecretTerminal();
-  initLens();
-  initMarquees();
-  initScrollProgress();
-  initSpotlight();
+  safe('terminal', initSecretTerminal);
+  safe('lens', initLens);
+  safe('marquees', initMarquees);
+  safe('scrollProgress', initScrollProgress);
+  safe('spotlight', initSpotlight);
 
   ScrollTrigger.sort();
   setTimeout(() => ScrollTrigger.refresh(), 200);

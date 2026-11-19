@@ -16,6 +16,9 @@ export function initMobileMenu() {
     btn.setAttribute('aria-label', open ? 'Cerrar menú' : 'Abrir menú');
     btn.textContent = open ? '✕' : '≡';
     document.documentElement.style.overflow = open ? 'hidden' : '';
+    // Reabrir a mitad del cierre (o al revés): se cortan las animaciones en curso para que
+    // el onComplete del cierre no oculte un menú que ya está abierto.
+    gsap.killTweensOf([menu, ...cards]);
 
     if (open) {
       menu.hidden = false;
@@ -25,7 +28,7 @@ export function initMobileMenu() {
       }
       cards[0]?.focus({ preventScroll: true });
     } else {
-      const done = () => { menu.hidden = true; gsap.set([menu, ...cards], { clearProps: 'all' }); };
+      const done = () => { if (open) return; menu.hidden = true; gsap.set([menu, ...cards], { clearProps: 'all' }); };
       if (!canAnimate()) return done();
       gsap.to(cards, { rotationX: 70, y: 20, opacity: 0, duration: 0.3, stagger: { each: 0.03, from: 'end' }, ease: 'power2.in' });
       gsap.to(menu, { clipPath: 'circle(0% at 100% 0%)', duration: 0.45, ease: 'power3.in', delay: 0.15, onComplete: done });
