@@ -1,9 +1,12 @@
 ---
 // Hero: nombre, propuesta y dos acciones. Capas con [data-depth] para el
-// parallax de mouse/giroscopio. Animación en scripts/sections/hero.ts.
+// parallax de mouse/giroscopio. Animación en hero.client.ts.
 import { portfolioData as D } from '../../data';
 import { Image } from 'astro:assets';
 import fondoImg from '../../assets/img/fondo.jpg';
+
+// El nombre sale en el HTML del servidor; hero.ts solo lo parte en letras para animarlo.
+const [first, ...rest] = D.identity.name.toUpperCase().split(' ');
 ---
 <section id="hero" class="hero relative cy-scanlines flex items-center px-6 lg:px-20 overflow-hidden max-w-full">
   <Image id="heroBg" src={fondoImg} alt="" aria-hidden="true" class="hero-bg" data-depth="0.6" widths={[400, 736]} sizes="(max-width: 767px) 90vw, 40vw" loading="eager" />
@@ -16,7 +19,7 @@ import fondoImg from '../../assets/img/fondo.jpg';
         <span class="h-px w-10 bg-[var(--accent)]"></span>
         <span class="font-mono text-[0.72rem] text-[var(--ink-3)] tracking-widest">v.2026</span>
       </div>
-      <h1 id="heroName" class="hero-name font-mono font-extrabold whitespace-nowrap" aria-label={D.identity.name}></h1>
+      <h1 id="heroName" class="hero-name font-mono font-extrabold whitespace-nowrap"><span class="sr-only">{D.identity.name}</span><span class="reveal-wrap" aria-hidden="true"><span class="inline-block" data-hero-split>{`${first}_`}</span></span><span class="reveal-wrap" aria-hidden="true"><span class="inline-block"><span data-hero-split>{rest.join(' ')}</span><span class="hc" style="color:var(--accent)">.</span></span></span></h1>
       <p class="hero-headline mt-8 max-w-2xl font-display">
         <span class="lang-es">{D.identity.headline.es}</span>
         <span class="lang-en">{D.identity.headline.en}</span>

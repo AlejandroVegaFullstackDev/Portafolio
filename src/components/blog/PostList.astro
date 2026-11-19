@@ -1,5 +1,5 @@
 ---
-// Lista de posts de /blog: filas que entran volteándose en 3D (scripts/blogIndex.ts).
+// Lista de posts de /blog: filas que entran volteándose en 3D (features/blog/index.client.ts).
 import type { CollectionEntry } from 'astro:content';
 import { readingTime } from '../../lib/blog';
 
@@ -11,7 +11,7 @@ const fmtDate = (d: Date) => d.toLocaleDateString('es-CO', { year: 'numeric', mo
   {posts.length > 0 ? (
     <div>
       {posts.map((post, i) => (
-        <a href={`/blog/${post.slug}`} class:list={["post-row", { "has-cover": post.data.cover }]}>
+        <a href={`/blog/${post.id}`} class:list={["post-row", { "has-cover": post.data.cover }]}>
           <span class="post-num">{String(i + 1).padStart(2, '0')}</span>
           <div class="post-body">
             <h2 class="post-title">{post.data.title}</h2>

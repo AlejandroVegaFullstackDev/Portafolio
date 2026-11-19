@@ -76,7 +76,7 @@ describe('CV descargable', () => {
     });
     it.skipIf(!hasPdftotext)(`el CV ${lang} lleva correo y no teléfono`, () => {
       const text = spawnSync('pdftotext', [file, '-'], { encoding: 'utf8' }).stdout;
-      expect(text).toContain('alejandro.vega103367@gmail.com');
+      expect(text).toContain(D.identity.contact.email);
       expect(text).not.toMatch(/\+57|\b3\d{2}\s?\d{3}\s?\d{4}\b/);
     });
   }

@@ -1,12 +1,15 @@
 /* Punto de entrada de estilos (lo importa Layout.astro).
-   Orden: base de Tailwind → tokens/base propios → componentes → utilidades de Tailwind.
-   Los estilos de cada sección viven dentro de su componente (.astro). */
+   Aquí viven los globales de verdad: tokens, base y primitives (piezas que usan varias secciones).
+   Los estilos de un solo componente van en su <style> scoped.
+   Las tres hojas de feature de abajo se importan aquí, y no desde su componente, porque son
+   globales a propósito (HTML que crea el JS o que viene del Markdown, sin scope de Astro) y
+   tienen que quedar antes de las utilidades de Tailwind en la cascada. */
 @import "tailwindcss/base";
 @import "./tokens.css";
 @import "./base.css";
 @import "tailwindcss/components";
-@import "./components.css";
-@import "./effects.css";
-@import "./coverflow.css";
-@import "./prose.css";
+@import "./primitives.css";
+@import "../features/home/effects.css";     /* efectos que crea features/home/effects/* */
+@import "../components/ui/coverflow.css";   /* carrusel de Proyectos y Blog */
+@import "../features/blog/prose.css";       /* contenido Markdown de los posts */
 @import "tailwindcss/utilities";

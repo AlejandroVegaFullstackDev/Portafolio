@@ -30,6 +30,8 @@ export const identity = {
   timezone: "GMT-5",
   domain: "4ledmt.dev",
   contact: {
+    // El mismo correo que trae el CV (tests/data.test.ts lo compara con el PDF).
+    email: "alejandro.vega103367@gmail.com",
     linkedin: "https://www.linkedin.com/in/alejandrovega-stackblend/",
     github: "https://github.com/AlejandroVegaFullstackDev",
   },

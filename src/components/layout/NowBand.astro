@@ -1,6 +1,6 @@
 ---
 // Franja de estado bajo el hero: disponibilidad, canción (Spotify), hora en Bogotá.
-// Datos vivos en scripts/sections/nowBand.ts.
+// Datos vivos en now-band.client.ts (al lado).
 ---
 <div id="nowBand" class="band">
   <div class="flex items-stretch overflow-x-auto no-scrollbar" style="max-width:100vw;">
@@ -20,6 +20,21 @@
 </div>
 
 <style>
+  .now-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 11px 22px;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    color: var(--ink-3);
+    text-transform: uppercase;
+    white-space: nowrap;
+    border-right: 1px solid var(--line);
+    flex-shrink: 0;
+  }
+  .now-item:last-child { border-right: 0; }
   .band { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); overflow: hidden; background: var(--bg-2); position: relative; }
   .pulse-dot { flex-shrink: 0; width: 8px; height: 8px; border-radius: 50%; background: var(--ok); box-shadow: 0 0 8px var(--ok); animation: pulse 1.6s ease-in-out infinite; }
   .track { flex: 1; }

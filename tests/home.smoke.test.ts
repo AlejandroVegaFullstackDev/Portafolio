@@ -1,4 +1,4 @@
-// Smoke test del home construido: carga dist/ en jsdom, ejecuta scripts/home.ts y
+// Smoke test del home construido: carga dist/ en jsdom, ejecuta features/home/init.client.ts y
 // verifica que todo arranque sin errores, en perfil desktop (mouse) y móvil (táctil).
 // Requiere `npm run build` antes.
 import { existsSync, readFileSync } from 'node:fs';
@@ -12,7 +12,7 @@ let bundle = '';
 
 beforeAll(async () => {
   if (!hasBuild) return;
-  const out = await build({ entryPoints: ['src/scripts/home.ts'], bundle: true, format: 'iife', write: false, logLevel: 'silent' });
+  const out = await build({ entryPoints: ['src/features/home/init.client.ts'], bundle: true, format: 'iife', write: false, logLevel: 'silent' });
   bundle = out.outputFiles[0].text;
 });
 
@@ -55,11 +55,17 @@ describe.skipIf(!hasBuild)('home (smoke)', () => {
     }, 20_000);
   }
 
-  it('enlaza al CV en ambos idiomas y no publica correo', () => {
+  it('enlaza al CV en ambos idiomas y ofrece el mismo correo del CV (sin teléfono)', () => {
     const html = readFileSync(HTML, 'utf8');
     expect(html).toContain('/alejandro-vega-cv-es.pdf');
     expect(html).toContain('/alejandro-vega-cv-en.pdf');
-    expect(html).not.toMatch(/mailto:|@gmail\.com/);
+    expect(html).toContain('mailto:alejandro.vega103367@gmail.com');
+    expect(html).not.toMatch(/tel:|\+57/);
+  });
+
+  it('el nombre (H1) viene en el HTML del servidor, sin depender de JS', () => {
+    const html = readFileSync(HTML, 'utf8');
+    expect(html).toMatch(/<h1 id="heroName"[^>]*>.*Alejandro Vega/s);
   });
 
   it('tiene vista previa para compartir (og:image) y datos estructurados', () => {

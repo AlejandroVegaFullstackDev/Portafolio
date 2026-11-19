@@ -1,9 +1,9 @@
 // Seguridad del ranking: la repetición no se deja engañar, los tokens no se falsifican,
 // los registros quedan cifrados y los nombres se validan.
 import { beforeAll, describe, expect, it } from 'vitest';
-import { createGame, step, turn, type Dir } from '../src/scripts/game/snakeEngine';
-import { mulberry32 } from '../src/scripts/game/prng';
-import { BOARD, replay, type Move } from '../src/scripts/game/replay';
+import { BOARD, createGame, step, turn, type Dir } from '../src/lib/arcade/snake/engine';
+import { mulberry32 } from '../src/lib/arcade/random';
+import { replay, type Move } from '../src/lib/arcade/snake/replay';
 import { cleanName } from '../src/lib/leaderboard/names';
 
 /** Juega una partida "real" con la semilla, siguiendo una estrategia simple, y registra los giros. */

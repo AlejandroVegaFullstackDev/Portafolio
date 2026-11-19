@@ -59,6 +59,8 @@ const PANEL_STYLE = `
 .twk-toggle[data-on="1"] i{transform:translateX(14px)}
 .twk-field{appearance:none;width:100%;height:26px;padding:0 8px;border:.5px solid rgba(0,0,0,.1);border-radius:7px;background:rgba(255,255,255,.6);color:inherit;font:inherit;outline:none}
 select.twk-field{padding-right:22px;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path fill='rgba(0,0,0,.5)' d='M0 0h10L5 6z'/></svg>");background-repeat:no-repeat;background-position:right 8px center}
+.tweaks-trigger{position:fixed;bottom:16px;right:16px;z-index:2000;width:36px;height:36px;background:var(--panel);border:1px solid var(--line-2);color:var(--ink-3);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:border-color 0.2s, color 0.2s;}
+.tweaks-trigger:hover{border-color:var(--accent);color:var(--accent);}
 `;
 
 function Seg({ value, options, onChange }: { value: string; options: string[]; onChange: (v: string) => void }) {

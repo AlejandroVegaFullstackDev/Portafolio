@@ -1,0 +1,150 @@
+// Trabajo de producción (Roda y clientes). El orden de aparición lo arma ./index.ts.
+
+export const production = [
+  {
+    slug: "worker-gps",
+    n: "004",
+    name: { es: "Worker de sincronización GPS", en: "GPS sync worker" },
+    kicker: { es: "Concurrencia y locks · Python", en: "Concurrency & locks · Python" },
+    plain: {
+      es: "La sincronización del GPS de la flota se demoraba tanto que una corrida se pisaba con la siguiente. Ahora consulta los dispositivos en paralelo y nunca procesa el mismo lote dos veces.",
+      en: "The fleet GPS sync took so long that one run overlapped the next. Now it queries devices in parallel and never processes the same batch twice.",
+    },
+    summary: {
+      es: "Worker que sincroniza el estado de los dispositivos GPS de la flota contra la API del proveedor. Tenía un cuello de botella de latencia por peticiones HTTP en serie; lo reemplacé por ejecución concurrente con ThreadPoolExecutor, sesiones con keep-alive y un lock distribuido en Redis que impide que dos ejecuciones procesen el mismo lote.",
+      en: "Worker that syncs the fleet's GPS device state against the provider's API. It had a latency bottleneck from serial HTTP requests; I replaced it with concurrent execution via ThreadPoolExecutor, keep-alive sessions and a distributed Redis lock that stops two runs from processing the same batch.",
+    },
+    role: { es: "Desarrollador backend", en: "Backend developer" },
+    year: "2025",
+    company: "Roda",
+    github: null,
+    stack: ["Python", "Redis", "Cloud Run", "GCP", "PostgreSQL"],
+    metrics: [
+      { k: { es: "concurrencia", en: "concurrency" }, v: "ThreadPool" },
+      { k: { es: "exclusión", en: "mutual exclusion" }, v: "Redis lock" },
+      { k: { es: "runtime", en: "runtime" }, v: "Cloud Run" },
+    ],
+  },
+  {
+    slug: "plataforma-interna",
+    n: "005",
+    name: { es: "Plataforma administrativa interna", en: "Internal admin platform" },
+    kicker: { es: "Plataforma interna · Python", en: "Internal platform · Python" },
+    plain: {
+      es: "El CRM y los paneles internos con los que el equipo de operaciones gestiona clientes, pagos y cartera todos los días.",
+      en: "The CRM and internal dashboards the operations team uses every day to manage customers, payments and collections.",
+    },
+    summary: {
+      es: "Plataforma administrativa interna de Roda: CRM en React para el equipo de operaciones, gestión de clientes y seguimiento de cartera, y microservicios en Python (FastAPI y Flask) que automatizan procesos de pagos, créditos y cartera. PostgreSQL y despliegue con Docker en Cloud Run de GCP.",
+      en: "Roda's internal admin platform: a React CRM for the operations team, customer management and collections follow-up, and Python microservices (FastAPI and Flask) that automate payment, credit and collections processes. PostgreSQL, deployed with Docker on GCP Cloud Run.",
+    },
+    role: { es: "Desarrollador full stack", en: "Full stack developer" },
+    year: "2025",
+    company: "Roda",
+    github: null,
+    stack: ["Python", "Flask", "FastAPI", "React", "PostgreSQL", "GCP", "TypeScript"],
+    metrics: [
+      { k: { es: "backend", en: "backend" }, v: "Python" },
+      { k: { es: "datos", en: "data" }, v: "PostgreSQL" },
+      { k: { es: "nube", en: "cloud" }, v: "GCP" },
+    ],
+  },
+  {
+    slug: "recuperacion-cartera",
+    n: "006",
+    name: { es: "Recuperación de cartera y activos", en: "Portfolio & asset recovery" },
+    kicker: { es: "Operación de campo · Python", en: "Field operations · Python" },
+    plain: {
+      es: "El proceso para recuperar vehículos y créditos vivía en hojas de cálculo y chats. Ahora tiene su propia herramienta, con un panel para la oficina y otro para el equipo en campo.",
+      en: "Recovering vehicles and loans used to live in spreadsheets and chats. Now it has its own tool, with one panel for the office and one for the field team.",
+    },
+    summary: {
+      es: "Módulo de recuperación de vehículos y créditos con dos interfaces administrativas, una para la oficina y otra para el equipo en campo. Reemplazó un proceso que se llevaba entre hojas de cálculo y coordinación por chat.",
+      en: "Vehicle and credit recovery module with two admin interfaces, one for the office and one for the field team. It replaced a process run across spreadsheets and chat coordination.",
+    },
+    role: { es: "Desarrollador full stack", en: "Full stack developer" },
+    year: "2025",
+    company: "Roda",
+    github: null,
+    stack: ["Python", "Flask", "React", "PostgreSQL", "GCP"],
+    metrics: [
+      { k: { es: "interfaces", en: "interfaces" }, v: "2" },
+      { k: { es: "usuarios", en: "users" }, v: { es: "Oficina + campo", en: "Office + field" } },
+      { k: { es: "reemplaza", en: "replaces" }, v: { es: "Proceso manual", en: "Manual process" } },
+    ],
+  },
+  {
+    slug: "vegareparaciones",
+    n: "007",
+    name: { es: "vegareparaciones.com", en: "vegareparaciones.com" },
+    kicker: { es: "Sitio y SEO · Next.js", en: "Site & SEO · Next.js" },
+    plain: {
+      es: "La página web de un negocio familiar de reparaciones, hecha para que lo encuentren en Google y lo llamen.",
+      en: "The website of a family repair business, built so people find it on Google and call.",
+    },
+    summary: {
+      es: "Sitio completo en Next.js para un negocio de reparaciones en Bogotá: arquitectura de contenido orientada a conversión, SEO técnico y local con JSON-LD, Search Console y Google Business Profile, GA4 para iterar sobre el comportamiento real, y despliegues automatizados con dominio y DNS propios.",
+      en: "A full Next.js site for a repairs business in Bogotá: conversion-oriented content architecture, technical and local SEO with JSON-LD, Search Console and Google Business Profile, GA4 to iterate on real behaviour, and automated deployments with its own domain and DNS.",
+    },
+    role: { es: "Full stack solo", en: "Solo full stack" },
+    year: "2025",
+    company: "VegaReparaciones",
+    github: null,
+    url: "https://vegareparaciones.com",
+    stack: ["Next.js", "JSON-LD", "GA4", "CI/CD"],
+    metrics: [
+      { k: { es: "seo", en: "seo" }, v: "100" },
+      { k: { es: "accesibilidad", en: "accessibility" }, v: "96" },
+      { k: { es: "rendimiento", en: "performance" }, v: "90" },
+    ],
+  },
+  {
+    slug: "escaneo-masivo",
+    n: "008",
+    name: { es: "Generación masiva de guías", en: "Bulk shipping labels" },
+    kicker: { es: "Rendimiento · PostgreSQL", en: "Performance · PostgreSQL" },
+    plain: {
+      es: "Las guías de envío se generaban una por una. Ahora un procedimiento en la base de datos las genera por lote.",
+      en: "Shipping labels used to be generated one at a time. Now a database procedure generates them in batches.",
+    },
+    summary: {
+      es: "Automaticé con un procedimiento almacenado en PostgreSQL, invocado desde NestJS, la generación masiva de guías de envío, que antes se hacía una por una. Lotes de más de 10.000 guías, en un módulo con arquitectura hexagonal.",
+      en: "I automated bulk shipping-label generation, previously done one at a time, with a PostgreSQL stored procedure called from NestJS. Batches of more than 10,000 labels, in a module with a hexagonal architecture.",
+    },
+    role: { es: "Desarrollador backend", en: "Backend developer" },
+    year: "2024",
+    company: "Kiki LATAM",
+    github: null,
+    stack: ["NestJS", "PostgreSQL", "TypeScript"],
+    metrics: [
+      { k: { es: "guías por lote", en: "labels per batch" }, v: "+10.000" },
+      { k: { es: "motor", en: "engine" }, v: "PostgreSQL" },
+      { k: { es: "arquitectura", en: "architecture" }, v: "Hexagonal" },
+    ],
+  },
+  {
+    slug: "etl-bigquery",
+    n: "009",
+    name: { es: "ETL de audiencia a BigQuery", en: "Audience ETL into BigQuery" },
+    kicker: { es: "Datos · Python", en: "Data · Python" },
+    plain: {
+      es: "Los datos de audiencia de un medio digital estaban repartidos entre dos versiones de Google Analytics. Los llevé a un solo lugar y armé los dashboards del equipo comercial.",
+      en: "A digital outlet's audience data was split between two versions of Google Analytics. I brought it into one place and built the sales team's dashboards.",
+    },
+    summary: {
+      es: "Procesos ETL en Python que llevan los datos de audiencia de Universal Analytics y GA4 a BigQuery, con la migración a GA4 hecha sin perder el histórico. Sobre esa base armé los dashboards del equipo comercial.",
+      en: "Python ETL processes that bring audience data from Universal Analytics and GA4 into BigQuery, with the GA4 migration done without losing the history. On top of that I built the sales team's dashboards.",
+    },
+    role: { es: "Desarrollador backend / datos", en: "Backend / data developer" },
+    year: "2023",
+    company: "Pulzo",
+    github: null,
+    stack: ["Python", "BigQuery", "GA4", "SQL"],
+    metrics: [
+      { k: { es: "histórico", en: "history" }, v: { es: "Conservado", en: "Kept" } },
+      { k: { es: "fuentes", en: "sources" }, v: "UA + GA4" },
+      { k: { es: "destino", en: "sink" }, v: "BigQuery" },
+    ],
+  },
+
+] as const;

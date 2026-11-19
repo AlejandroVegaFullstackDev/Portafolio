@@ -1,8 +1,9 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import { portfolioData as D } from '../data';
 ---
 
-<Layout title="Sobre mí — Alejandro Vega">
+<Layout title="Sobre mí — Alejandro Vega" spanishOnly>
 <style>
   .ab-card {
     border: 1px solid var(--line);
@@ -153,6 +154,10 @@ import Layout from '../layouts/Layout.astro';
 
     <!-- Footer links -->
     <div style="display:flex;flex-wrap:wrap;gap:24px;align-items:center;padding-top:24px;border-top:1px solid var(--line);">
+      <a href={`mailto:${D.identity.contact.email}`}
+        style="font-family:var(--font-mono);font-size:0.74rem;letter-spacing:0.1em;color:var(--accent);text-decoration:none;">
+        {D.identity.contact.email}
+      </a>
       <a href="https://www.twitch.tv/4ledmt" target="_blank" rel="noopener"
         style="font-family:var(--font-mono);font-size:0.74rem;letter-spacing:0.1em;color:var(--ink-3);text-decoration:none;"
         onmouseover="this.style.color='#9146ff'" onmouseout="this.style.color='var(--ink-3)'">

@@ -1,6 +1,6 @@
 ---
 // Página de un post. Encabezado y barra lateral son componentes (components/blog);
-// los estilos del contenido Markdown viven en styles/prose.css.
+// los estilos del contenido Markdown viven en features/blog/prose.css.
 import Layout from '../../layouts/Layout.astro';
 import PostHeader from '../../components/blog/PostHeader.astro';
 import PostSidebar from '../../components/blog/PostSidebar.astro';
@@ -9,14 +9,14 @@ import { getToc, readingTime } from '../../lib/blog';
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog');
-  return posts.map((post) => ({ params: { slug: post.slug }, props: { post } }));
+  return posts.map((post) => ({ params: { slug: post.id }, props: { post } }));
 }
 
 const { post } = Astro.props;
 const { Content } = await render(post);
 const toc = getToc(post.body);
 ---
-<Layout title={`${post.data.title} — Alejandro Vega`} description={post.data.description} image={post.data.cover} type="article">
+<Layout title={`${post.data.title} — Alejandro Vega`} description={post.data.description} image={post.data.cover} type="article" spanishOnly>
   <div id="read-bar" aria-hidden="true"></div>
 
   <nav class="nav" aria-label="Navegación del post">
@@ -46,7 +46,7 @@ const toc = getToc(post.body);
 </Layout>
 
 <script>
-  import { initBlogPost } from '../../scripts/blogPost';
+  import { initBlogPost } from '../../features/blog/post.client';
   initBlogPost();
 </script>
 

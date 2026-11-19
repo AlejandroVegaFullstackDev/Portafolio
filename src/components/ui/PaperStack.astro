@@ -1,5 +1,5 @@
 ---
-// Pila de hojas 3D (intro del blog). Animación en scripts/sections/blog.ts.
+// Pila de hojas 3D (intro del blog). Animación en paper-stack.client.ts (al lado).
 // La hoja del frente es el último post; si hay menos de 4, las de atrás son "borrador".
 import type { CollectionEntry } from 'astro:content';
 
@@ -14,7 +14,7 @@ const pages = Array.from({ length: PAPER_COUNT }, (_, i) => posts[i] ?? null);
 const latest = posts[0];
 ---
 {latest && (
-  <a href={`/blog/${latest.slug}`} class="paper-stage" id="paperStage" aria-label={`Leer el último post: ${latest.data.title}`} data-lens="leer">
+  <a href={`/blog/${latest.id}`} class="paper-stage" id="paperStage" aria-label={`Leer el último post: ${latest.data.title}`} data-lens="leer">
     <span class="paper-float" id="paperFloat">
       <span class="paper-rig" id="paperRig">
         <span class="paper-tilt" id="paperTilt">
