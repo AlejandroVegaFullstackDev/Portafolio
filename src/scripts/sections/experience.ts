@@ -2,7 +2,7 @@
 // se dibuja con el scroll; el nodo se enciende cuando su tarjeta llega.
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { canAnimate } from '../fx/env';
+import { canAnimate } from '../../lib/client/motion';
 
 gsap.registerPlugin(ScrollTrigger);
 

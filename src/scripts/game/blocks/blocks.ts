@@ -3,7 +3,7 @@
 // la barra de puntos (ArcadeShared). Cada línea completa cambia de canción.
 import { COLS, ROWS, TYPES, cellsOf, createBlocks, dropY, gravityMs, hardDrop, move, previewCells, rotate, step, type BlocksState, type PieceType } from './engine';
 import type { ArcadeShared } from '../snake';
-import { canAnimate } from '../../fx/env';
+import { canAnimate } from '../../../lib/client/motion';
 import { tr } from '../snakeUi';
 
 const BEST_KEY = 'av_blocks_best';

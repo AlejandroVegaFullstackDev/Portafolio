@@ -12,7 +12,7 @@ let bundle = '';
 
 beforeAll(async () => {
   if (!hasBuild) return;
-  const out = await build({ entryPoints: ['src/scripts/home.ts'], bundle: true, format: 'iife', write: false, logLevel: 'silent' });
+  const out = await build({ entryPoints: ['src/features/home/init.client.ts'], bundle: true, format: 'iife', write: false, logLevel: 'silent' });
   bundle = out.outputFiles[0].text;
 });
 

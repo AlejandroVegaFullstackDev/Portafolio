@@ -1,6 +1,6 @@
 // "Cromo" de la página: ticker en marquee, barra de progreso de scroll y halo del cursor.
 import gsap from 'gsap';
-import { canAffordHeavy, canAnimate, isFinePointer } from './env';
+import { canAffordHeavy, canAnimate, isFinePointer } from '../../../lib/client/motion';
 
 /** Marquees infinitos: duplica el contenido y lo desplaza a velocidad constante. */
 export function initMarquees() {

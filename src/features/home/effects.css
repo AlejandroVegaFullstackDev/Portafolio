@@ -1,6 +1,6 @@
-/* Efectos globales creados por scripts/fx/*. Cada bloque nombra su módulo. */
+/* Efectos globales creados por features/home/effects/* y algunos componentes. Cada bloque nombra su módulo. */
 
-/* fx/chrome.ts — halo que sigue al cursor (desktop) */
+/* effects/chrome.ts — halo que sigue al cursor (desktop) */
 .cy-spotlight {
   position: fixed; top: 0; left: 0;
   width: 700px; height: 700px; border-radius: 50%;
@@ -10,7 +10,7 @@
   mix-blend-mode: screen; will-change: transform;
 }
 
-/* fx/lens.ts — cursor lente magnético (solo con mouse) */
+/* effects/lens.ts — cursor lente magnético (solo con mouse) */
 .cy-lens {
   position: fixed; top: 0; left: 0; z-index: 9999;
   width: 18px; height: 18px; margin: -9px 0 0 -9px;
@@ -35,7 +35,7 @@
 .cy-lens.is-active .cy-lens-label { opacity: 1; }
 @media (hover: none) { .cy-lens { display: none; } }
 
-/* fx/typewriter.ts — cursor de terminal en titulares */
+/* effects/typewriter.ts — cursor de terminal en titulares */
 .tw-cursor {
   display: inline-block; width: 0.08em; min-width: 3px; height: 0.82em;
   margin-left: 0.04em; vertical-align: -0.04em;
@@ -44,7 +44,7 @@
 .tw-cursor--idle { animation: tw-blink 0.9s steps(1) infinite; }
 @keyframes tw-blink { 50% { opacity: 0; } }
 
-/* fx/crt.ts y coverflow — letras partidas */
+/* effects/crt.ts y coverflow — letras partidas */
 .hs-word { display: inline-block; white-space: nowrap; }
 .hs-char { display: inline-block; will-change: transform, opacity; transform-origin: 50% 100%; }
 

@@ -2,7 +2,7 @@
 // y sus [data-stagger-item] entran en cascada.
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { canAnimate } from './env';
+import { canAnimate } from '../../../lib/client/motion';
 
 gsap.registerPlugin(ScrollTrigger);
 

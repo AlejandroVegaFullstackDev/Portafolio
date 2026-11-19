@@ -9,9 +9,9 @@
 
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { canAffordHeavy, isFinePointer } from './env';
-import { crtFlash } from './crt';
-import { onTilt } from './gyro';
+import { canAffordHeavy, isFinePointer } from '../../lib/client/motion';
+import { crtFlash } from '../../features/home/effects/crt';
+import { onTilt } from '../../features/home/effects/gyro';
 
 gsap.registerPlugin(ScrollTrigger);
 

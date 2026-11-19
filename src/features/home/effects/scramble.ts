@@ -1,7 +1,7 @@
 // Etiquetas "// 0N _ NOMBRE" que se descifran al entrar en pantalla.
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { canAnimate } from './env';
-import type { Lang } from '../core/i18n';
+import { canAnimate } from '../../../lib/client/motion';
+import type { Lang } from '../../../lib/client/language';
 
 const CHARS = '!<>-_\\/[]{}—=+*^?#________ABCDEF0123456789';
 

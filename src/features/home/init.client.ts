@@ -1,33 +1,33 @@
 // Orquestador del home: decide QUÉ se inicia y en QUÉ orden. La lógica de cada cosa
-// vive en su módulo (core/ = infraestructura, sections/ = una por sección, fx/ = efectos).
+// vive en su módulo (lib/client/ = idioma y movimiento, effects/ = efectos, <Componente>.client.ts = uno por componente).
 //
 // Regla de ScrollTrigger: los triggers se crean en el orden de la página (de arriba
 // abajo) porque las secciones pinneadas empujan todo lo que viene después.
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
-import { getLang, initLangToggle } from './core/i18n';
-import { bootSequence, hideBoot } from './core/boot';
-import { initMobileMenu } from './core/menu';
+import { getLang, initLangToggle } from '../../lib/client/language';
+import { bootSequence, hideBoot } from '../../scripts/core/boot';
+import { initMobileMenu } from '../../scripts/core/menu';
 
-import { detectPerformance } from './fx/env';
-import { initGyro } from './fx/gyro';
-import { initScramble } from './fx/scramble';
-import { initTypewriter } from './fx/typewriter';
-import { initWipes } from './fx/wipe';
-import { initCrt } from './fx/crt';
-import { createCoverflow } from './fx/coverflow';
-import { initLens } from './fx/lens';
-import { initSecretTerminal } from './fx/secretTerminal';
-import { initMarquees, initScrollProgress, initSpotlight } from './fx/chrome';
+import { detectPerformance } from '../../lib/client/motion';
+import { initGyro } from './effects/gyro';
+import { initScramble } from './effects/scramble';
+import { initTypewriter } from './effects/typewriter';
+import { initWipes } from './effects/wipe';
+import { initCrt } from './effects/crt';
+import { createCoverflow } from '../../scripts/fx/coverflow';
+import { initLens } from './effects/lens';
+import { initSecretTerminal } from '../../scripts/fx/secretTerminal';
+import { initMarquees, initScrollProgress, initSpotlight } from './effects/chrome';
 
-import { initHero } from './sections/hero';
-import { initNowBand } from './sections/nowBand';
-import { initPaperStack } from './sections/blog';
-import { initExperience } from './sections/experience';
-import { initContact } from './sections/contact';
-import { initPlaylistSnake } from './game/snake';
-import { initArcade } from './game/arcade';
+import { initHero } from '../../scripts/sections/hero';
+import { initNowBand } from '../../scripts/sections/nowBand';
+import { initPaperStack } from '../../scripts/sections/blog';
+import { initExperience } from '../../scripts/sections/experience';
+import { initContact } from '../../scripts/sections/contact';
+import { initPlaylistSnake } from '../../scripts/game/snake';
+import { initArcade } from '../../scripts/game/arcade';
 
 gsap.registerPlugin(ScrollTrigger);
 ScrollTrigger.config({ ignoreMobileResize: true });

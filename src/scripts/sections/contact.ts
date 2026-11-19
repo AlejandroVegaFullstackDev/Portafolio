@@ -2,8 +2,8 @@
 // se sacuden con la velocidad del scroll. En desktop reaccionan al hover.
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { canAffordHeavy, canAnimate, isFinePointer } from '../fx/env';
-import { onTilt } from '../fx/gyro';
+import { canAffordHeavy, canAnimate, isFinePointer } from '../../lib/client/motion';
+import { onTilt } from '../../features/home/effects/gyro';
 
 gsap.registerPlugin(ScrollTrigger);
 

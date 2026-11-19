@@ -3,8 +3,8 @@
 // se levanta al pasar el cursor. El carrusel lo maneja fx/coverflow.
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { canAnimate, isFinePointer } from '../fx/env';
-import { onTilt } from '../fx/gyro';
+import { canAnimate, isFinePointer } from '../../lib/client/motion';
+import { onTilt } from '../../features/home/effects/gyro';
 
 gsap.registerPlugin(ScrollTrigger);
 

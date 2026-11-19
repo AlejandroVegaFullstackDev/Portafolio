@@ -1,6 +1,6 @@
 // Menú móvil 3D: las opciones caen como cartas. Esc o un enlace lo cierran.
 import gsap from 'gsap';
-import { canAnimate } from '../fx/env';
+import { canAnimate } from '../../lib/client/motion';
 
 export function initMobileMenu() {
   const btn = document.getElementById('mobileMenuBtn');

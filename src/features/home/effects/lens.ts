@@ -2,7 +2,7 @@
 // tarjetas crece como lupa y muestra una etiqueta ([data-lens="ver"]). Los
 // elementos [data-magnetic] se acercan al cursor.
 import gsap from 'gsap';
-import { canAnimate, isFinePointer } from './env';
+import { canAnimate, isFinePointer } from '../../../lib/client/motion';
 
 const TARGETS = 'a, button, [data-lens], [data-magnetic]';
 

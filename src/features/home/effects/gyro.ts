@@ -1,7 +1,7 @@
 // Giroscopio compartido: una sola escucha de deviceorientation, muchos suscriptores.
 // iOS exige pedir permiso desde un toque; los botones [data-gyro-btn] lo hacen.
 
-import { canAffordHeavy, isFinePointer } from './env';
+import { canAffordHeavy, isFinePointer } from '../../../lib/client/motion';
 
 type Listener = (nx: number, ny: number) => void;
 

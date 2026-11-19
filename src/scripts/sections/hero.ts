@@ -1,8 +1,8 @@
 // Hero: nombre letra por letra y capas
 // [data-depth] que se mueven con el mouse (desktop) o el giroscopio (móvil).
 import gsap from 'gsap';
-import { canAffordHeavy, canAnimate, isFinePointer } from '../fx/env';
-import { onTilt } from '../fx/gyro';
+import { canAffordHeavy, canAnimate, isFinePointer } from '../../lib/client/motion';
+import { onTilt } from '../../features/home/effects/gyro';
 
 /** El nombre ya viene del servidor (Hero.astro); aquí solo se parte en letras .hc. */
 function splitName() {

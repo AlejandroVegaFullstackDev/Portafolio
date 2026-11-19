@@ -1,6 +1,6 @@
 // Tocadiscos de la última canción que te comiste: la funda entra volteándose y el
 // vinilo (con la carátula de etiqueta) sale de ella y gira mientras se juega o suena.
-import { canAnimate } from '../fx/env';
+import { canAnimate } from '../../lib/client/motion';
 
 interface DeckTrack { title: string; artist: string; cover: string | null; art?: string | null; url: string }
 

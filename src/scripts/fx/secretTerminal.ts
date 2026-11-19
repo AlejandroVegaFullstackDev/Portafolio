@@ -1,8 +1,8 @@
 // Terminal secreta (easter egg). Se abre escribiendo "sudo" fuera de un campo de
 // texto, o tocando 5 veces el logo en menos de 2 s. Esc la cierra.
 import gsap from 'gsap';
-import { canAnimate } from './env';
-import { getLang } from '../core/i18n';
+import { canAnimate } from '../../lib/client/motion';
+import { getLang } from '../../lib/client/language';
 
 interface TermData {
   name: string;

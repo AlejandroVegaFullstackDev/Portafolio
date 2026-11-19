@@ -3,7 +3,7 @@
 //  · al comer, la carátula salta del tablero girando
 //  · al chocar, el tablero tiembla y destella
 // Respeta "reducir movimiento" y el modo ahorro (fx/env).
-import { canAffordHeavy, canAnimate, isFinePointer } from '../fx/env';
+import { canAffordHeavy, canAnimate, isFinePointer } from '../../lib/client/motion';
 import type { Dir } from './snakeEngine';
 
 const LEAN: Record<Dir, [number, number]> = { up: [3, 0], down: [-2, 0], left: [0, -3], right: [0, 3] };

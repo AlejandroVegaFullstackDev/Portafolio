@@ -1,7 +1,7 @@
 // Secuencia de arranque tipo consola. Resuelve cuando la pantalla desaparece.
 // La pantalla solo se ve si el inline de BootScreen.astro puso html.js-boot.
 import gsap from 'gsap';
-import { canAnimate } from '../fx/env';
+import { canAnimate } from '../../lib/client/motion';
 
 const LINES = [
   '[ OK ]  loading kernel modules ...',
