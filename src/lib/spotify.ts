@@ -20,9 +20,14 @@ export function credentials() {
   return clientId && clientSecret && refreshToken ? { clientId, clientSecret, refreshToken } : null;
 }
 
+// El access token dura ~1 h: se reutiliza mientras la función siga caliente, para no
+// pedirle uno nuevo a Spotify en cada petición.
+let cached: { token: string; expiresAt: number } | null = null;
+
 export async function getAccessToken(): Promise<string | null> {
   const c = credentials();
   if (!c) return null;
+  if (cached && Date.now() < cached.expiresAt) return cached.token;
   const basic = Buffer.from(`${c.clientId}:${c.clientSecret}`).toString('base64');
   const res = await fetch(TOKEN_URL, {
     method: 'POST',
@@ -31,8 +36,11 @@ export async function getAccessToken(): Promise<string | null> {
     body: new URLSearchParams({ grant_type: 'refresh_token', refresh_token: c.refreshToken }),
   });
   if (!res.ok) return null;
-  const data = (await res.json()) as { access_token?: string };
-  return data.access_token ?? null;
+  const data = (await res.json()) as { access_token?: string; expires_in?: number };
+  if (!data.access_token) return null;
+  // Margen de 60 s antes del vencimiento real.
+  cached = { token: data.access_token, expiresAt: Date.now() + ((data.expires_in ?? 3600) - 60) * 1000 };
+  return data.access_token;
 }
 
 export async function spotifyGet<T>(url: string, token: string): Promise<{ status: number; data: T | null }> {
