@@ -13,7 +13,8 @@ const PLAYLIST_ID = import.meta.env.SPOTIFY_SNAKE_PLAYLIST || '5Xc3x3ELDWOkBcnHt
 const MAX = 40;
 // Las previews de Deezer vienen firmadas y vencen en horas: 30 min de CDN es seguro.
 const CACHE_OK = 'public, max-age=0, s-maxage=1800, stale-while-revalidate=600';
-const NO_CACHE = 'no-store, max-age=0';
+// Los fallos también se cachean (poco) para que no disparen decenas de llamadas a Spotify/Deezer por petición.
+const CACHE_FAIL = 'public, max-age=0, s-maxage=60';
 
 type PlaylistRow = { item?: SpotifyTrack | null; track?: SpotifyTrack | null };
 
@@ -23,10 +24,10 @@ const unique = (list: (SpotifyTrack | null | undefined)[]) => {
 };
 
 export async function GET() {
-  if (!credentials()) return json({ tracks: [], source: 'none', status: 'missing-env' }, 200, NO_CACHE);
+  if (!credentials()) return json({ tracks: [], source: 'none', status: 'missing-env' }, 200, CACHE_FAIL);
   try {
     const token = await getAccessToken();
-    if (!token) return json({ tracks: [], source: 'none', status: 'token-refresh-failed' }, 200, NO_CACHE);
+    if (!token) return json({ tracks: [], source: 'none', status: 'token-refresh-failed' }, 200, CACHE_FAIL);
     const statuses: Record<string, number> = {};
 
     // Desde feb-2026 Spotify movió /tracks → /items (y `track` → `item`), y solo devuelve
@@ -75,8 +76,8 @@ export async function GET() {
     const previews = await findPreviews(base);
     const tracks: Track[] = base.map((t, i) => ({ ...t, preview: previews[i] }));
 
-    return json({ tracks, source: tracks.length ? source : 'none', status: statuses }, 200, tracks.length ? CACHE_OK : NO_CACHE);
+    return json({ tracks, source: tracks.length ? source : 'none', status: statuses }, 200, tracks.length ? CACHE_OK : CACHE_FAIL);
   } catch {
-    return json({ tracks: [], source: 'none', status: 'error' }, 200, NO_CACHE);
+    return json({ tracks: [], source: 'none', status: 'error' }, 200, CACHE_FAIL);
   }
 }
